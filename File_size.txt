@@ -1,0 +1,48 @@
+27/02/2023 
+      text       data        bss      total filename
+     29412       4420      76476     110308 Pi_the_Robot.elf
+27/02/2023 
+      text       data        bss      total filename
+     29412       4420      76476     110308 Pi_the_Robot.elf
+28/02/2023 
+      text       data        bss      total filename
+     29412       4420      76476     110308 Pi_the_Robot.elf
+02/03/2023 
+      text       data        bss      total filename
+     29412       4420      76476     110308 Pi_the_Robot.elf
+02/03/2023 
+      text       data        bss      total filename
+     29412       4420      76476     110308 Pi_the_Robot.elf
+02/03/2023 
+      text       data        bss      total filename
+     29412       4420      76476     110308 Pi_the_Robot.elf
+02/03/2023 
+      text       data        bss      total filename
+     29412       4420      76476     110308 Pi_the_Robot.elf
+02/03/2023 
+      text       data        bss      total filename
+     29412       4420      76476     110308 Pi_the_Robot.elf
+02/03/2023 
+      text       data        bss      total filename
+     29412       4420      76476     110308 Pi_the_Robot.elf
+02/03/2023 
+      text       data        bss      total filename
+     29412       4420      76476     110308 Pi_the_Robot.elf
+02/03/2023 
+      text       data        bss      total filename
+     29412       4420      76476     110308 Pi_the_Robot.elf
+02/03/2023 
+      text       data        bss      total filename
+     29412       4420      76476     110308 Pi_the_Robot.elf
+02/03/2023 
+      text       data        bss      total filename
+     29412       4420      76476     110308 Pi_the_Robot.elf
+02/03/2023 
+      text       data        bss      total filename
+     29412       4420      76476     110308 Pi_the_Robot.elf
+02/03/2023 
+      text       data        bss      total filename
+     29412       4420      76476     110308 Pi_the_Robot.elf
+03/03/2023 
+      text       data        bss      total filename
+     29412       4420      76476     110308 Pi_the_Robot.elf
