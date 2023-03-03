@@ -18,11 +18,14 @@ Add RP2040 Pico board to manage head hardware
 * Windows 10 laptop
 * Rasperry Pi windows installer
     * Visual Studio Code
-    * GCC 10.3.1 arm-none-eabi compiler
+    * Arm GNU toolchain
     * Ninja
     * Cmake
+    * OpenOCD
+    * Git for windows
+    * Python 3.9
     * Picotools
 * Hardware PicoProbe debug probe : CMSIS version
 
 
-Jim Herd February 2023
+Jim Herd March 2023
