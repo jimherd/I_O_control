@@ -47,6 +47,16 @@
 #define UART_ID uart0
 #define BAUD_RATE 115200
 
+#define LINE_AVAILABLE  0   // bit in eventgroup_uart_IO
+
+#define     RETURN      '\r'
+#define     NEWLINE     '\n'
+#define     TAB         '\t'
+#define     SPACE       ' '
+#define     STRING_NULL '\0'
+
+#define     MAX_STRING_LENGTH  80
+
 //==============================================================================
 //I2C port
 
@@ -105,6 +115,9 @@ extern const uint BLINK_PIN;
 // FreeRTOS components
 
 extern void Task_blink_LED(void *p);
+extern void Task_run_cmd(void *p);
+
+extern EventGroupHandle_t eventgroup_uart_IO;
 
 // extern  TaskHandle_t taskhndl_Task_blink_LED;
 // extern SemaphoreHandle_t semaphore_1

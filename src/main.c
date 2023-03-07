@@ -36,6 +36,8 @@ const uint BLINK_PIN = LED_PIN;
 // FreeRTOS components handles
 
 TaskHandle_t taskhndl_Task_blink_LED;
+TaskHandle_t taskhndl_Task_run_cmd;
+EventGroupHandle_t eventgroup_uart_IO;
 
 // SemaphoreHandle_t semaphore_1;
 // QueueHandle_t queue_1;
@@ -87,6 +89,16 @@ int main()
                 TASK_PRIORITYIDLE,
                 &taskhndl_Task_blink_LED
     );
+
+        xTaskCreate(Task_run_cmd,
+                "Command_execution_task",
+                configMINIMAL_STACK_SIZE,
+                NULL,
+                TASK_PRIORITYIDLE,
+                &taskhndl_Task_run_cmd
+    );
+
+    eventgroup_uart_IO = xEventGroupCreate (); 
 
     vTaskStartScheduler();
 
