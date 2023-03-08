@@ -114,6 +114,7 @@ extern const uint BLINK_PIN;
 
 // FreeRTOS components
 
+extern void Task_UART(void *p);
 extern void Task_blink_LED(void *p);
 extern void Task_run_cmd(void *p);
 

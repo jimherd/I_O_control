@@ -35,13 +35,10 @@ const uint BLINK_PIN = LED_PIN;
 
 // FreeRTOS components handles
 
-TaskHandle_t taskhndl_Task_blink_LED;
-TaskHandle_t taskhndl_Task_run_cmd;
-EventGroupHandle_t eventgroup_uart_IO;
-
-// SemaphoreHandle_t semaphore_1;
-// QueueHandle_t queue_1;
-// EventGroupHandle_t eventgroup_1;
+TaskHandle_t        taskhndl_Task_uart;
+TaskHandle_t        taskhndl_Task_blink_LED;
+TaskHandle_t        taskhndl_Task_run_cmd;
+EventGroupHandle_t  eventgroup_uart_IO;
 
 //==============================================================================
 // System initiation
@@ -65,10 +62,11 @@ int main()
     gpio_set_dir(LOG_PIN, GPIO_OUT);
     gpio_pull_down(LOG_PIN);         // should default but just make sure
 
-    uart_init(UART_ID, BAUD_RATE);
-    gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
-    gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
-    uart_puts(UART_ID, "Hello\n");
+    
+    // gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
+    // gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
+    // uart_init(UART_ID, BAUD_RATE);
+    // uart_puts(UART_ID, "Hello\n");
 
         // I2C Initialisation. Using it at 400Khz.
     i2c_init(I2C_PORT, 400*1000);
@@ -90,7 +88,15 @@ int main()
                 &taskhndl_Task_blink_LED
     );
 
-        xTaskCreate(Task_run_cmd,
+    xTaskCreate(Task_UART,
+                "uart_task",
+                configMINIMAL_STACK_SIZE,
+                NULL,
+                TASK_PRIORITYIDLE,
+                &taskhndl_Task_uart
+    );
+
+    xTaskCreate(Task_run_cmd,
                 "Command_execution_task",
                 configMINIMAL_STACK_SIZE,
                 NULL,

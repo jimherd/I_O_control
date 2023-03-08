@@ -12,9 +12,11 @@
 // Prototypes
 //==============================================================================
 
+//void Task_UART(void *p);
+
 void uart_sys_init(void);
 void uart_println(char *str);
 char uart_getchar(void);
-uint32_t uart_getline(char *string);
+int32_t uart_readline(char *string);
 
 static void uart_interrupt_handler(void);

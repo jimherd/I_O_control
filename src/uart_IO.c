@@ -12,6 +12,8 @@
 #include    "hardware/irq.h"
 
 #include    "FreeRTOS.h"
+#include    "event_groups.h"
+#include    "timers.h"
 
 #include    "system.h"
 #include    "uart_IO.h"
@@ -51,8 +53,8 @@ static void uart_interrupt_handler(void) {
              if (ring_buffer_in.in_pt > RING_BUFF_SIZE) {
                 ring_buffer_in.in_pt = 0;   // rotate in pointer to the beginning
              }
-             if (data == NEWLINE) {     // send event flag if line of data received
-                xEventGroupSetBitsFromISR(eventgroup_uart_IO, LINE_AVAILABLE, pdFALSE);
+             if (data == NEWLINE) {     // set event flag if line of data received
+                xEventGroupSetBitsFromISR(eventgroup_uart_IO, (1 <<LINE_AVAILABLE), pdFALSE);
              }
         }
     }
@@ -91,8 +93,8 @@ void uart_sys_init(void)
     ring_buffer_out.out_pt = 0;
     ring_buffer_out.count  = 0;
 
-    gpio_set_function(UART_TX_PIN, GP0);
-    gpio_set_function(UART_RX_PIN, GP1);
+    gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
+    gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
 
     uart_init(uart0, BAUD_RATE);
     uart_set_hw_flow(uart0, false, false);
@@ -100,7 +102,7 @@ void uart_sys_init(void)
     uart_set_fifo_enabled(uart0, true);
 
     irq_set_exclusive_handler(UART_IRQ, uart_interrupt_handler);
-    irq_set_enabled(UART1_IRQ, true);
+    irq_set_enabled(UART0_IRQ, true);
 
     hw_set_bits(&UART->imsc, UART_UARTIMSC_RXIM_BITS | UART_UARTIMSC_RTIM_BITS);
 }
@@ -125,12 +127,14 @@ char  uart_getchar(void)
  * @brief Read a line of data from input ring buffer
  * 
  * @param string        pointer to string 
- * @return  uint32_t   number of characters in string
- * 
+ * @return  int32_t     >0  number of characters in string
+ *                      -1   error
  * @note
  *      Wait until line of data has been received in the input ring buffer.
+ *      Task will not use CPU time during the wait period.
+ *      No time-out on wait.
  */
-uint32_t uart_readline(char *string)
+int32_t uart_readline(char *string)
 {
 uint32_t    i, ch_count, event_bits;
 char        ch;
