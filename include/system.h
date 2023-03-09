@@ -57,12 +57,18 @@
 
 #define     MAX_STRING_LENGTH  80
 
+#define     MAX_COMMAND_LENGTH  100
+
+#define     MAX_COMMAND_PARAMETERS   16
+
+enum modes_e {MODE_U, MODE_I, MODE_R, MODE_S} ;  // defines modes as scan progresses
+
 //==============================================================================
 //I2C port
 
-#define I2C_PORT i2c0
-#define I2C_SDA 8
-#define I2C_SCL 9
+#define I2C_PORT    i2c0
+#define I2C_SDA     GP8
+#define I2C_SCL     GP9
 
 //==============================================================================
 // Freertos
@@ -102,8 +108,20 @@ typedef enum TASKS {
 // definitions of system data structures
 //==============================================================================
 
+enum error_codes_e {
+    OK,
+    LETTER_ERROR    = -100,
+    DOT_ERROR       = -101,
+    PLUSMINUS_ERROR = -102,
+    BAD_COMMAND     = -103,
+    BAD_PORT_NUMBER = -104
+};
+
 //==============================================================================
 // Extern references
+//==============================================================================
+
+//==============================================Error codesdefinitions of system data structures
 //==============================================================================
 
 // Hardware

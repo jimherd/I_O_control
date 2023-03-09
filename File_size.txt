@@ -103,3 +103,42 @@
 08/03/2023 
       text       data        bss      total filename
      29764       4388      77092     111244 Pi_the_Robot.elf
+09/03/2023 
+      text       data        bss      total filename
+     29764       4388      77092     111244 Pi_the_Robot.elf
+09/03/2023 
+      text       data        bss      total filename
+     29764       4388      77092     111244 Pi_the_Robot.elf
+09/03/2023 
+      text       data        bss      total filename
+     29764       4388      77092     111244 Pi_the_Robot.elf
+09/03/2023 
+      text       data        bss      total filename
+     29764       4388      77092     111244 Pi_the_Robot.elf
+09/03/2023 
+      text       data        bss      total filename
+     29764       4388      77092     111244 Pi_the_Robot.elf
+09/03/2023 
+      text       data        bss      total filename
+     29764       4388      77092     111244 Pi_the_Robot.elf
+09/03/2023 
+      text       data        bss      total filename
+     29764       4388      77112     111264 Pi_the_Robot.elf
+09/03/2023 
+      text       data        bss      total filename
+     29764       4388      77112     111264 Pi_the_Robot.elf
+09/03/2023 
+      text       data        bss      total filename
+     29764       4388      77112     111264 Pi_the_Robot.elf
+09/03/2023 
+      text       data        bss      total filename
+     29764       4388      77112     111264 Pi_the_Robot.elf
+09/03/2023 
+      text       data        bss      total filename
+     29764       4388      77112     111264 Pi_the_Robot.elf
+09/03/2023 
+      text       data        bss      total filename
+     29764       4388      77112     111264 Pi_the_Robot.elf
+09/03/2023 
+      text       data        bss      total filename
+     29764       4388      77112     111264 Pi_the_Robot.elf
