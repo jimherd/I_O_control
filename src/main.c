@@ -7,6 +7,7 @@
  */
 
 #include "system.h"
+#include "sys_routines.h"
 
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
@@ -26,6 +27,9 @@
 //==============================================================================
 // Global data
 //==============================================================================
+// set of print buffers
+
+char print_string_buffers[NOS_PRINT_STRING_BUFFERS][STRING_LENGTH];
 
 // Hardware
 
@@ -38,6 +42,10 @@ const uint BLINK_PIN = LED_PIN;
 TaskHandle_t        taskhndl_Task_uart;
 TaskHandle_t        taskhndl_Task_blink_LED;
 TaskHandle_t        taskhndl_Task_run_cmd;
+
+QueueHandle_t       queue_print_string_buffers;
+QueueHandle_t       queue_free_buffers;
+
 EventGroupHandle_t  eventgroup_uart_IO;
 
 //==============================================================================
@@ -103,6 +111,10 @@ int main()
                 TASK_PRIORITYIDLE,
                 &taskhndl_Task_run_cmd
     );
+
+    queue_print_string_buffers = xQueueCreate(NOS_PRINT_STRING_BUFFERS+1, sizeof(struct string_buffer_s));
+    queue_free_buffers   = xQueueCreate(NOS_PRINT_STRING_BUFFERS+1, sizeof(struct string_buffer_s));
+    prime_free_buffer_queue();
 
     eventgroup_uart_IO = xEventGroupCreate (); 
 

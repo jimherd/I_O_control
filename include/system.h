@@ -105,8 +105,28 @@ typedef enum TASKS {
 #define     ATTRIBUTE_PACKED     __attribute__ ((__packed__))
 
 //==============================================================================
-// definitions of system data structures
+// Print task information
 //==============================================================================
+
+#define     NOS_PRINT_STRING_BUFFERS    8
+#define     STRING_LENGTH        128
+
+//==============================================================================
+// queue element for serial print facility
+//
+// Queue to print task  holds list of used indexes pointing to string to be printed
+// Queue from print task holds list of indexes pointing to free string buffers
+
+
+
+// Format of queues to/from print task
+
+struct string_buffer_s {
+    uint32_t    buffer_index;
+};
+
+//==============================================================================
+// 
 
 enum error_codes_e {
     OK,
@@ -135,6 +155,9 @@ extern const uint BLINK_PIN;
 extern void Task_UART(void *p);
 extern void Task_blink_LED(void *p);
 extern void Task_run_cmd(void *p);
+
+extern QueueHandle_t       queue_print_string_buffers;
+extern QueueHandle_t       queue_free_buffers;
 
 extern EventGroupHandle_t eventgroup_uart_IO;
 

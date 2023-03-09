@@ -14,6 +14,12 @@
 
 #include "pico/stdlib.h"
 
+#include "FreeRTOS.h"
+#include "task.h"
+#include "queue.h"
+#include "semphr.h"
+#include "event_groups.h"
+
 
 //***************************************************************************
 // ASCII_to_int : local version of atoi()
@@ -99,3 +105,19 @@ char* int_to_ASCII(int32_t num, char* str)
     str[i] = ' '; // Append string terminator 
     return str; 
 } 
+
+//==============================================================================
+/**
+ * @brief prime free buffer queue with pointers to all free buffers
+ * 
+ */
+void prime_free_buffer_queue(void)
+{
+struct string_buffer_s free_buffer_index;
+
+    for (uint8_t i = 0; i < NOS_PRINT_STRING_BUFFERS; i++) {
+        free_buffer_index.buffer_index  = i;
+        xQueueSend(queue_free_buffers, &free_buffer_index, portMAX_DELAY);
+    }
+    return;
+}

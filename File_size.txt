@@ -142,3 +142,12 @@
 09/03/2023 
       text       data        bss      total filename
      29764       4388      77112     111264 Pi_the_Robot.elf
+09/03/2023 
+      text       data        bss      total filename
+     29988       4660      77248     111896 Pi_the_Robot.elf
+09/03/2023 
+      text       data        bss      total filename
+     30588       4660      77384     112632 Pi_the_Robot.elf
+09/03/2023 
+      text       data        bss      total filename
+     30588       4660      77384     112632 Pi_the_Robot.elf

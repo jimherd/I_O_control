@@ -18,6 +18,9 @@
 
 #include "FreeRTOS.h"
 
+int32_t parse_command (void);
+int32_t convert_tokens(void);
+
 
 char        command[MAX_COMMAND_LENGTH];
 uint32_t    character_count;
@@ -28,10 +31,12 @@ float       float_parameters[MAX_COMMAND_PARAMETERS];
 void Task_run_cmd(void *p) {
 
 int32_t     char_count;
+int32_t     status;
 
     FOREVER {
         char_count = uart_readline(command);
-        printf("test\n");
+        status = parse_command();
+        status = convert_tokens();
  
     }
 }
