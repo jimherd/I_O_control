@@ -17,6 +17,6 @@
 int32_t ASCII_to_int(char *str);
 float ASCII_to_float(const char *char_pt);
 char* int_to_ASCII(int32_t num, char* str);
-void prime_free_buffer_queue(void);
+void update_task_execution_time(task_et task, uint32_t start_time, uint32_t end_time);
 
 #endif

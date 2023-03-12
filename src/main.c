@@ -8,6 +8,7 @@
 
 #include "system.h"
 #include "sys_routines.h"
+#include "uart_IO.h"
 
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
@@ -29,7 +30,9 @@
 //==============================================================================
 // set of print buffers
 
-char print_string_buffers[NOS_PRINT_STRING_BUFFERS][STRING_LENGTH];
+char print_string_buffers[NOS_PRINT_STRING_BUFFERS][MAX_PRINT_STRING_LENGTH];
+
+struct task_data_s  task_data[NOS_TASKS];
 
 // Hardware
 
@@ -40,7 +43,7 @@ const uint BLINK_PIN = LED_PIN;
 // FreeRTOS components handles
 
 TaskHandle_t        taskhndl_Task_uart;
-TaskHandle_t        taskhndl_Task_blink_LED;
+TaskHandle_t        taskhndl_Task_blink;
 TaskHandle_t        taskhndl_Task_run_cmd;
 
 QueueHandle_t       queue_print_string_buffers;
@@ -70,11 +73,6 @@ int main()
     gpio_set_dir(LOG_PIN, GPIO_OUT);
     gpio_pull_down(LOG_PIN);         // should default but just make sure
 
-    
-    // gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
-    // gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
-    // uart_init(UART_ID, BAUD_RATE);
-    // uart_puts(UART_ID, "Hello\n");
 
         // I2C Initialisation. Using it at 400Khz.
     i2c_init(I2C_PORT, 400*1000);
@@ -88,12 +86,12 @@ int main()
 
     init_system_data();
 
-    xTaskCreate(Task_blink_LED,
+    xTaskCreate(Task_blink,
                 "Blink_task",
                 configMINIMAL_STACK_SIZE,
                 NULL,
                 TASK_PRIORITYIDLE,
-                &taskhndl_Task_blink_LED
+                &taskhndl_Task_blink
     );
 
     xTaskCreate(Task_UART,
@@ -112,8 +110,8 @@ int main()
                 &taskhndl_Task_run_cmd
     );
 
-    queue_print_string_buffers = xQueueCreate(NOS_PRINT_STRING_BUFFERS+1, sizeof(struct string_buffer_s));
-    queue_free_buffers   = xQueueCreate(NOS_PRINT_STRING_BUFFERS+1, sizeof(struct string_buffer_s));
+    queue_print_string_buffers = xQueueCreate(NOS_PRINT_STRING_BUFFERS+1, sizeof(uint32_t));
+    queue_free_buffers   = xQueueCreate(NOS_PRINT_STRING_BUFFERS+1, sizeof(uint32_t));
     prime_free_buffer_queue();
 
     eventgroup_uart_IO = xEventGroupCreate (); 

@@ -14,7 +14,7 @@
 
 #include "FreeRTOS.h"
 
-void Task_blink_LED(void *p) {
+void Task_blink(void *p) {
 
     gpio_init(BLINK_PIN);
     gpio_set_dir(BLINK_PIN, GPIO_OUT);

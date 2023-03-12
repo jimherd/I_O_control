@@ -41,8 +41,8 @@
 //==============================================================================
 // Serial comms port (UART)
 
-#define UART_TX_PIN GP0
-#define UART_RX_PIN GP1
+#define UART_TX_PIN     GP0
+#define UART_RX_PIN     GP1
 
 #define UART_ID uart0
 #define BAUD_RATE 115200
@@ -55,11 +55,11 @@
 #define     SPACE       ' '
 #define     STRING_NULL '\0'
 
-#define     MAX_STRING_LENGTH  80
+#define     MAX_STRING_LENGTH       80
 
-#define     MAX_COMMAND_LENGTH  100
+#define     MAX_COMMAND_LENGTH      100
 
-#define     MAX_COMMAND_PARAMETERS   16
+#define     MAX_COMMAND_PARAMETERS  16
 
 enum modes_e {MODE_U, MODE_I, MODE_R, MODE_S} ;  // defines modes as scan progresses
 
@@ -72,12 +72,6 @@ enum modes_e {MODE_U, MODE_I, MODE_R, MODE_S} ;  // defines modes as scan progre
 
 //==============================================================================
 // Freertos
-
-typedef enum TASKS {
-    TASK_BLINK
-} task_t;
-
-#define     NOS_TASKS   (TASK_BLINK + 1)
 
 //==============================================================================
 // Set of 8 priority levels (set 8 in FreeRTOSconfig.h)
@@ -109,7 +103,7 @@ typedef enum TASKS {
 //==============================================================================
 
 #define     NOS_PRINT_STRING_BUFFERS    8
-#define     STRING_LENGTH        128
+#define     MAX_PRINT_STRING_LENGTH     128
 
 //==============================================================================
 // queue element for serial print facility
@@ -121,12 +115,34 @@ typedef enum TASKS {
 
 // Format of queues to/from print task
 
-struct string_buffer_s {
-    uint32_t    buffer_index;
-};
+// struct string_buffer_s {
+//     uint32_t    buffer_index;
+// };
 
 //==============================================================================
 // 
+
+typedef enum {
+    TASK_UART, TASK_RUN_CMD, TASK_BLINK
+} task_et;
+
+#define     NOS_TASKS   (TASK_BLINK + 1)
+
+//==============================================================================
+/**
+ * @brief Task data
+ */
+struct task_data_s {
+    TaskHandle_t            task_handle;
+    uint8_t                 priority;
+    StackType_t             *pxStackBase;
+    configSTACK_DEPTH_TYPE  StackHighWaterMark;
+    struct {
+        uint32_t    last_exec_time;
+        uint32_t    lowest_exec_time;
+        uint32_t    highest_exec_time;
+    };
+};
 
 enum error_codes_e {
     OK,
@@ -141,9 +157,6 @@ enum error_codes_e {
 // Extern references
 //==============================================================================
 
-//==============================================Error codesdefinitions of system data structures
-//==============================================================================
-
 // Hardware
 
 extern const uint LED_PIN;
@@ -153,7 +166,7 @@ extern const uint BLINK_PIN;
 // FreeRTOS components
 
 extern void Task_UART(void *p);
-extern void Task_blink_LED(void *p);
+extern void Task_blink(void *p);
 extern void Task_run_cmd(void *p);
 
 extern QueueHandle_t       queue_print_string_buffers;
@@ -161,9 +174,9 @@ extern QueueHandle_t       queue_free_buffers;
 
 extern EventGroupHandle_t eventgroup_uart_IO;
 
-// extern  TaskHandle_t taskhndl_Task_blink_LED;
-// extern SemaphoreHandle_t semaphore_1
-// extern QueueHandle_t queue_1; 
-// extern EventGroupHandle_t eventgroup_1;      // event groups
+
+extern char print_string_buffers[NOS_PRINT_STRING_BUFFERS][MAX_PRINT_STRING_LENGTH];
+extern struct task_data_s  task_data[NOS_TASKS];
+
 
 #endif /* __SYSTEM_H__ */

@@ -7,18 +7,36 @@
  */
 
 #ifndef UART_PORT
-    #define UART_PORT uart0
-    #define UART ((uart_hw_t *)UART_PORT)
-    #define UART_IRQ UART0_IRQ
+    #define UART_PORT   uart0
+    #define UART        ((uart_hw_t *)UART_PORT)
+    #define UART_IRQ    UART0_IRQ
 #endif
 
+#define     RING_BUFF_SIZE  256 
+
 //==============================================================================
-// Prototypes
+// Structures
 //==============================================================================
+
+struct ring_buffer_s {
+    uint32_t    in_pt;
+    uint32_t    out_pt;
+    uint32_t    count;
+    char        buffer[RING_BUFF_SIZE];
+};
+
+//==============================================================================
+// Function prototypes
+//==============================================================================
+
+static void uart_interrupt_handler(void);
 
 void uart_sys_init(void);
 void uart_println(char *str);
 char uart_getchar(void);
 int32_t uart_readline(char *string);
+void uart_putstring(char *string);
+void uart_Write_string_buffer(uint32_t string_index);
+static bool uart_putchar(const char ch);
+void prime_free_buffer_queue(void);
 
-static void uart_interrupt_handler(void);

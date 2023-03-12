@@ -14,23 +14,20 @@
 #include    "FreeRTOS.h"
 #include    "event_groups.h"
 #include    "timers.h"
+#include    "queue.h"
 
 #include    "system.h"
+#include    "sys_routines.h"
 #include    "uart_IO.h"
 
-#define     RING_BUFF_SIZE  256     // MUST be 2^n value
-
-struct ring_buffer_s {
-    uint32_t    in_pt;
-    uint32_t    out_pt;
-    uint32_t    count;
-    char        buffer[RING_BUFF_SIZE];
-};
+//==============================================================================
+// System data
+//==============================================================================
 
 struct ring_buffer_s  ring_buffer_in, ring_buffer_out;
 
 //==============================================================================
-// Deal with UART Tx/Rx interrupts
+// Interrupt  handler : Deal with UART Tx/Rx interrupts
 //==============================================================================
 
 static void uart_interrupt_handler(void) {
@@ -60,21 +57,45 @@ static void uart_interrupt_handler(void) {
     }
 
     // Interrupt if the TX FIFO is lower or equal to the empty TX FIFO threshold
-
     // Transmit interrupt processing
 
     if(ctrl & UART_UARTMIS_TXMIS_BITS) {
-        // uint_fast16_t tail = txbuf.tail;
-
         // // As long as the TX FIFO is not full or the buffer is not empty
-        // while((!(UART->fr & UART_UARTFR_TXFF_BITS)) && (tail != txbuf.head)) {
-        //     UART->dr = txbuf.data[tail];    // Put character in TX FIFO
-        //     tail = BUFNEXT(tail, txbuf);    // and update tmp tail pointer
-        // }
-        // txbuf.tail = tail;                  //  Update tail pointer
+        while((!(UART->fr & UART_UARTFR_TXFF_BITS)) && (ring_buffer_out.count == 0)) {
+            UART->dr = ring_buffer_out.buffer[ring_buffer_out.out_pt++];    // Put character in TX FIFO
+            ring_buffer_out.count--;
+            if (ring_buffer_out.out_pt > RING_BUFF_SIZE) {
+                ring_buffer_out.out_pt = 0;   // rotate in pointer to the beginning
+             }
+            if(ring_buffer_out.count == 0)	{  // Disable TX interrupt when the TX buffer is empty
+                hw_clear_bits(&UART->imsc, UART_UARTIMSC_TXIM_BITS);
+            }
+        }
+    }
+}
 
-        // if(txbuf.tail == txbuf.head)	    // Disable TX interrupt when the TX buffer is empty
-        //     hw_clear_bits(&UART->imsc, UART_UARTIMSC_TXIM_BITS);
+//==============================================================================
+// Task code
+//==============================================================================
+/**
+ * @brief   Task to manage printing to UART channel
+ * @note
+ *          
+ */
+void Task_UART(void *p) {
+
+uint32_t    xLastWakeTime, start_time, end_time;
+uint32_t    string_index;
+
+    uart_sys_init();
+
+    xLastWakeTime = xTaskGetTickCount ();
+    FOREVER {
+        xQueueReceive(queue_print_string_buffers, &string_index,  portMAX_DELAY);
+        start_time = time_us_32();
+        uart_Write_string_buffer (string_index);
+        end_time = time_us_32();
+        update_task_execution_time(TASK_UART, start_time, end_time);
     }
 }
 
@@ -107,22 +128,9 @@ void uart_sys_init(void)
     hw_set_bits(&UART->imsc, UART_UARTIMSC_RXIM_BITS | UART_UARTIMSC_RTIM_BITS);
 }
 
-/**
- * @brief   read a character from the input circular buffer
- * @return * char 
- * @note    Access to buffer count is protected in a critical region.
- *          This stops possible corruption by a uart interrupt.
- */
-char  uart_getchar(void)
-{
-    taskENTER_CRITICAL();
-    if (ring_buffer_in.count != 0) {
-        ring_buffer_in.count--;
-    }
-    taskEXIT_CRITICAL();
-    return ring_buffer_in.buffer[ring_buffer_in.out_pt++];
-}
-
+//==============================================================================
+// UART input routines
+//==============================================================================
 /**
  * @brief Read a line of data from input ring buffer
  * 
@@ -158,41 +166,190 @@ char        ch;
     return (ch_count + 1);
 }
 
+//==============================================================================
 /**
- * @brief   Output a string to the UART buffer
- * @note    Backgroung interrupts will manage the character transfer
- * @param   str     string to be send - no '\n' required
+ * @brief   read a character from the input circular buffer
+ * @return * char 
+ * @note    Access to buffer count is protected in a critical region.
+ *          This stops possible corruption by a uart interrupt.
  */
-void uart_println(char *str) 
+char  uart_getchar(void)
 {
-uint32_t    char_cnt, index;
-char        *char_pt;
+char  ch;
 
-    char_cnt = strlen(str);
-    char_pt = &ring_buffer_out.buffer[ring_buffer_out.out_pt];
-
-    for (index = 0 ; index < char_cnt ; index++) {
-        ring_buffer_out.buffer[ring_buffer_out.out_pt++] = str[index];
-        ring_buffer_out.out_pt &= RING_BUFF_SIZE;  // do roll over
+    taskENTER_CRITICAL();
+    if (ring_buffer_in.count != 0) {
+        ring_buffer_in.count--;
     }
-    ring_buffer_out.buffer[ring_buffer_out.out_pt] = '\n';
-    ring_buffer_out.out_pt &= RING_BUFF_SIZE;    // do roll over
+    ch = ring_buffer_in.buffer[ring_buffer_in.out_pt++];
+    if (ring_buffer_in.out_pt > RING_BUFF_SIZE) {
+        ring_buffer_in.out_pt = 0;
+    }
+    taskEXIT_CRITICAL();
+    return ring_buffer_in.buffer[ring_buffer_in.out_pt++];
 }
 
-
 //==============================================================================
-// Task code
+// UART output routines
 //==============================================================================
 /**
- * @brief   Task to manage printing to UART channel
+ * @brief Send string through buffered UART channel
+ * 
+ * @param string 
  * @note
- *          
+ *      get index of free buffer
+ *      copy string to this buffer
+ *      send this buffer to UART subsystem
+ *      return buffer to free list
  */
-void Task_UART(void *p) {
+void uart_putstring(char *string)
+{
+uint32_t    buffer_index;
 
-    uart_sys_init();
+    xQueueReceive (queue_free_buffers, &buffer_index, portMAX_DELAY);
+    char* in_pt = &string[0];
+    char* out_pt = &print_string_buffers[buffer_index][0];
+    uint32_t string_length = strlen(string);
+    if (string_length >= MAX_PRINT_STRING_LENGTH) {
+        string_length = MAX_PRINT_STRING_LENGTH - 1;
+    }
+    for (uint32_t i=0 ; i < string_length ; i++) {
+        *out_pt++ = *in_pt++;
+    }
+    *out_pt = NULL;     // ensure string is null terminated
+    uart_Write_string_buffer(buffer_index);
+    xQueueSend(queue_free_buffers, &buffer_index, portMAX_DELAY);
+}
 
-    FOREVER {
-        
+//==============================================================================
+/**
+ * @brief output NULL terminated string to uart
+ * 
+ * @param   buffer_index    buffer number
+ */
+void uart_Write_string_buffer (uint32_t buffer_index)
+{
+    char    *ptr, ch;
+
+    ptr = &print_string_buffers[buffer_index][0];
+    while((ch = *ptr++) != '\0')
+        uart_putchar(ch);
+    xQueueSend(queue_free_buffers, &buffer_index, portMAX_DELAY);
+}
+
+//==============================================================================
+/**
+ * @brief Output single character to uart or uart buffer
+ * 
+ * @param       c 
+ * @return      true 
+ * @return      false 
+ * @note
+ *      if buffer is empty AND harware FIFO is not full
+ *          output character to hardare out register and exit
+ *      else
+ *          add character to buffer
+ *          adjust in pointer and character count
+ *          enable uartTX interrupt
+ *          exit
+ */
+static bool uart_putchar (const char ch)
+{
+
+    if ((ring_buffer_out.count == 0) && !(UART->fr & UART_UARTFR_TXFF_BITS)) {
+        UART->dr = ch;  
+        return true;
+    } else {
+        taskENTER_CRITICAL();
+        ring_buffer_out.buffer[ring_buffer_out.out_pt++] = ch;
+        if (ring_buffer_out.out_pt > RING_BUFF_SIZE) {
+            ring_buffer_out.out_pt = 0;
+        }
+        ring_buffer_out.count++;
+        taskEXIT_CRITICAL();
+        hw_set_bits(&UART->imsc, UART_UARTIMSC_TXIM_BITS);  // Enable transmit interrupt
+        return true;
     }
 }
+
+
+
+//==============================================================================
+/**
+ * @brief prime free buffer queue with indices for all free buffers
+ * 
+ */
+void prime_free_buffer_queue(void)
+{
+// struct string_buffer_s free_buffer_index;
+
+    for (uint32_t count = 0; count < NOS_PRINT_STRING_BUFFERS; count++) {
+        xQueueSend(queue_free_buffers, &count, portMAX_DELAY);
+    }
+    return;
+}
+
+static void uart_TxFlush (void)
+{
+    hw_clear_bits(&UART->imsc, UART_UARTIMSC_TXIM_BITS);
+    ring_buffer_out.out_pt = 0;
+    ring_buffer_out.out_pt = 0;
+    ring_buffer_out.count = 0;
+}
+
+//==============================================================================
+
+static void uart_RxFlush (void)
+{
+    while(!(UART->fr & UART_UARTFR_RXFE_BITS)) {
+        UART->dr;
+    }
+    ring_buffer_in.out_pt = 0;
+    ring_buffer_in.in_pt = 0;
+    ring_buffer_out.count = 0;
+}
+
+// static void serialWrite (const char *s, uint16_t length)
+// {
+//     char *ptr = (char *)s;
+//     while(length--)
+//         serialPutC(*ptr++);
+// }
+//==============================================================================
+// static bool serialSuspendInput (bool suspend)
+// {
+//     return stream_rx_suspend(&rxbuf, suspend);
+// }
+//==============================================================================
+// static uint16_t serialTxCount (void) {
+//     uint_fast16_t head = txbuf.head, tail = txbuf.tail;
+//     return BUFCOUNT(head, tail, TX_BUFFER_SIZE) + ((UART->fr & UART_UARTFR_BUSY_BITS) ? 1 : 0);
+// }
+//==============================================================================
+// /**
+//  * @brief   Output a string to the UART buffer
+//  * @note    Backgroung interrupts will manage the character transfer
+//  * @param   str     string to be send - no '\n' required
+//  */
+// void uart_println(char *str) 
+// {
+// uint32_t    char_cnt, index;
+// char        *char_pt;
+//
+//     char_cnt = strlen(str);
+//     char_pt = &ring_buffer_out.buffer[ring_buffer_out.out_pt];
+//     for (index = 0 ; index < char_cnt ; index++) {
+//         ring_buffer_out.buffer[ring_buffer_out.out_pt++] = str[index];
+//         ring_buffer_out.out_pt &= RING_BUFF_SIZE;  // do roll over
+//     }
+//     ring_buffer_out.buffer[ring_buffer_out.out_pt] = '\n';
+//     ring_buffer_out.out_pt &= RING_BUFF_SIZE;    // do roll over
+// }
+//==============================================================================
+// static void serialRxCancel (void)
+// {
+//     serialRxFlush();
+//     rxbuf.data[rxbuf.head] = ASCII_CAN;
+//     rxbuf.head = BUFNEXT(rxbuf.head, rxbuf);
+// }
+

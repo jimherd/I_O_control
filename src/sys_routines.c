@@ -106,18 +106,33 @@ char* int_to_ASCII(int32_t num, char* str)
     return str; 
 } 
 
+
+
 //==============================================================================
 /**
- * @brief prime free buffer queue with pointers to all free buffers
- * 
+ * @brief Calculate task execution time and record
+ * @note  Check for new low/high values and record
+ * @param task 
+ * @param start_time    units of uS
+ * @param end_time      units of uS
  */
-void prime_free_buffer_queue(void)
+void update_task_execution_time(task_et task, uint32_t start_time, uint32_t end_time) 
 {
-struct string_buffer_s free_buffer_index;
+uint32_t delta_time;
 
-    for (uint8_t i = 0; i < NOS_PRINT_STRING_BUFFERS; i++) {
-        free_buffer_index.buffer_index  = i;
-        xQueueSend(queue_free_buffers, &free_buffer_index, portMAX_DELAY);
+    if (end_time > start_time) {
+        delta_time = end_time - start_time;
+    } else {
+        delta_time = (UINT32_MAX - start_time) + end_time + 1;
     }
-    return;
+
+    task_data[task].last_exec_time = delta_time;
+
+    if (delta_time < task_data[task].lowest_exec_time) {
+        task_data[task].lowest_exec_time = delta_time;
+    }
+    
+    if (delta_time > task_data[task].highest_exec_time) {
+        task_data[task].highest_exec_time = delta_time;
+    }
 }

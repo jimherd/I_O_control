@@ -34,10 +34,11 @@ int32_t     char_count;
 int32_t     status;
 
     FOREVER {
+        uart_putstring("Task_run_cmd : started\n");
         char_count = uart_readline(command);
         status = parse_command();
         status = convert_tokens();
- 
+        uart_putstring("Task_run_cmd : command recieved\n");
     }
 }
 
@@ -143,11 +144,3 @@ int32_t convert_tokens(void)
     }
     return OK;
 }
-
-//***************************************************************************
-// Constants relevant to this task
-
-// enum {MODE_U, MODE_I, MODE_R, MODE_S} modes;  // defines modes as scan progresses
-
-// #define     MAX_COMMAND_LENGTH         100
-// #define     MAX_COMMAND_PARAMETERS      16
