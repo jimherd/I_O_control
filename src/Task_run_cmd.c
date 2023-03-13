@@ -34,7 +34,8 @@ int32_t     char_count;
 int32_t     status;
 
     FOREVER {
-        uart_putstring("Task_run_cmd : started\n");
+        uart_putstring("Task_run_cmd : has been started and is waiting on a command\n");
+        uart_putstring("This is a second string to be output through the buffer\n");
         char_count = uart_readline(command);
         status = parse_command();
         status = convert_tokens();

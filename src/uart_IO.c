@@ -61,7 +61,7 @@ static void uart_interrupt_handler(void) {
 
     if(ctrl & UART_UARTMIS_TXMIS_BITS) {
         // // As long as the TX FIFO is not full or the buffer is not empty
-        while((!(UART->fr & UART_UARTFR_TXFF_BITS)) && (ring_buffer_out.count == 0)) {
+        while((!(UART->fr & UART_UARTFR_TXFF_BITS)) && (ring_buffer_out.count != 0)) {
             UART->dr = ring_buffer_out.buffer[ring_buffer_out.out_pt++];    // Put character in TX FIFO
             ring_buffer_out.count--;
             if (ring_buffer_out.out_pt > RING_BUFF_SIZE) {
@@ -69,6 +69,8 @@ static void uart_interrupt_handler(void) {
              }
             if(ring_buffer_out.count == 0)	{  // Disable TX interrupt when the TX buffer is empty
                 hw_clear_bits(&UART->imsc, UART_UARTIMSC_TXIM_BITS);
+            } else {
+                hw_set_bits(&UART->imsc, UART_UARTIMSC_TXIM_BITS);
             }
         }
     }
@@ -216,7 +218,7 @@ uint32_t    buffer_index;
     for (uint32_t i=0 ; i < string_length ; i++) {
         *out_pt++ = *in_pt++;
     }
-    *out_pt = NULL;     // ensure string is null terminated
+    *out_pt = STRING_NULL;     // ensure string is null terminated
     uart_Write_string_buffer(buffer_index);
     xQueueSend(queue_free_buffers, &buffer_index, portMAX_DELAY);
 }
@@ -261,9 +263,9 @@ static bool uart_putchar (const char ch)
         return true;
     } else {
         taskENTER_CRITICAL();
-        ring_buffer_out.buffer[ring_buffer_out.out_pt++] = ch;
-        if (ring_buffer_out.out_pt > RING_BUFF_SIZE) {
-            ring_buffer_out.out_pt = 0;
+        ring_buffer_out.buffer[ring_buffer_out.in_pt++] = ch;
+        if (ring_buffer_out.in_pt > RING_BUFF_SIZE) {
+            ring_buffer_out.in_pt = 0;
         }
         ring_buffer_out.count++;
         taskEXIT_CRITICAL();
