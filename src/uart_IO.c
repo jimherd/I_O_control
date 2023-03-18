@@ -248,10 +248,10 @@ void uart_Write_string_buffer (uint32_t buffer_index)
  * @return      false 
  * @note
  *      if buffer is empty AND harware FIFO is not full
- *          output character to hardare out register and exit
+ *          output character to hardware out register and exit
  *      else
  *          add character to buffer
- *          adjust in pointer and character count
+ *          adjust in-pointer and character count
  *          enable uartTX interrupt
  *          exit
  */
@@ -274,8 +274,6 @@ static bool uart_putchar (const char ch)
     }
 }
 
-
-
 //==============================================================================
 /**
  * @brief prime free buffer queue with indices for all free buffers
@@ -290,6 +288,8 @@ void prime_free_buffer_queue(void)
     }
     return;
 }
+
+//==============================================================================
 
 static void uart_TxFlush (void)
 {
@@ -310,48 +310,4 @@ static void uart_RxFlush (void)
     ring_buffer_in.in_pt = 0;
     ring_buffer_out.count = 0;
 }
-
-// static void serialWrite (const char *s, uint16_t length)
-// {
-//     char *ptr = (char *)s;
-//     while(length--)
-//         serialPutC(*ptr++);
-// }
-//==============================================================================
-// static bool serialSuspendInput (bool suspend)
-// {
-//     return stream_rx_suspend(&rxbuf, suspend);
-// }
-//==============================================================================
-// static uint16_t serialTxCount (void) {
-//     uint_fast16_t head = txbuf.head, tail = txbuf.tail;
-//     return BUFCOUNT(head, tail, TX_BUFFER_SIZE) + ((UART->fr & UART_UARTFR_BUSY_BITS) ? 1 : 0);
-// }
-//==============================================================================
-// /**
-//  * @brief   Output a string to the UART buffer
-//  * @note    Backgroung interrupts will manage the character transfer
-//  * @param   str     string to be send - no '\n' required
-//  */
-// void uart_println(char *str) 
-// {
-// uint32_t    char_cnt, index;
-// char        *char_pt;
-//
-//     char_cnt = strlen(str);
-//     char_pt = &ring_buffer_out.buffer[ring_buffer_out.out_pt];
-//     for (index = 0 ; index < char_cnt ; index++) {
-//         ring_buffer_out.buffer[ring_buffer_out.out_pt++] = str[index];
-//         ring_buffer_out.out_pt &= RING_BUFF_SIZE;  // do roll over
-//     }
-//     ring_buffer_out.buffer[ring_buffer_out.out_pt] = '\n';
-//     ring_buffer_out.out_pt &= RING_BUFF_SIZE;    // do roll over
-// }
-//==============================================================================
-// static void serialRxCancel (void)
-// {
-//     serialRxFlush();
-//     rxbuf.data[rxbuf.head] = ASCII_CAN;
-//     rxbuf.head = BUFNEXT(rxbuf.head, rxbuf);
-// }
 
