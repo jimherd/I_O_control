@@ -70,6 +70,8 @@ enum modes_e {MODE_U, MODE_I, MODE_R, MODE_S} ;  // defines modes as scan progre
 #define I2C_SDA     GP8
 #define I2C_SCL     GP9
 
+
+
 //==============================================================================
 // Freertos
 

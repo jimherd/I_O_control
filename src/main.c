@@ -106,12 +106,13 @@ int main()
                 "Command_execution_task",
                 configMINIMAL_STACK_SIZE,
                 NULL,
-                TASK_PRIORITYIDLE,
+                TASK_PRIORITYNORMAL,
                 &taskhndl_Task_run_cmd
     );
 
     queue_print_string_buffers = xQueueCreate(NOS_PRINT_STRING_BUFFERS+1, sizeof(uint32_t));
     queue_free_buffers   = xQueueCreate(NOS_PRINT_STRING_BUFFERS+1, sizeof(uint32_t));
+    
     prime_free_buffer_queue();
 
     eventgroup_uart_IO = xEventGroupCreate (); 

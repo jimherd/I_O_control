@@ -10,6 +10,7 @@
 #include "uart_IO.h"
 #include "sys_routines.h"
 #include "ROM_data.h"
+#include "PCA9685.h"
 
 #include  "Pico_IO.h"
 
@@ -33,13 +34,20 @@ void Task_run_cmd(void *p) {
 int32_t     char_count;
 int32_t     status;
 
+    init_PCA9685_servo_IO();
+    PCA9685_set_servo(0, 42);
     FOREVER {
-        uart_putstring("Task_run_cmd : has been started and is waiting on a command\n");
-        uart_putstring("This is a second string to be output through the buffer\n");
-        char_count = uart_readline(command);
-        status = parse_command();
-        status = convert_tokens();
-        uart_putstring("Task_run_cmd : command recieved\n");
+        uart_putstring("1. Task_run_cmd : has been started and is waiting on a command\n");
+        uart_putstring("  2. abbccc ddddeeeee ffffff ggggggg hhhhhhhh iiiiiiiiii\n");
+        uart_putstring("    3. jjjjjjjjjj kkkkkkkkk lllllll mmmmmmm nnnnnn ooooo\n");
+        // char_count = uart_readline(command);
+        // status = parse_command();
+        // status = convert_tokens();
+        // uart_putstring("Task_run_cmd : command recieved\n");
+        // write_PCA9685_register(20,34);
+
+        
+        vTaskDelay(20000);
     }
 }
 

@@ -47,7 +47,7 @@ static void uart_interrupt_handler(void) {
              }
              ring_buffer_in.buffer[ring_buffer_in.in_pt++] = (char)data;  // store data
              ring_buffer_in.count++;
-             if (ring_buffer_in.in_pt > RING_BUFF_SIZE) {
+             if (ring_buffer_in.in_pt >= RING_BUFF_SIZE) {
                 ring_buffer_in.in_pt = 0;   // rotate in pointer to the beginning
              }
              if (data == NEWLINE) {     // set event flag if line of data received
@@ -64,7 +64,7 @@ static void uart_interrupt_handler(void) {
         while((!(UART->fr & UART_UARTFR_TXFF_BITS)) && (ring_buffer_out.count != 0)) {
             UART->dr = ring_buffer_out.buffer[ring_buffer_out.out_pt++];    // Put character in TX FIFO
             ring_buffer_out.count--;
-            if (ring_buffer_out.out_pt > RING_BUFF_SIZE) {
+            if (ring_buffer_out.out_pt >= RING_BUFF_SIZE) {
                 ring_buffer_out.out_pt = 0;   // rotate in pointer to the beginning
              }
             if(ring_buffer_out.count == 0)	{  // Disable TX interrupt when the TX buffer is empty
@@ -184,7 +184,7 @@ char  ch;
         ring_buffer_in.count--;
     }
     ch = ring_buffer_in.buffer[ring_buffer_in.out_pt++];
-    if (ring_buffer_in.out_pt > RING_BUFF_SIZE) {
+    if (ring_buffer_in.out_pt >= RING_BUFF_SIZE) {
         ring_buffer_in.out_pt = 0;
     }
     taskEXIT_CRITICAL();
@@ -234,9 +234,9 @@ void uart_Write_string_buffer (uint32_t buffer_index)
     char    *ptr, ch;
 
     ptr = &print_string_buffers[buffer_index][0];
-    while((ch = *ptr++) != '\0')
+    while((ch = *ptr++) != '\0') {
         uart_putchar(ch);
-    xQueueSend(queue_free_buffers, &buffer_index, portMAX_DELAY);
+    }
 }
 
 //==============================================================================
@@ -264,7 +264,7 @@ static bool uart_putchar (const char ch)
     } else {
         taskENTER_CRITICAL();
         ring_buffer_out.buffer[ring_buffer_out.in_pt++] = ch;
-        if (ring_buffer_out.in_pt > RING_BUFF_SIZE) {
+        if (ring_buffer_out.in_pt >= RING_BUFF_SIZE) {
             ring_buffer_out.in_pt = 0;
         }
         ring_buffer_out.count++;
