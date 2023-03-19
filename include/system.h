@@ -63,6 +63,8 @@
 
 enum modes_e {MODE_U, MODE_I, MODE_R, MODE_S} ;  // defines modes as scan progresses
 
+enum {LETTER, NUMBER, DOT, PLUSMINUS, NULTERM, END, OTHER};
+
 //==============================================================================
 //I2C port
 
@@ -125,7 +127,7 @@ enum modes_e {MODE_U, MODE_I, MODE_R, MODE_S} ;  // defines modes as scan progre
 // 
 
 typedef enum {
-    TASK_UART, TASK_RUN_CMD, TASK_BLINK
+    TASK_UART, TASK_RUN_CMD, TASK_SERVO_CONTROL, TASK_BLINK
 } task_et;
 
 #define     NOS_TASKS   (TASK_BLINK + 1)
@@ -170,6 +172,7 @@ extern const uint BLINK_PIN;
 extern void Task_UART(void *p);
 extern void Task_blink(void *p);
 extern void Task_run_cmd(void *p);
+extern void Task_servo_control(void *p);
 
 extern QueueHandle_t       queue_print_string_buffers;
 extern QueueHandle_t       queue_free_buffers;
@@ -179,6 +182,8 @@ extern EventGroupHandle_t eventgroup_uart_IO;
 
 extern char print_string_buffers[NOS_PRINT_STRING_BUFFERS][MAX_PRINT_STRING_LENGTH];
 extern struct task_data_s  task_data[NOS_TASKS];
+
+extern const uint8_t char_type[256];
 
 
 #endif /* __SYSTEM_H__ */

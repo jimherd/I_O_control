@@ -3,7 +3,6 @@
  * @author  Jim Herd
  * @brief   Folder template for RP2040/FreeRTOS projects
  *          RP2040/FreeRTOS/TinyUSB/1306 LCD/DRV8833 H-bridge
- * Test
  */
 
 #include "system.h"
@@ -45,6 +44,7 @@ const uint BLINK_PIN = LED_PIN;
 TaskHandle_t        taskhndl_Task_uart;
 TaskHandle_t        taskhndl_Task_blink;
 TaskHandle_t        taskhndl_Task_run_cmd;
+TaskHandle_t        taskhndl_Task_servo_control;
 
 QueueHandle_t       queue_print_string_buffers;
 QueueHandle_t       queue_free_buffers;
@@ -108,6 +108,14 @@ int main()
                 NULL,
                 TASK_PRIORITYNORMAL,
                 &taskhndl_Task_run_cmd
+    );
+
+    xTaskCreate(Task_servo_control,
+                "RC_servo_control_task",
+                configMINIMAL_STACK_SIZE,
+                NULL,
+                TASK_PRIORITYNORMAL,
+                &taskhndl_Task_servo_control
     );
 
     queue_print_string_buffers = xQueueCreate(NOS_PRINT_STRING_BUFFERS+1, sizeof(uint32_t));

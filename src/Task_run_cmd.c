@@ -9,7 +9,6 @@
 #include "system.h"
 #include "uart_IO.h"
 #include "sys_routines.h"
-#include "ROM_data.h"
 #include "PCA9685.h"
 
 #include  "Pico_IO.h"
@@ -21,7 +20,6 @@
 
 int32_t parse_command (void);
 int32_t convert_tokens(void);
-
 
 char        command[MAX_COMMAND_LENGTH];
 uint32_t    character_count;
@@ -35,7 +33,7 @@ int32_t     char_count;
 int32_t     status;
 
     init_PCA9685_servo_IO();
-    PCA9685_set_servo(0, 42);
+    PCA9685_set_servo(0, -44);
     FOREVER {
         uart_putstring("1. Task_run_cmd : has been started and is waiting on a command\n");
         uart_putstring("  2. abbccc ddddeeeee ffffff ggggggg hhhhhhhh iiiiiiiiii\n");

@@ -24,7 +24,7 @@
 #define     SERVO_TRIM_MAX		590
 
 #define		MID_POINT_COUNT		307
-#define		COUNT_2mS			410
+#define		COUNT_1mS			205
 #define		MAX_ANGLE			 90
 
 typedef enum  {SERVO, MOTOR} servo_type_te;

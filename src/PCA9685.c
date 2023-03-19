@@ -159,7 +159,7 @@ uint8_t     PCA9685_chan_address;
     if (servo_data_pt->enable == true) {
         servo_data_pt->angle = angle;               // log requested angle
         
-        pulse_change = ((abs(angle) * COUNT_2mS)/MAX_ANGLE);
+        pulse_change = ((abs(angle) * COUNT_1mS)/MAX_ANGLE);
         if (angle > 0) {
             PWM_OFF_time = MID_POINT_COUNT + pulse_change;
         } else {
