@@ -32,22 +32,28 @@ void Task_run_cmd(void *p) {
 int32_t     char_count;
 int32_t     status;
 
-    init_PCA9685_servo_IO();
-    PCA9685_set_servo(0, -44);
     FOREVER {
-        uart_putstring("1. Task_run_cmd : has been started and is waiting on a command\n");
-        uart_putstring("  2. abbccc ddddeeeee ffffff ggggggg hhhhhhhh iiiiiiiiii\n");
-        uart_putstring("    3. jjjjjjjjjj kkkkkkkkk lllllll mmmmmmm nnnnnn ooooo\n");
-        // char_count = uart_readline(command);
-        // status = parse_command();
-        // status = convert_tokens();
-        // uart_putstring("Task_run_cmd : command recieved\n");
-        // write_PCA9685_register(20,34);
 
-        
-        vTaskDelay(20000);
+        char_count = uart_readline(command);
+        status = parse_command();
+        status = convert_tokens();
+
+        switch(command[0]) {
+            case 'p' : {  // ping command
+                uart_putstring("OK\n");
+                break;
+            }
+            default : {
+                break;
+            }
+        }
     }
 }
+
+        // uart_putstring("1. Task_run_cmd : has been started and is waiting on a command\n");
+        // uart_putstring("  2. abbccc ddddeeeee ffffff ggggggg hhhhhhhh iiiiiiiiii\n");
+        // uart_putstring("    3. jjjjjjjjjj kkkkkkkkk lllllll mmmmmmm nnnnnn ooooo\n");
+        // write_PCA9685_register(20,34);
 
 //***************************************************************************
 // parse_command : analyse command string and convert into labelled strings
@@ -63,7 +69,7 @@ int32_t     status;
 
 int32_t parse_command (void) 
 {
-int32_t    count, mode, status;
+int32_t     count, mode, status;
 uint8_t     character_type;
 
     argc = 0;

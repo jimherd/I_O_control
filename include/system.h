@@ -7,6 +7,9 @@
 #ifndef __SYSTEM_H__
 #define __SYSTEM_H__
 
+#include    "system.h"
+#include    "PCA9685.h"
+
 #include    "pico/stdlib.h"
 #include    "Pico_IO.h"
 
@@ -76,6 +79,9 @@ enum {LETTER, NUMBER, DOT, PLUSMINUS, NULTERM, END, OTHER};
 
 //==============================================================================
 // Freertos
+
+#define     TASK_SERVO_CONTROL_FREQUENCY                 10  // Hz
+#define     TASK_SERVO_CONTROL_FREQUENCY_TICK_COUNT      ((1000/TASK_SERVO_CONTROL_FREQUENCY) * portTICK_PERIOD_MS)
 
 //==============================================================================
 // Set of 8 priority levels (set 8 in FreeRTOSconfig.h)
@@ -184,6 +190,8 @@ extern char print_string_buffers[NOS_PRINT_STRING_BUFFERS][MAX_PRINT_STRING_LENG
 extern struct task_data_s  task_data[NOS_TASKS];
 
 extern const uint8_t char_type[256];
+
+extern struct servo_data_s     servo_data[NOS_SERVOS];
 
 
 #endif /* __SYSTEM_H__ */

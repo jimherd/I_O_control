@@ -151,12 +151,12 @@ void PCA9685_set_servo_freq(void){
 void  PCA9685_set_servo(uint32_t servo_no, int32_t angle)
 {
 uint8_t     PCA9685_i2c_packet[5];
-uint32_t    PWM_ON_time, PWM_OFF_time, pulse_change;
+int32_t    PWM_ON_time, PWM_OFF_time, pulse_change;
 struct servo_data_s  *servo_data_pt;
 uint8_t     PCA9685_chan_address;
 
     servo_data_pt = &servo_data[servo_no];
-    if (servo_data_pt->enable == true) {
+    if (servo_data_pt->state != DISABLED) {
         servo_data_pt->angle = angle;               // log requested angle
         
         pulse_change = ((abs(angle) * COUNT_1mS)/MAX_ANGLE);
@@ -184,4 +184,32 @@ uint8_t     PCA9685_chan_address;
     PCA9685_i2c_packet[3] = PWM_OFF_time & 0xFF;
     PCA9685_i2c_packet[4] = (PWM_OFF_time >> 8) & 0xFF;
     i2c_write_blocking(I2C_PORT, PCA9685_address, PCA9685_i2c_packet, 5, false);
+}
+
+
+void PCA9685_set_zero(uint32_t servo_no) 
+{
+uint8_t  PCA9685_i2c_packet[5];
+
+    PCA9685_i2c_packet[0] = (uint8_t) PCA9685__LED0_ON_L + (servo_no << 2);
+    PCA9685_i2c_packet[1] = 0x00;
+    PCA9685_i2c_packet[2] = 0x00;
+    PCA9685_i2c_packet[3] = 0x00;
+    PCA9685_i2c_packet[4] = 0x00;
+    i2c_write_blocking(I2C_PORT, PCA9685_address, PCA9685_i2c_packet, 5, false);
+}
+
+void    set_servo_channel(  uint8_t         servo_no,
+                            servo_states_te servo_state,
+                            int16_t         servo_angle,
+                            bool            servo_sync
+                            )
+{
+struct servo_data_s  *servo_data_pt;
+
+    servo_data_pt = &servo_data[servo_no];
+
+    servo_data_pt->state = servo_state;
+    servo_data_pt->angle = servo_angle;
+    servo_data_pt->sync  = servo_sync;
 }

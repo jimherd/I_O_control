@@ -12,6 +12,9 @@
 #ifndef __PCA9685_H__
 #define __PCA9685_H__
 
+#include    "system.h"
+#include    "PCA9685.h"
+
 #include    "pico/stdlib.h"
 
 #define     PCA9685_address     0x40
@@ -35,8 +38,10 @@ enum {R_EYEBALL, L_EYEBALL, R_EYE_LID, L_EYE_LID, R_EYE_BROW, L_EYE_BROW, MOUTH}
 //==============================================================================
 // structure to hold servo specific data
 
+typedef enum {DISABLED, DORMANT, DELAY, MOVE, TIMED_MOVE, MOVE_SYNC_HOLD, TIMED_MOVE_SYNC_HOLD} servo_states_te;
+
 struct servo_data_s {
-	bool			enable;
+	servo_states_te	state;
 	bool			sync;
 	servo_type_te	type;
 	int16_t			angle;			// current value
@@ -46,7 +51,12 @@ struct servo_data_s {
 	bool			flip;
 	int16_t			angle_min, angle_max;
 	uint16_t		pulse_offset;
+	uint32_t		counter;
+	float			gradient;
+	uint32_t		y_intercept;
+	uint32_t		t_end;
 };
+
 
 
 
@@ -200,5 +210,11 @@ void  PCA9685_set_auto_increment(bool mode);
 void  PCA9685_reset(void);
 void PCA9685_set_servo_freq(void);
 void  PCA9685_set_servo(uint32_t servo_no, int32_t position);
+void  PCA9685_set_zero(uint32_t servo_no);
+void  set_servo_channel(  uint8_t         servo_no,
+                          servo_states_te servo_state,
+                          int16_t         servo_angle,
+                          bool            servo_sync
+                        );
 
 #endif

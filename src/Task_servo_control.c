@@ -20,11 +20,67 @@
 
 void Task_servo_control(void *p) {
 
-    init_PCA9685_servo_IO();
+TickType_t  xLastWakeTime;
+BaseType_t  xWasDelayed;
+uint32_t    start_time, end_time;
+uint32_t    sample_count;
+int32_t     angle;
 
+servo_states_te      RC_state;
+
+    init_PCA9685_servo_IO();
+    
+
+    for (uint8_t i = 0; i < NOS_SERVOS ; i++) {
+            servo_data[i].state = DISABLED;
+    }
+
+    set_servo_channel(0, MOVE, +42, false);
+    
+    sample_count = 0;
+    xLastWakeTime = xTaskGetTickCount ();
     FOREVER {
-        
-        vTaskDelay(20000);
+        xWasDelayed = xTaskDelayUntil( &xLastWakeTime, TASK_SERVO_CONTROL_FREQUENCY_TICK_COUNT );
+        START_PULSE;
+        start_time = time_us_32();
+        sample_count++;
+        for (uint8_t i = 0; i < NOS_SERVOS; i++) {
+            switch (servo_data[i].state) {
+                case DISABLED :
+                    PCA9685_set_zero(i);       // ensure servo is off
+                    break;
+                case DORMANT :
+                    break;        // do nothing but leave PWN at current value
+                case DELAY :
+                    servo_data[i].counter--;   // count down for delay
+                    if (servo_data[i].counter == 0) {
+                        servo_data[i].state = DORMANT;
+                    }
+                    break;
+                case MOVE :
+                    PCA9685_set_servo(i, servo_data[i].angle);
+                    servo_data[i].state = DORMANT;
+                    break;
+                case TIMED_MOVE :
+                    if (servo_data[i].counter == servo_data[i].t_end) {
+                        servo_data[i].state = DORMANT;
+                    } else {
+                        angle = (int32_t)(servo_data[i].gradient * (float)servo_data[i].counter) + servo_data[i].y_intercept - 90;
+                        PCA9685_set_servo(i, angle);
+                        servo_data[i].counter++;
+                    }
+                    break;
+                case MOVE_SYNC_HOLD :
+                case TIMED_MOVE_SYNC_HOLD :
+                    break;      // do nothing until sync command
+                default :
+                    break;
+            }
+        }
+
+        end_time = time_us_32();
+        update_task_execution_time(TASK_SERVO_CONTROL, start_time, end_time);   
+        STOP_PULSE;
     }
 }
 
