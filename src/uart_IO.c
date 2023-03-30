@@ -188,7 +188,7 @@ char  ch;
         ring_buffer_in.out_pt = 0;
     }
     taskEXIT_CRITICAL();
-    return ring_buffer_in.buffer[ring_buffer_in.out_pt++];
+    return ch;
 }
 
 //==============================================================================
