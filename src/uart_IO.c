@@ -143,11 +143,21 @@ void uart_sys_init(void)
  *      Wait until line of data has been received in the input ring buffer.
  *      Task will not use CPU time during the wait period.
  *      No time-out on wait.
+ * 
+ *      Simple state machine to
+ *          1. remove leading spaces
+ *          2. ignore RETURN characters
+ *          3. convert TAM character to a single SPACE
+ *          4. replace NEWLINE with a STRING_NULL and exit
  */
+
+typedef enum  {INIT, READ} line_read_states_te;
+
 int32_t uart_readline(char *string)
 {
 uint32_t    i, ch_count, event_bits;
 char        ch;
+line_read_states_te  state;
 
     event_bits = xEventGroupWaitBits  ( 
                         eventgroup_uart_IO,
@@ -155,16 +165,38 @@ char        ch;
                         pdTRUE,        //  clear flag
                         pdFALSE,        
                         portMAX_DELAY);
+    state = INIT;
     ch_count = 0;
     for (i = 0; i < (MAX_STRING_LENGTH - 1) ; i++) {
         ch = uart_getchar();
-        if (ch == NEWLINE) {
-            break;
+        if (state == INIT) {
+            if ((ch == SPACE) || (ch == TAB) || (ch == RETURN)) { // ignore char
+                continue;    
+            } else if (ch == NEWLINE) {      // string complete
+                *string = STRING_NULL;
+                return (ch_count + 1);
+            } else {                         // load first character into buffer
+                *string++ = ch;
+                ch_count++;
+                state = READ;
+                continue;
+            }
         }
-        *string++ = ch;
-        ch_count++;
+        if (state == READ) {
+            if (ch == NEWLINE) {
+                *string = STRING_NULL;
+                return (ch_count + 1);
+            } else if (ch == TAB) {
+                *string++ = SPACE;
+                ch_count++;
+            } else {
+                *string++ = ch;
+                ch_count++;
+                continue;
+            }
+        }
     }
-    *string = STRING_NULL;
+    *string = STRING_NULL;  // string has filled buffer
     return (ch_count + 1);
 }
 

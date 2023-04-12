@@ -10,6 +10,7 @@
 #include "uart_IO.h"
 #include "sys_routines.h"
 #include "PCA9685.h"
+#include "tokenizer.h"
 
 #include  "Pico_IO.h"
 
@@ -33,19 +34,22 @@ int32_t     char_count;
 int32_t     status;
 
     FOREVER {
-
         char_count = uart_readline(command);
         status = parse_command();
         status = convert_tokens();
 
-        switch(command[0]) {
-            case 'p' : {  // ping command
-                uart_putstring("OK\n");
-                break;
+        if (char_type[command[0]] == LETTER) {
+            switch (command[0]) {
+                case 'p': {  // ping command
+                    uart_putstring("OK\n");
+                    break;
+                }
+                default: {
+                    break;
+                }
             }
-            default : {
-                break;
-            }
+        } else {
+        //error
         }
     }
 }
