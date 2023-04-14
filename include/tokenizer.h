@@ -31,11 +31,7 @@
 #define __TOKENIZER_H__
 
 #include    "pico/stdlib.h"
-
-struct token_list {
-    char *keyword;
-    int token;
-};
+#include    "system.h"
 
 enum {
     TOKENIZER_ERROR,
@@ -47,7 +43,7 @@ enum {
     TOKENIZER_PING,
 };
 
-uint32_t string_to_token(struct token_list command_list[], char *string);
+uint32_t string_to_token(struct token_list_s *tk_list, char *string);
 // void tokenizer_init(const char *program);
 // void tokenizer_next(void);
 // int tokenizer_token(void);

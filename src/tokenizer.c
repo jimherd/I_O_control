@@ -36,37 +36,22 @@
 #define DEBUG_PRINTF(...)
 #endif
 
+#include "system.h"
 #include "tokenizer.h"
 
 #include <string.h>
 #include <ctype.h>
 #include <stdlib.h>
 
-static char const *ptr, *nextptr;
+#define     NOS_STRING_CMDS     (TOKENIZER_PING + 1)
 
-#define MAX_NUMLEN 5
-
-
-
-// static int current_token = TOKENIZER_ERROR;
-
-const struct token_list commands[] = {
-    {"servo", TOKENIZER_SERVO},
-    {"stepper", TOKENIZER_STEPPER},
-    {"sync", TOKENIZER_SYNC},
-    {"config", TOKENIZER_CONFIG},
-    {"info", TOKENIZER_INFO},
-    {"ping", TOKENIZER_PING},
-};
-
-#define     NOS_STRING_CMDS     (TOKENIZER_PING +1)
-
-uint32_t string_to_token(struct token_list command_list[], char *string)
+uint32_t string_to_token(struct token_list_s *tk_list, char *string)
 {
     for (uint32_t i = 0; i < NOS_STRING_CMDS; i++) {
-        if (strncmp(string, command_list[i].keyword, strlen(command_list[i].keyword)) == 0) {
-            return command_list[i].token;
+        if (strncmp(string, tk_list->keyword, strlen(tk_list->keyword)) == 0) {
+            return tk_list->token;
         }
+        tk_list++;
     }
     return TOKENIZER_ERROR;
 }

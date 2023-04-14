@@ -32,11 +32,14 @@ void Task_run_cmd(void *p) {
 
 int32_t     char_count;
 int32_t     status;
+static uint32_t token;
 
     FOREVER {
         char_count = uart_readline(command);
         status = parse_command();
         status = convert_tokens();
+
+        token = string_to_token(commands, &command[arg_pt[0]]);
 
         if (char_type[command[0]] == LETTER) {
             switch (command[0]) {

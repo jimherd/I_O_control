@@ -4,6 +4,9 @@
 
 #include "pico/stdlib.h"
 
+#include "system.h"
+#include "tokenizer.h"
+
 //***************************************************************************
 // ROM table to allow fast categorisation of charcaters in a command
 //
@@ -19,8 +22,6 @@
 // OTHER     = all other characters in the 256 extended ASCII set
 //
 // This is uded in the command string parser in "Task_run_cmd" 
-
-enum {LETTER, NUMBER, DOT, PLUSMINUS, NULTERM, END, OTHER};
 
 const uint8_t char_type[256] = {
     NULTERM,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,    END,     OTHER,  OTHER,     OTHER,  OTHER,  OTHER,  // 00->0F
@@ -40,4 +41,13 @@ const uint8_t char_type[256] = {
      OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,     OTHER,  OTHER,     OTHER,  OTHER,  OTHER,  // D0->DF
      OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,     OTHER,  OTHER,     OTHER,  OTHER,  OTHER,  // E0->EF
      OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,     OTHER,  OTHER,     OTHER,  OTHER,  OTHER,  // F0->FF
+};
+
+struct token_list_s commands[] = {
+    {"servo", TOKENIZER_SERVO},
+    {"stepper", TOKENIZER_STEPPER},
+    {"sync", TOKENIZER_SYNC},
+    {"config", TOKENIZER_CONFIG},
+    {"info", TOKENIZER_INFO},
+    {"ping", TOKENIZER_PING},
 };

@@ -75,8 +75,6 @@ enum {LETTER, NUMBER, DOT, PLUSMINUS, NULTERM, END, OTHER};
 #define I2C_SDA     GP8
 #define I2C_SCL     GP9
 
-
-
 //==============================================================================
 // Freertos
 
@@ -163,6 +161,11 @@ enum error_codes_e {
     BAD_PORT_NUMBER = -104
 };
 
+struct token_list_s {
+    char      *keyword;
+    uint32_t  token;
+};
+
 //==============================================================================
 // Extern references
 //==============================================================================
@@ -185,6 +188,7 @@ extern QueueHandle_t       queue_free_buffers;
 
 extern EventGroupHandle_t eventgroup_uart_IO;
 
+// data structures
 
 extern char print_string_buffers[NOS_PRINT_STRING_BUFFERS][MAX_PRINT_STRING_LENGTH];
 extern struct task_data_s  task_data[NOS_TASKS];
@@ -192,6 +196,8 @@ extern struct task_data_s  task_data[NOS_TASKS];
 extern const uint8_t char_type[256];
 
 extern struct servo_data_s     servo_data[NOS_SERVOS];
+
+extern struct token_list_s commands[6];
 
 
 #endif /* __SYSTEM_H__ */
