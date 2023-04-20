@@ -4,6 +4,7 @@
 
 #include    <stdio.h>
 #include    <string.h>
+#include    <stdarg.h>
 #include    "pico/stdlib.h"
 #include    "pico/binary_info.h"
 
@@ -19,6 +20,8 @@
 #include    "system.h"
 #include    "sys_routines.h"
 #include    "uart_IO.h"
+#include    "string_IO.h"
+#include    "min_printf.h"
 
 //==============================================================================
 // System data
@@ -198,6 +201,29 @@ line_read_states_te  state;
     }
     *string = STRING_NULL;  // string has filled buffer
     return (ch_count + 1);
+}
+
+#define     DEBUG_REPLY     'D'
+#define     CMD_REPLY       'C'
+#define     MAX_SIZE_REPLY_STRING   128
+
+struct string_buffer reply_buffer;
+
+//==============================================================================
+/**
+ * @brief 
+ * 
+ * @param format 
+ * @param ... 
+ */
+void print_string(const char *format, ...)
+{
+    init_ASCII_buffer(&reply_buffer);
+    va_list vargs;
+    va_start(vargs, format);
+    min_sprintf(&reply_buffer, format, vargs);
+    va_end(vargs);
+    uart_putstring(&reply_buffer.buffer[0]);
 }
 
 //==============================================================================

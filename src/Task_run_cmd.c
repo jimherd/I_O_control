@@ -8,6 +8,7 @@
 
 #include "system.h"
 #include "uart_IO.h"
+#include "string_IO.h"
 #include "sys_routines.h"
 #include "PCA9685.h"
 #include "tokenizer.h"
@@ -28,6 +29,8 @@ uint32_t    argc, arg_pt[MAX_COMMAND_PARAMETERS], arg_type[MAX_COMMAND_PARAMETER
 int         int_parameters[MAX_COMMAND_PARAMETERS];
 float       float_parameters[MAX_COMMAND_PARAMETERS];
 
+
+
 void Task_run_cmd(void *p) {
 
 int32_t     char_count;
@@ -41,19 +44,31 @@ static uint32_t token;
 
         token = string_to_token(commands, &command[arg_pt[0]]);
 
-        if (char_type[command[0]] == LETTER) {
-            switch (command[0]) {
-                case 'p': {  // ping command
-                    uart_putstring("OK\n");
-                    break;
-                }
-                default: {
-                    break;
-                }
+        switch (token) {
+            case TOKENIZER_SERVO : {
+                break;
             }
-        } else {
-        //error
+            case TOKENIZER_STEPPER : {
+                break;
+            }
+            case TOKENIZER_SYNC : {
+                break;
+            }
+            case TOKENIZER_CONFIG : {
+                break;
+            }
+            case TOKENIZER_INFO : {
+                break;
+            }
+            case TOKENIZER_PING : {
+                print_string("%c %d %d\n", 'd', 42, OK);
+                break;
+            }
+            default : {
+                break;
+            }
         }
+        uart_putstring("OK\n");
     }
 }
 

@@ -6,6 +6,9 @@
  * @date 2023-03-09
  */
 
+#ifndef __UART_IO_H__
+#define __UART_IO_H__
+
 #ifndef UART_PORT
     #define UART_PORT   uart0
     #define UART        ((uart_hw_t *)UART_PORT)
@@ -40,3 +43,6 @@ void uart_Write_string_buffer(uint32_t string_index);
 static bool uart_putchar(const char ch);
 void prime_free_buffer_queue(void);
 
+void print_string(const char *format, ...);
+
+#endif    /*   __UART_IO_H__    */

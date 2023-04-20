@@ -56,7 +56,10 @@
 #define     NEWLINE     '\n'
 #define     TAB         '\t'
 #define     SPACE       ' '
+#define     MINUS       '-'
+#define     CHAR_0      '0'
 #define     STRING_NULL '\0'
+#define     PERCENT     '%'
 
 #define     MAX_STRING_LENGTH       80
 
