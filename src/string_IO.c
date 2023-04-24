@@ -21,7 +21,7 @@
  * 
  * @param buff_pt   pointer to string buffer structure
  */
-void init_ASCII_buffer(struct string_buffer *buff_pt) {
+void init_string_buffer(struct string_buffer *buff_pt) {
 
     buff_pt->char_pt = 0;
     buff_pt->buffer[SIZE_REPLY_STRING - 1] = STRING_NULL;

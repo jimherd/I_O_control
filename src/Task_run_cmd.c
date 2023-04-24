@@ -33,12 +33,12 @@ float       float_parameters[MAX_COMMAND_PARAMETERS];
 
 void Task_run_cmd(void *p) {
 
-int32_t     char_count;
+//int32_t     char_count;
 int32_t     status;
 static uint32_t token;
 
     FOREVER {
-        char_count = uart_readline(command);
+        character_count = uart_readline(command);
         status = parse_command();
         status = convert_tokens();
 
@@ -61,7 +61,11 @@ static uint32_t token;
                 break;
             }
             case TOKENIZER_PING : {
-                print_string("%c %d %d\n", 'd', 42, OK);
+                if (argc == 3) {
+                    print_string("%d %d %d\n", int_parameters[1], OK, (int_parameters[2] + 1));
+                } else {
+                    print_error(BAD_NOS_PARAMETERS);
+                }
                 break;
             }
             default : {
@@ -71,11 +75,6 @@ static uint32_t token;
         uart_putstring("OK\n");
     }
 }
-
-        // uart_putstring("1. Task_run_cmd : has been started and is waiting on a command\n");
-        // uart_putstring("  2. abbccc ddddeeeee ffffff ggggggg hhhhhhhh iiiiiiiiii\n");
-        // uart_putstring("    3. jjjjjjjjjj kkkkkkkkk lllllll mmmmmmm nnnnnn ooooo\n");
-        // write_PCA9685_register(20,34);
 
 //***************************************************************************
 // parse_command : analyse command string and convert into labelled strings
@@ -107,7 +106,7 @@ uint8_t     character_type;
                     if (mode == MODE_U) {
                         mode = MODE_S;
                         arg_pt[argc] = count;
-                        // argc++;
+                        // argc++; //
                     } 
                 }
                 break;
@@ -115,8 +114,15 @@ uint8_t     character_type;
                 if (mode == MODE_U) {
                     mode = MODE_I;
                     arg_pt[argc] = count;
-                    // argc++;
+                    // argc++;  //
                 } 
+                break;
+            case SEPARATOR :
+                if (mode != MODE_U) {
+                    arg_type[argc++] = mode;
+                    command[count] = STRING_NULL;
+                    mode = MODE_U;
+                }
                 break;
             case DOT :
                 if (mode == MODE_I) {
@@ -131,7 +137,7 @@ uint8_t     character_type;
                 if (mode == MODE_U) {
                     mode = MODE_I;
                     arg_pt[argc] = count;
-                    //argc++;
+                    // argc++;   //
                 } else {
                     if ((mode == MODE_I) || (mode == MODE_R)) {
                         status = PLUSMINUS_ERROR;
@@ -147,7 +153,8 @@ uint8_t     character_type;
             case END :
                 if (mode != MODE_U) {
                     arg_type[argc++] = mode;
-                    mode = MODE_U;
+                    //mode = MODE_U;
+                    return status;
                 }
                 break;
         }   // end of SWITCH

@@ -24,9 +24,9 @@
 // This is uded in the command string parser in "Task_run_cmd" 
 
 const uint8_t char_type[256] = {
-    NULTERM,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,    END,     OTHER,  OTHER,     OTHER,  OTHER,  OTHER,  // 00->0F
+    END    ,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER, SEPARATOR, END,     OTHER,    END,     OTHER,  OTHER,  OTHER,  // 00->0F
     OTHER  ,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,     OTHER,  OTHER,     OTHER,  OTHER,  OTHER,  // 10->1F
-    OTHER  ,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER, PLUSMINUS,  OTHER, PLUSMINUS,    DOT,  OTHER,  // 20->2F
+    SEPARATOR,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER, PLUSMINUS,  SEPARATOR, PLUSMINUS,    DOT,  OTHER,  // 20->2F
     NUMBER , NUMBER, NUMBER, NUMBER, NUMBER, NUMBER, NUMBER, NUMBER, NUMBER, NUMBER,  OTHER,     OTHER,  OTHER,     OTHER,  OTHER,  OTHER,  // 30->3F
     OTHER  , LETTER, LETTER, LETTER, LETTER, LETTER, LETTER, LETTER, LETTER, LETTER, LETTER,    LETTER, LETTER,    LETTER, LETTER, LETTER,  // 40->4F
     LETTER , LETTER, LETTER, LETTER, LETTER, LETTER, LETTER, LETTER, LETTER, LETTER, LETTER,     OTHER,  OTHER,     OTHER,  OTHER, LETTER,  // 50->5F
@@ -50,4 +50,14 @@ struct token_list_s commands[] = {
     {"config", TOKENIZER_CONFIG},
     {"info", TOKENIZER_INFO},
     {"ping", TOKENIZER_PING},
+};
+
+struct error_list_s errors[] = {
+    {OK,                 "OK"},
+    {LETTER_ERROR,       "Parse : Letter in number error"},
+    {DOT_ERROR,          "Parse : Point in number error"},
+    {PLUSMINUS_ERROR,    "Parse : +/- in wrong place"},
+    {BAD_COMMAND,        "Unknown command"},
+    {BAD_PORT_NUMBER,    "Bad PORT number"},
+    {BAD_NOS_PARAMETERS, "Wrong number of parameters"},
 };

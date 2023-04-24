@@ -150,7 +150,7 @@ void uart_sys_init(void)
  *      Simple state machine to
  *          1. remove leading spaces
  *          2. ignore RETURN characters
- *          3. convert TAM character to a single SPACE
+ *          3. convert TAB character to a single SPACE
  *          4. replace NEWLINE with a STRING_NULL and exit
  */
 
@@ -218,7 +218,7 @@ struct string_buffer reply_buffer;
  */
 void print_string(const char *format, ...)
 {
-    init_ASCII_buffer(&reply_buffer);
+    init_string_buffer(&reply_buffer);
     va_list vargs;
     va_start(vargs, format);
     min_sprintf(&reply_buffer, format, vargs);

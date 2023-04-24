@@ -2,15 +2,12 @@
 // sys_routines.cpp :  useful routines
 //***************************************************************************
 //
-// 1. faster and lower overhead replacments for the following routines
-//      a. atoi
-//      b. atof
-//      c. itoa
-// 2. send strings through queue to HLLControl system
 //
 
 #include "system.h"
 #include "sys_routines.h"
+#include "uart_IO.h"
+
 
 #include "pico/stdlib.h"
 
@@ -47,4 +44,9 @@ uint32_t delta_time;
     if (delta_time > task_data[task].highest_exec_time) {
         task_data[task].highest_exec_time = delta_time;
     }
+}
+
+void print_error(error_codes_e sys_error)
+{
+
 }

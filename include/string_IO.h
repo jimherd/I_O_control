@@ -16,7 +16,7 @@ struct string_buffer {
 // Function prototypes
 //==============================================================================
 
-void init_ASCII_buffer(struct string_buffer *buff_pt);
+void init_string_buffer(struct string_buffer *buff_pt);
 void add_char_to_char_buffer(struct string_buffer *buff_pt, char ch);
 void add_string_to_char_buffer(struct string_buffer *buff_pt, const char *str);
 void add_int_to_char_buffer(struct string_buffer *buff_pt, int32_t num);

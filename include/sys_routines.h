@@ -12,8 +12,11 @@
 #define __SYS_ROUTINES_H__
 
 #include    "pico/stdlib.h"
+#include    "system.h"
 
 
 void update_task_execution_time(task_et task, uint32_t start_time, uint32_t end_time);
+void print_error(error_codes_e sys_error);
+
 
 #endif

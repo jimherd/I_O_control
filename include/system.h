@@ -69,7 +69,7 @@
 
 enum modes_e {MODE_U, MODE_I, MODE_R, MODE_S} ;  // defines modes as scan progresses
 
-enum {LETTER, NUMBER, DOT, PLUSMINUS, NULTERM, END, OTHER};
+enum {LETTER, NUMBER, DOT, PLUSMINUS, NULTERM, END, SEPARATOR, OTHER};
 
 //==============================================================================
 //I2C port
@@ -155,13 +155,19 @@ struct task_data_s {
     };
 };
 
-enum error_codes_e {
-    OK,
-    LETTER_ERROR    = -100,
-    DOT_ERROR       = -101,
-    PLUSMINUS_ERROR = -102,
-    BAD_COMMAND     = -103,
-    BAD_PORT_NUMBER = -104
+typedef enum  {
+    OK                  = 0,
+    LETTER_ERROR        = -100,
+    DOT_ERROR           = -101,
+    PLUSMINUS_ERROR     = -102,
+    BAD_COMMAND         = -103,
+    BAD_PORT_NUMBER     = -104,
+    BAD_NOS_PARAMETERS  = -105,
+} error_codes_e;
+
+struct error_list_s {
+    int32_t     error_code;
+    char        *error_string;
 };
 
 struct token_list_s {
