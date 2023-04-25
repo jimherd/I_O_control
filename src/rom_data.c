@@ -60,4 +60,5 @@ struct error_list_s errors[] = {
     {BAD_COMMAND,        "Unknown command"},
     {BAD_PORT_NUMBER,    "Bad PORT number"},
     {BAD_NOS_PARAMETERS, "Wrong number of parameters"},
+    {BAD_BASE_PARAMETER, "printf int base not 10 or 16"},
 };

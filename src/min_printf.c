@@ -45,44 +45,49 @@ static inline void printchar(struct string_buffer *buff_pt, char character)
 /**
  * @brief 
  * 
- * @param buff_pt 
+ * @param buff_pt
  * @param string 
  * @param width 
  * @param pad 
  * @return int32_t 
  */
-static void prints(struct string_buffer *buff_pt, const char *string, int32_t width, int32_t pad)
+static void prints(struct string_buffer *buff_pt, const char *string)
 {
-int32_t  len, padchar = SPACE;
-const char*	ptr;
-
-    if (width > 0) {
-        len = 0;
-        for (ptr = string; *ptr; ++ptr) {
-			++len;
-		}
-        if (len >= width) {
-            width = 0;
-		} else {
-            width -= len;
-		}
-        if (pad & PAD_ZERO) {
-			padchar = CHAR_0;
-    	}
-		if (!(pad & PAD_RIGHT)) {
-			for (; width > 0; --width) {
-				printchar(buff_pt, padchar);
-			}
-    	}
-		for (; *string; ++string) {
-			printchar(buff_pt, *string);
-		}
-		for (; width > 0; --width) {
-			printchar(buff_pt, padchar);
-		}
-		return;
-	}
+	add_string_to_char_buffer(buff_pt, string);
 }
+
+// static void prints(struct string_buffer *buff_pt, const char *string, int32_t width, int32_t pad)
+// {
+// int32_t  len, padchar = SPACE;
+// const char*	ptr;
+
+//     if (width > 0) {
+//         len = 0;
+//         for (ptr = string; *ptr; ++ptr) {
+// 			++len;
+// 		}
+//         if (len >= width) {
+//             width = 0;
+// 		} else {
+//             width -= len;
+// 		}
+//         if (pad & PAD_ZERO) {
+// 			padchar = CHAR_0;
+//     	}
+// 		if (!(pad & PAD_RIGHT)) {
+// 			for (; width > 0; --width) {
+// 				printchar(buff_pt, padchar);
+// 			}
+//     	}
+// 		for (; *string; ++string) {
+// 			printchar(buff_pt, *string);
+// 		}
+// 		for (; width > 0; --width) {
+// 			printchar(buff_pt, padchar);
+// 		}
+// 		return;
+// 	}
+// }
 
 //==============================================================================
 #define PRINT_BUF_LEN 12
@@ -97,50 +102,56 @@ const char*	ptr;
  * @param pad 
  * @param letbase 		'a'-> lowercase ; 'A' -> uppercase
  */
-static void printi(struct string_buffer *buff_pt, int32_t i, int32_t base, bool signed_numb, int32_t width, int32_t pad, int32_t letbase)
+
+static void printi(struct string_buffer *buff_pt, int32_t int_value, uint32_t base, uint32_t letter_case) 
 {
-char 	  temp_buf[PRINT_BUF_LEN];
-char 	  *str_pt;
-int32_t   remainder; 
-bool      neg;
-uint32_t  number = i;
-
-	neg = false;
-    if (i == 0) {
-		temp_buf[0] = CHAR_0;
-		temp_buf[1] = STRING_NULL;
-		prints (buff_pt, temp_buf, width, pad);
-		return;
-	}
-
-// if (signed_numb && b == 10 && i < 0) {
-	if ((signed_numb == true) && (base == 10) && (i < 0)) {
-		neg = true;
-		number = -i;
-	}
-    str_pt = temp_buf + PRINT_BUF_LEN - 1;
-    *str_pt = STRING_NULL;
-
-	while (number > 0) {
-		remainder = number % base;
-		if( remainder >= 10 ) {
-			remainder += letbase - CHAR_0 - 10;
-		}
-		*--str_pt = remainder + CHAR_0;
-		number /= base;
-	}
-
-	if (neg == true) {
-		if( width && (pad & PAD_ZERO) ) {
-			printchar (buff_pt, MINUS);
-			--width;
-		} else {
-			*--str_pt = MINUS;
-		}
-	}
-	prints (buff_pt, str_pt, width, pad);
-	return;
+	add_int_to_char_buffer(buff_pt, int_value, base, letter_case);
 }
+
+// static void printi(struct string_buffer *buff_pt, int32_t i, int32_t base, bool signed_numb, int32_t width, int32_t pad, int32_t letbase)
+// {
+// char 	  temp_buf[PRINT_BUF_LEN];
+// char 	  *str_pt;
+// int32_t   remainder; 
+// bool      neg;
+// uint32_t  number = i;
+
+// 	neg = false;
+//     if (i == 0) {
+// 		temp_buf[0] = CHAR_0;
+// 		temp_buf[1] = STRING_NULL;
+// 		prints (buff_pt, temp_buf /* ,width, pad */);
+// 		return;
+// 	}
+
+// // if (signed_numb && b == 10 && i < 0) {
+// 	if ((signed_numb == true) && (base == 10) && (i < 0)) {
+// 		neg = true;
+// 		number = -i;
+// 	}
+//     str_pt = temp_buf + PRINT_BUF_LEN - 1;
+//     *str_pt = STRING_NULL;
+
+// 	while (number > 0) {
+// 		remainder = number % base;
+// 		if( remainder >= 10 ) {
+// 			remainder += letbase - CHAR_0 - 10;
+// 		}
+// 		*--str_pt = remainder + CHAR_0;
+// 		number /= base;
+// 	}
+
+// 	if (neg == true) {
+// 		if( width && (pad & PAD_ZERO) ) {
+// 			printchar (buff_pt, MINUS);
+// 			--width;
+// 		} else {
+// 			*--str_pt = MINUS;
+// 		}
+// 	}
+// 	prints (buff_pt, str_pt /* ,width, pad */);
+// 	return;
+// }
 
 //==============================================================================
 /**
@@ -178,23 +189,23 @@ int32_t width, pad;
 			}
 			if( *format == 's' ) {
 				char *s = (char *)va_arg(vargs, int32_t);
-				prints (buff_pt, s?s:"(null)", width, pad);
+				prints (buff_pt, s?s:"(null)" /*, width, pad */);
 				continue;
 			}
 			if( *format == 'd' ) {
-				printi (buff_pt, (int32_t)va_arg(vargs, int32_t), 10, true, width, pad, 'a');
+				printi (buff_pt, (int32_t)va_arg(vargs, int32_t), BASE_10, LOWER_CASE);
 				continue;
 			}
 			if( *format == 'x' ) {
-				printi (buff_pt, (int32_t)va_arg(vargs, int32_t), 16, false, width, pad, 'a');
+				printi (buff_pt, (int32_t)va_arg(vargs, int32_t), BASE_16, LOWER_CASE);
 				continue;
 			}
 			if( *format == 'X' ) {
-				printi (buff_pt, (int32_t)va_arg(vargs, int32_t), 16, false, width, pad, 'A');
+				printi (buff_pt, (int32_t)va_arg(vargs, int32_t), BASE_16, UPPER_CASE);
 				continue;
 			}
 			if( *format == 'u' ) {
-				printi (buff_pt, (int32_t)va_arg(vargs, int32_t), 10, false, width, pad, 'a');
+			//	printi (buff_pt, (int32_t)va_arg(vargs, int32_t), 10, false, width, pad, 'a');
 				continue;
 			}
 			if( *format == 'c' ) {

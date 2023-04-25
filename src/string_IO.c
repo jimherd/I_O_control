@@ -48,12 +48,60 @@ void add_char_to_char_buffer(struct string_buffer *buff_pt, char ch) {
     }
 }
 
-void add_string_to_buffer(struct string_buffer *buff_pt, const char *str)
+void add_string_to_char_buffer(struct string_buffer *buff_pt, const char *str)
 {
     for (uint32_t i = 0 ; i < strlen(str); i++) {
         add_char_to_char_buffer(buff_pt, *str++);
     }
 }
+
+char    digit_char_ucase[] = {
+    '0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'
+};
+char    digit_char_lcase[] = {
+    '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'
+};
+
+error_codes_e add_int_to_char_buffer(struct string_buffer *buff_pt, int32_t int_value, uint32_t base, uint32_t letter_case)
+{
+int32_t i, temp_i, remainder, char_cnt; 
+char    temp_buff[12];
+
+    temp_i = int_value;
+    char_cnt = 0;
+    if ((base != BASE_10) && (base == BASE_16)) {
+        return BAD_BASE_PARAMETER;
+    }
+    /* Handle 0 explicitely, otherwise empty string is printed for 0 */
+    if (temp_i == 0) {
+        add_char_to_char_buffer(buff_pt, CHAR_0);
+        return OK; 
+    } 
+  
+    if (temp_i < 0) { 
+		add_char_to_char_buffer(buff_pt, MINUS);
+        temp_i = -temp_i; 
+    } 
+  
+    // Process individual digits 
+    while (temp_i != 0) { 
+        remainder = temp_i % base; 
+        if (base == BASE_16) {
+            if (letter_case == LOWER_CASE) {
+                temp_buff[char_cnt++] =  digit_char_lcase[remainder];
+            } else {
+                temp_buff[char_cnt++] =  digit_char_lcase[remainder];
+            }
+        } else {
+            temp_buff[char_cnt++] =  digit_char_lcase[remainder];
+        }
+        temp_i = temp_i/base; 
+    }
+    for (i = (char_cnt - 1); i >= 0 ; i--) {
+        add_char_to_char_buffer(buff_pt, temp_buff[i]);
+    }
+    return OK; 
+} 
 
 //***************************************************************************
 // ASCII_to_int : local version of atoi()

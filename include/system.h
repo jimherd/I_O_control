@@ -71,6 +71,9 @@ enum modes_e {MODE_U, MODE_I, MODE_R, MODE_S} ;  // defines modes as scan progre
 
 enum {LETTER, NUMBER, DOT, PLUSMINUS, NULTERM, END, SEPARATOR, OTHER};
 
+enum {BASE_10 = 10, BASE_16 = 16};
+enum {UPPER_CASE, LOWER_CASE};
+
 //==============================================================================
 //I2C port
 
@@ -163,6 +166,7 @@ typedef enum  {
     BAD_COMMAND         = -103,
     BAD_PORT_NUMBER     = -104,
     BAD_NOS_PARAMETERS  = -105,
+    BAD_BASE_PARAMETER  = -106,
 } error_codes_e;
 
 struct error_list_s {
