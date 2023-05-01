@@ -16,7 +16,7 @@
 
 
 void update_task_execution_time(task_et task, uint32_t start_time, uint32_t end_time);
-void print_error(error_codes_e sys_error);
+void print_error(int32_t port, error_codes_te sys_error);
 
 
 #endif

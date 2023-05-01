@@ -38,6 +38,8 @@ enum {R_EYEBALL, L_EYEBALL, R_EYE_LID, L_EYE_LID, R_EYE_BROW, L_EYE_BROW, MOUTH}
 //==============================================================================
 // structure to hold servo specific data
 
+typedef enum {ABS_MOVE, SPEED_MOVE, RUN_SYNC_MOVES, STOP, STOP_ALL} servo_commands_te;
+
 typedef enum {DISABLED, DORMANT, DELAY, MOVE, TIMED_MOVE, MOVE_SYNC_HOLD, TIMED_MOVE_SYNC_HOLD} servo_states_te;
 
 struct servo_data_s {

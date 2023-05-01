@@ -33,15 +33,6 @@
 #include    "pico/stdlib.h"
 #include    "system.h"
 
-enum {
-    TOKENIZER_ERROR,
-    TOKENIZER_SERVO,
-    TOKENIZER_STEPPER,
-    TOKENIZER_SYNC,
-    TOKENIZER_CONFIG,
-    TOKENIZER_INFO,
-    TOKENIZER_PING,
-};
 
 uint32_t string_to_token(struct token_list_s *tk_list, char *string);
 // void tokenizer_init(const char *program);

@@ -19,7 +19,7 @@ struct string_buffer {
 void init_string_buffer(struct string_buffer *buff_pt);
 void add_char_to_char_buffer(struct string_buffer *buff_pt, char ch);
 void add_string_to_char_buffer(struct string_buffer *buff_pt, const char *str);
-error_codes_e add_int_to_char_buffer(struct string_buffer *buff_pt, int32_t int_value, uint32_t base, uint32_t letter_case);
+error_codes_te add_int_to_char_buffer(struct string_buffer *buff_pt, int32_t int_value, uint32_t base, uint32_t letter_case);
 
 int32_t ASCII_to_int(char *str);
 float ASCII_to_float(const char *char_pt);

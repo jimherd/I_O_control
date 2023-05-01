@@ -65,7 +65,7 @@
 
 #define     MAX_COMMAND_LENGTH      100
 
-#define     MAX_COMMAND_PARAMETERS  16
+#define     MAX_ARGC  8
 
 enum modes_e {MODE_U, MODE_I, MODE_R, MODE_S} ;  // defines modes as scan progresses
 
@@ -167,7 +167,10 @@ typedef enum  {
     BAD_PORT_NUMBER     = -104,
     BAD_NOS_PARAMETERS  = -105,
     BAD_BASE_PARAMETER  = -106,
-} error_codes_e;
+    PARAMETER_OUTWITH_LIMITS = -107,
+} error_codes_te;
+
+#define UNDEFINED_PORT  -1
 
 struct error_list_s {
     int32_t     error_code;
@@ -178,6 +181,30 @@ struct token_list_s {
     char      *keyword;
     uint32_t  token;
 };
+
+struct min_max_s {
+    int32_t     parameter_min;
+    int32_t     parameter_max;
+};
+
+struct command_limits_s {
+    uint32_t    nos_parameters;
+    uint32_t    port_max;
+    struct min_max_s  p_limits[MAX_ARGC - 2];
+};
+
+enum {
+    TOKENIZER_SERVO,
+    TOKENIZER_STEPPER,
+    TOKENIZER_SYNC,
+    TOKENIZER_CONFIG,
+    TOKENIZER_INFO,
+    TOKENIZER_PING,
+    TOKENIZER_ERROR,
+};
+
+#define NOS_COMMANDS   (TOKENIZER_ERROR + 1)
+
 
 //==============================================================================
 // Extern references

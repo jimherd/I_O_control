@@ -62,7 +62,7 @@ char    digit_char_lcase[] = {
     '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'
 };
 
-error_codes_e add_int_to_char_buffer(struct string_buffer *buff_pt, int32_t int_value, uint32_t base, uint32_t letter_case)
+error_codes_te add_int_to_char_buffer(struct string_buffer *buff_pt, int32_t int_value, uint32_t base, uint32_t letter_case)
 {
 int32_t i, temp_i, remainder, char_cnt; 
 char    temp_buff[12];
