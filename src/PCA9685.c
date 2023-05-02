@@ -203,14 +203,14 @@ uint8_t  PCA9685_i2c_packet[5];
  * @brief Set the servo channel object
  * 
  * @param servo_no 
- * @param servo_state 
+ * @param servo_cmd 
  * @param servo_angle 
  * @param servo_sync 
  */
-void    set_servo_channel(  uint8_t         servo_no,
-                            servo_states_te servo_state,
-                            int16_t         servo_angle,
-                            bool            servo_sync
+void    set_servo_channel(  uint8_t            servo_no,
+                            servo_commands_te  servo_state,
+                            int16_t            servo_angle,
+                            bool               servo_sync
                             )
 {
 struct servo_data_s  *servo_data_pt;

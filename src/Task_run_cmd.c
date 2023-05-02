@@ -22,7 +22,7 @@
 
 int32_t parse_command (void);
 int32_t convert_tokens(void);
-error_codes_te check_command(uint32_t cmd_token);
+error_codes_te check_command(int32_t cmd_token);
 
 //***************************************************************************
 // Global command and parsed data
@@ -30,7 +30,7 @@ error_codes_te check_command(uint32_t cmd_token);
 char        command[MAX_COMMAND_LENGTH];
 uint32_t    character_count;
 uint32_t    argc, arg_pt[MAX_ARGC], arg_type[MAX_ARGC];
-int         int_parameters[MAX_ARGC];
+int32_t     int_parameters[MAX_ARGC];
 float       float_parameters[MAX_ARGC];
 
 //***************************************************************************
@@ -38,12 +38,12 @@ float       float_parameters[MAX_ARGC];
 // Specific limits may be tested in the command execution code
 
 struct command_limits_s    cmd_limits[NOS_COMMANDS] = {
-    {5, 63, {{0, 5}, {-90, +90}}},
-    {0, 0, {0,0}},                              // stepper,
-    {0, 0, {0,0}},                               // sync,
-    {0, 0, {0,0}},                               // config
-    {0, 0, {0,0}},                               // info
-    {3,   63,   {-255, +255}},           // ping,
+    {5, 63, {{0, 5}, {0, 15}, {-90, +90}}},   // servo
+    {0,  0, {0,0}},                           // stepper,
+    {0,  0, {0,0}},                           // sync,
+    {0,  0, {0,0}},                           // config
+    {0,  0, {0,0}},                           // info
+    {3, 63, {-255, +255}},                    // ping,
 };
 
 //***************************************************************************
@@ -51,7 +51,7 @@ struct command_limits_s    cmd_limits[NOS_COMMANDS] = {
 
 void Task_run_cmd(void *p) {
     error_codes_te status;
-    static uint32_t token;
+    static int32_t token;
 
     status = OK;
     FOREVER {
@@ -69,65 +69,54 @@ void Task_run_cmd(void *p) {
         token = string_to_token(commands, &command[arg_pt[0]]);
         status = check_command(token);
         if (status != OK) {
-            print_error(UNDEFINED_PORT, status);
+            print_error(int_parameters[1], status);
             continue;
         }
-
+        status = OK;
         switch (token) {
-            case TOKENIZER_SERVO: {
+            case TOKENIZER_SERVO: 
                 switch (int_parameters[2]) {
-                    case ABS_MOVE: {
-                        set_servo_channel(int_parameters[2], int_parameters[3], int_parameters[4], false);
-                        print_string("%d %d\n", int_parameters[1], OK);
+                    case ABS_MOVE: 
+                        set_servo_channel( int_parameters[3], MOVE, int_parameters[4], false);
                         break;
-                    }
-                    case SPEED_MOVE: {
-                        set_servo_channel(int_parameters[2], int_parameters[3], int_parameters[4], false);
-                        print_string("%d %d\n", int_parameters[1], OK);
+                    case ABS_MOVE_SYNC: 
+                        set_servo_channel( int_parameters[3], MOVE, int_parameters[4], true);
                         break;
-                    }
-                    case RUN_SYNC_MOVES: {
-                        set_servo_channel(int_parameters[2], int_parameters[3], int_parameters[4], false);
-                        print_string("%d %d\n", int_parameters[1], OK);
+                    case SPEED_MOVE: 
+                        set_servo_channel(int_parameters[3], TIMED_MOVE, int_parameters[4], false);
                         break;
-                    }
-                    case STOP: {
-                        set_servo_channel(int_parameters[2], int_parameters[3], int_parameters[4], false);
-                        print_string("%d %d\n", int_parameters[1], OK);
+                    case SPEED_MOVE_SYNC: 
+                        set_servo_channel(int_parameters[3], TIMED_MOVE, int_parameters[4], true);
                         break;
-                    }
-                    case STOP_ALL: {
+                    case RUN_SYNC_MOVES: 
                         set_servo_channel(int_parameters[2], int_parameters[3], int_parameters[4], false);
-                        print_string("%d %d\n", int_parameters[1], OK);
                         break;
-                    }
-                    default: {
+                    case STOP:
+                        set_servo_channel(DORMANT, int_parameters[3], int_parameters[4], false);  
+                        break;
+                    case STOP_ALL: 
                         set_servo_channel(int_parameters[2], int_parameters[3], int_parameters[4], false);
-                        print_string("%d %d\n", int_parameters[1], OK);
                         break;
-                    }
+                    default:
+                        status = BAD_SERVO_COMMAND;
+                        break;
                 } 
-            }
-            case TOKENIZER_STEPPER: {
+                print_string("%d %d\n", int_parameters[1], status);
+ 
+            case TOKENIZER_STEPPER: 
                 break;
-            }
-            case TOKENIZER_SYNC: {
+            case TOKENIZER_SYNC: 
                 break;
-            }
-            case TOKENIZER_CONFIG: {
+            case TOKENIZER_CONFIG: 
                 break;
-            }
-            case TOKENIZER_INFO: {
+            case TOKENIZER_INFO: 
                 break;
-            }
-            case TOKENIZER_PING: {
+            case TOKENIZER_PING: 
                 print_string("%d %d %d\n", int_parameters[1], OK, (int_parameters[2] + 1));
                 break;
-                }
-            default: {
+            default: 
                 break;
                 print_error(int_parameters[1],status);
-            }
         }
     }
 }
@@ -243,7 +232,7 @@ int32_t convert_tokens(void)
     return OK;
 }
 
-error_codes_te check_command(uint32_t cmd_token)
+error_codes_te check_command(int32_t cmd_token)
 {
     error_codes_te status;
     uint32_t i;
@@ -254,7 +243,7 @@ error_codes_te check_command(uint32_t cmd_token)
     } else if (int_parameters[1] > cmd_limits[cmd_token].port_max) {
         status = BAD_PORT_NUMBER;
     } else {
-        for (i = 2 ; i<MAX_ARGC ; i++) {
+        for (i = 2 ; i<argc ; i++) {
             if (arg_type[i] == MODE_I) {
                 if ((int_parameters[i] < cmd_limits[cmd_token].p_limits[i-2].parameter_min) || 
                               (int_parameters[i] > cmd_limits[cmd_token].p_limits[i-2].parameter_max)) {

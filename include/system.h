@@ -168,6 +168,7 @@ typedef enum  {
     BAD_NOS_PARAMETERS  = -105,
     BAD_BASE_PARAMETER  = -106,
     PARAMETER_OUTWITH_LIMITS = -107,
+    BAD_SERVO_COMMAND   = -108,
 } error_codes_te;
 
 #define UNDEFINED_PORT  -1

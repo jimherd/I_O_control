@@ -38,7 +38,7 @@ enum {R_EYEBALL, L_EYEBALL, R_EYE_LID, L_EYE_LID, R_EYE_BROW, L_EYE_BROW, MOUTH}
 //==============================================================================
 // structure to hold servo specific data
 
-typedef enum {ABS_MOVE, SPEED_MOVE, RUN_SYNC_MOVES, STOP, STOP_ALL} servo_commands_te;
+typedef enum {ABS_MOVE, ABS_MOVE_SYNC, SPEED_MOVE, SPEED_MOVE_SYNC, RUN_SYNC_MOVES, STOP, STOP_ALL} servo_commands_te;
 
 typedef enum {DISABLED, DORMANT, DELAY, MOVE, TIMED_MOVE, MOVE_SYNC_HOLD, TIMED_MOVE_SYNC_HOLD} servo_states_te;
 
@@ -58,9 +58,6 @@ struct servo_data_s {
 	uint32_t		y_intercept;
 	uint32_t		t_end;
 };
-
-
-
 
 //==============================================================================
 // register set for PCA9685 device
@@ -213,10 +210,10 @@ void  PCA9685_reset(void);
 void PCA9685_set_servo_freq(void);
 void  PCA9685_set_servo(uint32_t servo_no, int32_t position);
 void  PCA9685_set_zero(uint32_t servo_no);
-void  set_servo_channel(  uint8_t         servo_no,
-                          servo_states_te servo_state,
-                          int16_t         servo_angle,
-                          bool            servo_sync
+void  set_servo_channel(  uint8_t            servo_no,
+                          servo_commands_te  servo_state,
+                          int16_t            servo_angle,
+                          bool               servo_sync
                         );
 
 #endif
