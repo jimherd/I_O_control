@@ -38,12 +38,12 @@ float       float_parameters[MAX_ARGC];
 // Specific limits may be tested in the command execution code
 
 struct command_limits_s    cmd_limits[NOS_COMMANDS] = {
-    {5, 63, {{0, 5}, {0, 15}, {-90, +90}}},   // servo
-    {0,  0, {0,0}},                           // stepper,
-    {0,  0, {0,0}},                           // sync,
-    {0,  0, {0,0}},                           // config
-    {0,  0, {0,0}},                           // info
-    {3, 63, {-255, +255}},                    // ping,
+    [0].p_limits = {{5, 6}, {0, 63}, {0, 5}, {0, 15}, {-90, +90}, {1, 1000}},   // servo
+    [1].p_limits = {{0, 0}, {0,0}, {0,0}},                           // stepper,
+    [2].p_limits = {{0, 0}, {0,0}, {0,0}},                           // sync,
+    [3].p_limits = {{0, 0}, {0,0}, {0,0}},                           // config
+    [4].p_limits = {{0, 0}, {0,0}, {0,0}},                           // info
+    [5].p_limits = {{3, 3}, {0, 63}, {-255, +255}},                  // ping,
 };
 
 //***************************************************************************
@@ -232,21 +232,26 @@ int32_t convert_tokens(void)
     return OK;
 }
 
+//***************************************************************************
 error_codes_te check_command(int32_t cmd_token)
 {
     error_codes_te status;
     uint32_t i;
 
     status = OK;
-    if (argc != cmd_limits[cmd_token].nos_parameters) {
+
+
+    if ((argc < cmd_limits[cmd_token].p_limits[0].parameter_min) || 
+                (argc > cmd_limits[cmd_token].p_limits[0].parameter_max)) {
         status = BAD_NOS_PARAMETERS;
-    } else if (int_parameters[1] > cmd_limits[cmd_token].port_max) {
+    } else if ((int_parameters[1] < cmd_limits[cmd_token].p_limits[1].parameter_min) || 
+                (int_parameters[1] > cmd_limits[cmd_token].p_limits[1].parameter_max)) {
         status = BAD_PORT_NUMBER;
     } else {
         for (i = 2 ; i<argc ; i++) {
             if (arg_type[i] == MODE_I) {
-                if ((int_parameters[i] < cmd_limits[cmd_token].p_limits[i-2].parameter_min) || 
-                              (int_parameters[i] > cmd_limits[cmd_token].p_limits[i-2].parameter_max)) {
+                if ((int_parameters[i] < cmd_limits[cmd_token].p_limits[i].parameter_min) || 
+                              (int_parameters[i] > cmd_limits[cmd_token].p_limits[i].parameter_max)) {
                     status = PARAMETER_OUTWITH_LIMITS;
                     break;
                 }

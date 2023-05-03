@@ -189,9 +189,7 @@ struct min_max_s {
 };
 
 struct command_limits_s {
-    uint32_t    nos_parameters;
-    uint32_t    port_max;
-    struct min_max_s  p_limits[MAX_ARGC - 2];
+    struct min_max_s  p_limits[MAX_ARGC];
 };
 
 enum {
