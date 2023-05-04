@@ -29,13 +29,11 @@ int32_t     angle;
 servo_states_te      RC_state;
 
     init_PCA9685_servo_IO();
-    
-
     for (uint8_t i = 0; i < NOS_SERVOS ; i++) {
             servo_data[i].state = DISABLED;
     }
 
-    set_servo_channel(0, MOVE, +42, false);
+    set_servo_move(0, MOVE, +42, false);
     
     sample_count = 0;
     xLastWakeTime = xTaskGetTickCount ();
@@ -65,7 +63,7 @@ servo_states_te      RC_state;
                     if (servo_data[i].counter == servo_data[i].t_end) {
                         servo_data[i].state = DORMANT;
                     } else {
-                        angle = (int32_t)(servo_data[i].gradient * (float)servo_data[i].counter) + servo_data[i].y_intercept - 90;
+                        angle = (int32_t)(servo_data[i].gradient * (float)servo_data[i].counter) + servo_data[i].y_intercept;
                         PCA9685_set_servo(i, angle);
                         servo_data[i].counter++;
                     }

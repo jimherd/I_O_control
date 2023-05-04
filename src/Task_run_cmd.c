@@ -49,9 +49,10 @@ struct command_limits_s    cmd_limits[NOS_COMMANDS] = {
 //***************************************************************************
 // Get, parse, and execute UART received command
 
-void Task_run_cmd(void *p) {
-    error_codes_te status;
-    static int32_t token;
+void Task_run_cmd(void *p) 
+{
+error_codes_te status;
+static int32_t token;
 
     status = OK;
     FOREVER {
@@ -77,25 +78,25 @@ void Task_run_cmd(void *p) {
             case TOKENIZER_SERVO: 
                 switch (int_parameters[2]) {
                     case ABS_MOVE: 
-                        set_servo_channel( int_parameters[3], MOVE, int_parameters[4], false);
+                        set_servo_move( int_parameters[3], MOVE, int_parameters[4], false);
                         break;
                     case ABS_MOVE_SYNC: 
-                        set_servo_channel( int_parameters[3], MOVE, int_parameters[4], true);
+                        set_servo_move( int_parameters[3], MOVE, int_parameters[4], true);
                         break;
                     case SPEED_MOVE: 
-                        set_servo_channel(int_parameters[3], TIMED_MOVE, int_parameters[4], false);
+                        set_servo_speed_move(int_parameters[3], TIMED_MOVE, int_parameters[4], int_parameters[5], false);
                         break;
                     case SPEED_MOVE_SYNC: 
-                        set_servo_channel(int_parameters[3], TIMED_MOVE, int_parameters[4], true);
+                        set_servo_speed_move(int_parameters[3], TIMED_MOVE, int_parameters[4], int_parameters[5], true);
                         break;
                     case RUN_SYNC_MOVES: 
-                        set_servo_channel(int_parameters[2], int_parameters[3], int_parameters[4], false);
+                        set_servo_move(int_parameters[2], int_parameters[3], int_parameters[4], false);
                         break;
                     case STOP:
-                        set_servo_channel(DORMANT, int_parameters[3], int_parameters[4], false);  
+                        set_servo_move(DORMANT, int_parameters[3], int_parameters[4], false);  
                         break;
                     case STOP_ALL: 
-                        set_servo_channel(int_parameters[2], int_parameters[3], int_parameters[4], false);
+                        set_servo_move(int_parameters[2], int_parameters[3], int_parameters[4], false);
                         break;
                     default:
                         status = BAD_SERVO_COMMAND;
@@ -235,11 +236,10 @@ int32_t convert_tokens(void)
 //***************************************************************************
 error_codes_te check_command(int32_t cmd_token)
 {
-    error_codes_te status;
-    uint32_t i;
+error_codes_te status;
+uint32_t i;
 
     status = OK;
-
 
     if ((argc < cmd_limits[cmd_token].p_limits[0].parameter_min) || 
                 (argc > cmd_limits[cmd_token].p_limits[0].parameter_max)) {

@@ -29,6 +29,7 @@ struct servo_data_s     servo_data[NOS_SERVOS] = {
 };
 uPCA9685_REG__MODE1     PCA9685_reg_mode1;
 
+//==============================================================================
 /**
  * @brief write byte to PCA9685
  * 
@@ -46,6 +47,7 @@ void write_PCA9685_register(uint8_t reg_number, uint8_t data_byte)
     return;
 }
 
+//==============================================================================
 /**
  * @brief   read byte from PCA9685
  * 
@@ -62,6 +64,7 @@ uint8_t  data;
     return  data;
 }
 
+//==============================================================================
 /**
  * @brief Initialise PCA9685 to drive RC servos
  * 
@@ -77,6 +80,7 @@ uint8_t  data;
     return;
 }
 
+//==============================================================================
 /**
  * @brief set PCA9685 into its sleep mode
  */
@@ -94,6 +98,8 @@ uint8_t PCA9685_mode1_data;
         write_PCA9685_register(PCA9685__MODE1, PCA9685_mode1_data);
     }
 }
+
+//==============================================================================
 /**
  * @brief reset PCA968a device
  */
@@ -102,6 +108,7 @@ void inline PCA9685_reset(void)
     write_PCA9685_register(PCA9685__MODE1, PCA9685_MODE1_RESTART);
 }
 
+//==============================================================================
 /**
  * @brief enable/disable device autoincrement mode
  * 
@@ -122,6 +129,7 @@ void  PCA9685_set_auto_increment(bool mode)
     }
 }
 
+//==============================================================================
 /**
  * @brief Set frequency to 50Hz for use with servos
  */
@@ -132,6 +140,8 @@ void PCA9685_set_servo_freq(void){
     write_PCA9685_register(PCA9685__PRE_SCALE, PCA9685_50Hz_PRE_SCALER);
     PCA9685_set_sleep(false);
 }
+
+//==============================================================================
 /**
  * @brief 
  * 
@@ -186,7 +196,7 @@ uint8_t     PCA9685_chan_address;
     i2c_write_blocking(I2C_PORT, PCA9685_address, PCA9685_i2c_packet, 5, false);
 }
 
-
+//==============================================================================
 void PCA9685_set_zero(uint32_t servo_no) 
 {
 uint8_t  PCA9685_i2c_packet[5];
@@ -199,6 +209,7 @@ uint8_t  PCA9685_i2c_packet[5];
     i2c_write_blocking(I2C_PORT, PCA9685_address, PCA9685_i2c_packet, 5, false);
 }
 
+//==============================================================================
 /**
  * @brief Set the servo channel object
  * 
@@ -207,11 +218,11 @@ uint8_t  PCA9685_i2c_packet[5];
  * @param servo_angle 
  * @param servo_sync 
  */
-void    set_servo_channel(  uint8_t            servo_no,
-                            servo_commands_te  servo_state,
-                            int16_t            servo_angle,
-                            bool               servo_sync
-                            )
+void    set_servo_move( uint8_t            servo_no,
+                        servo_commands_te  servo_state,
+                        int16_t            servo_angle,
+                        bool               servo_sync 
+                      )
 {
 struct servo_data_s  *servo_data_pt;
 
@@ -221,3 +232,39 @@ struct servo_data_s  *servo_data_pt;
     servo_data_pt->angle = servo_angle;
     servo_data_pt->sync  = servo_sync;
 }
+
+//==============================================================================
+/**
+ * @brief Set the servo speed move object
+ * 
+ * @param servo_no 
+ * @param servo_state 
+ * @param servo_angle       target angle
+ * @param time_for_move     move time in units of 100mS
+ * @param servo_sync        true/false
+ */
+void    set_servo_speed_move(   uint8_t             servo_no,
+                                servo_commands_te   servo_state,
+                                int16_t             servo_angle,
+                                int16_t             time_for_move,
+                                bool                servo_sync 
+                            )
+{
+struct servo_data_s  *servo_data_pt;
+
+    servo_data_pt = &servo_data[servo_no];
+
+    servo_data_pt->gradient    = ((float)(servo_angle - servo_data_pt->angle) / (float)time_for_move);
+    servo_data_pt->y_intercept = (float)servo_data_pt->angle;
+    servo_data_pt->state       = servo_state;
+    servo_data_pt->angle       = servo_angle;
+    servo_data_pt->sync        = servo_sync;
+    servo_data_pt->counter     = 0;
+    servo_data_pt->t_end       = time_for_move;
+}
+
+    
+
+
+
+
