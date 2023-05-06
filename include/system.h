@@ -199,6 +199,7 @@ enum {
     TOKENIZER_CONFIG,
     TOKENIZER_INFO,
     TOKENIZER_PING,
+    TOKENIZER_TDELAY,
     TOKENIZER_ERROR,
 };
 
@@ -236,7 +237,7 @@ extern const uint8_t char_type[256];
 
 extern struct servo_data_s     servo_data[NOS_SERVOS];
 
-extern struct token_list_s commands[6];
+extern struct token_list_s commands[NOS_COMMANDS];
 
 
 #endif /* __SYSTEM_H__ */

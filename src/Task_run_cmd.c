@@ -53,6 +53,7 @@ void Task_run_cmd(void *p)
 {
 error_codes_te status;
 static int32_t token;
+bool           reply_done;
 
     status = OK;
     FOREVER {
@@ -73,6 +74,8 @@ static int32_t token;
             print_error(int_parameters[1], status);
             continue;
         }
+
+        reply_done = false;
         status = OK;
         switch (token) {
             case TOKENIZER_SERVO: 
@@ -101,9 +104,10 @@ static int32_t token;
                     default:
                         status = BAD_SERVO_COMMAND;
                         break;
-                } 
+                }  // end of inner switch
                 print_string("%d %d\n", int_parameters[1], status);
- 
+                reply_done = true;
+                break;
             case TOKENIZER_STEPPER: 
                 break;
             case TOKENIZER_SYNC: 
@@ -114,10 +118,16 @@ static int32_t token;
                 break;
             case TOKENIZER_PING: 
                 print_string("%d %d %d\n", int_parameters[1], OK, (int_parameters[2] + 1));
+                reply_done = true;
+                break;
+            case TOKENIZER_TDELAY:
+                vTaskDelay(int_parameters[2]);
                 break;
             default: 
                 break;
-                print_error(int_parameters[1],status);
+        }  // end of outer switch
+        if (reply_done == false) {
+            print_error(int_parameters[1],status);
         }
     }
 }

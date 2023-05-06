@@ -46,10 +46,11 @@ const uint8_t char_type[256] = {
 struct token_list_s commands[] = {
     {"servo", TOKENIZER_SERVO},
     {"stepper", TOKENIZER_STEPPER},
+    {"delay", TOKENIZER_TDELAY},
     {"sync", TOKENIZER_SYNC},
     {"config", TOKENIZER_CONFIG},
     {"info", TOKENIZER_INFO},
-    {"ping", TOKENIZER_PING},
+    {"ping", TOKENIZER_PING}
 };
 
 struct error_list_s errors[] = {
