@@ -39,10 +39,10 @@ float       float_parameters[MAX_ARGC];
 
 struct command_limits_s    cmd_limits[NOS_COMMANDS] = {
     [0].p_limits = {{5, 6}, {0, 63}, {0, 5}, {0, 15}, {-90, +90}, {1, 1000}},   // servo
-    [1].p_limits = {{0, 0}, {0,0}, {0,0}},                           // stepper,
-    [2].p_limits = {{0, 0}, {0,0}, {0,0}},                           // sync,
-    [3].p_limits = {{0, 0}, {0,0}, {0,0}},                           // config
-    [4].p_limits = {{0, 0}, {0,0}, {0,0}},                           // info
+    [1].p_limits = {{0, 0}, {0,  0}, {0,0}},                         // stepper,
+    [2].p_limits = {{2, 2}, {0, 63}, {0,0}},                         // sync,
+    [3].p_limits = {{0, 0}, {0,  0}, {0,0}},                         // config
+    [4].p_limits = {{0, 0}, {0,  0}, {0,0}},                         // info
     [5].p_limits = {{3, 3}, {0, 63}, {-255, +255}},                  // ping,
 };
 
@@ -51,6 +51,7 @@ struct command_limits_s    cmd_limits[NOS_COMMANDS] = {
 
 void Task_run_cmd(void *p) 
 {
+struct servo_data_s *servo_pt;
 error_codes_te status;
 static int32_t token;
 bool           reply_done;
@@ -111,6 +112,10 @@ bool           reply_done;
             case TOKENIZER_STEPPER: 
                 break;
             case TOKENIZER_SYNC: 
+                for( int32_t i=0; i<NOS_SERVOS; i++) {
+                    servo_pt = &servo_data[0];
+                    servo_pt->sync = false;
+                }
                 break;
             case TOKENIZER_CONFIG: 
                 break;

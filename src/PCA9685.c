@@ -166,7 +166,8 @@ struct servo_data_s  *servo_data_pt;
 uint8_t     PCA9685_chan_address;
 
     servo_data_pt = &servo_data[servo_no];
-    if (servo_data_pt->state != DISABLED) {
+    if ((servo_data_pt->state != DISABLED) && (servo_data_pt->sync == false)) {
+
         servo_data_pt->angle = angle;               // log requested angle
         
         pulse_change = ((abs(angle) * COUNT_1mS)/MAX_ANGLE);
