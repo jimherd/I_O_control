@@ -45,6 +45,7 @@ TaskHandle_t        taskhndl_Task_uart;
 TaskHandle_t        taskhndl_Task_blink;
 TaskHandle_t        taskhndl_Task_run_cmd;
 TaskHandle_t        taskhndl_Task_servo_control;
+TaskHandle_t        taskhndl_Task_stepper_control;
 
 QueueHandle_t       queue_print_string_buffers;
 QueueHandle_t       queue_free_buffers;
@@ -59,6 +60,7 @@ void init_system_data(void)
 {
 
 }
+
 //==============================================================================
 /**
  * @brief   Initialise datastore, some hardware, and FreeRTOS elements
@@ -116,6 +118,14 @@ int main()
                 NULL,
                 TASK_PRIORITYNORMAL,
                 &taskhndl_Task_servo_control
+    );
+
+    xTaskCreate(Task_stepper_control,
+                "Stepper_motor_control_task",
+                configMINIMAL_STACK_SIZE,
+                NULL,
+                TASK_PRIORITYNORMAL,
+                &taskhndl_Task_stepper_control
     );
 
     queue_print_string_buffers = xQueueCreate(NOS_PRINT_STRING_BUFFERS+1, sizeof(uint32_t));

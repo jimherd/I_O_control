@@ -82,6 +82,30 @@ enum {UPPER_CASE, LOWER_CASE};
 #define I2C_SCL     GP9
 
 //==============================================================================
+//stepper motor interface (A4988)
+
+#define     NOS_STEPPERS        1
+
+#define     MAX_STEPS           500
+
+#define     A4988_STEP          GP10
+#define     A4988_DIRECTION     GP11
+#define     LIMIT_SWITCH_1      GP12
+#define     LIMIT_SWITCH_2      GP13
+
+enum {CLOCKWISE, ANTI_CLOCKWISE};
+
+struct stepper_data_s {
+    bool        enable;
+    int32_t     current_step_count;
+    int32_t     target_step_count;
+    int32_t     init_step_count;
+    int32_t     current_step_delay;
+    int32_t     coast_step_delay;
+    bool        flip_direction;
+};
+
+//==============================================================================
 // Freertos
 
 #define     TASK_SERVO_CONTROL_FREQUENCY                 10  // Hz
@@ -137,7 +161,7 @@ enum {UPPER_CASE, LOWER_CASE};
 // 
 
 typedef enum {
-    TASK_UART, TASK_RUN_CMD, TASK_SERVO_CONTROL, TASK_BLINK
+    TASK_UART, TASK_RUN_CMD, TASK_SERVO_CONTROL, TASK_STEPPER_CONTROL, TASK_BLINK
 } task_et;
 
 #define     NOS_TASKS   (TASK_BLINK + 1)
@@ -169,6 +193,7 @@ typedef enum  {
     BAD_BASE_PARAMETER  = -106,
     PARAMETER_OUTWITH_LIMITS = -107,
     BAD_SERVO_COMMAND   = -108,
+    STEPPER_CALIBRATE_FAIL = -109,
 } error_codes_te;
 
 #define UNDEFINED_PORT  -1
@@ -222,6 +247,7 @@ extern void Task_UART(void *p);
 extern void Task_blink(void *p);
 extern void Task_run_cmd(void *p);
 extern void Task_servo_control(void *p);
+extern void Task_stepper_control(void *p);
 
 extern QueueHandle_t       queue_print_string_buffers;
 extern QueueHandle_t       queue_free_buffers;

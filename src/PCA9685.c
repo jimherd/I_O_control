@@ -166,7 +166,7 @@ struct servo_data_s  *servo_data_pt;
 uint8_t     PCA9685_chan_address;
 
     servo_data_pt = &servo_data[servo_no];
-    if ((servo_data_pt->state != DISABLED) && (servo_data_pt->sync == false)) {
+    if (servo_data_pt->state != DISABLED) {
 
         servo_data_pt->angle = angle;               // log requested angle
         

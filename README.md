@@ -11,7 +11,7 @@ Add RP2040 Pico board to manage head hardware
 * Servo motor control
     - 16 channel Adafruit PCA9685 board
 * Stepper motor control
-    - A4899 stepper motor board
+    - A4988 stepper motor board
 
 ### Tools
 

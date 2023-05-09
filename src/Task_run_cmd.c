@@ -113,7 +113,7 @@ bool           reply_done;
                 break;
             case TOKENIZER_SYNC: 
                 for( int32_t i=0; i<NOS_SERVOS; i++) {
-                    servo_pt = &servo_data[0];
+                    servo_pt = &servo_data[i];
                     servo_pt->sync = false;
                 }
                 break;

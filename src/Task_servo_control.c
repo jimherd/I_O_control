@@ -57,11 +57,15 @@ servo_states_te      RC_state;
                     break;
                 case MOVE :
                     PCA9685_set_servo(i, servo_data[i].angle);
-                    servo_data[i].state = DORMANT;
+                    if (servo_data[i].sync != true) {
+                        servo_data[i].state = DORMANT;
+                    }
                     break;
                 case TIMED_MOVE :
                     if (servo_data[i].counter == servo_data[i].t_end) {
-                        servo_data[i].state = DORMANT;
+                        if (servo_data[i].sync != true) {
+                            servo_data[i].state = DORMANT;
+                        }
                     } else {
                         angle = (int32_t)(servo_data[i].gradient * (float)servo_data[i].counter) + servo_data[i].y_intercept;
                         PCA9685_set_servo(i, angle);

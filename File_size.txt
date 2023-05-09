@@ -1039,3 +1039,57 @@
 07/05/2023 
       text       data        bss      total filename
      34876       4988      78536     118400 Pi_the_Robot.elf
+08/05/2023 
+      text       data        bss      total filename
+     34892       4988      78536     118416 Pi_the_Robot.elf
+08/05/2023 
+      text       data        bss      total filename
+     34876       4988      78536     118400 Pi_the_Robot.elf
+08/05/2023 
+      text       data        bss      total filename
+     34908       4988      78536     118432 Pi_the_Robot.elf
+09/05/2023 
+      text       data        bss      total filename
+     34908       4988      78536     118432 Pi_the_Robot.elf
+09/05/2023 
+      text       data        bss      total filename
+     35004       5012      78536     118552 Pi_the_Robot.elf
+09/05/2023 
+      text       data        bss      total filename
+     35164       5020      78560     118744 Pi_the_Robot.elf
+09/05/2023 
+      text       data        bss      total filename
+     35148       5020      78560     118728 Pi_the_Robot.elf
+09/05/2023 
+      text       data        bss      total filename
+     35196       5044      78592     118832 Pi_the_Robot.elf
+09/05/2023 
+      text       data        bss      total filename
+     35196       5044      78592     118832 Pi_the_Robot.elf
+09/05/2023 
+      text       data        bss      total filename
+     35196       5044      78592     118832 Pi_the_Robot.elf
+09/05/2023 
+      text       data        bss      total filename
+     35196       5044      78592     118832 Pi_the_Robot.elf
+09/05/2023 
+      text       data        bss      total filename
+     35308       5044      78592     118944 Pi_the_Robot.elf
+09/05/2023 
+      text       data        bss      total filename
+     35308       5044      78592     118944 Pi_the_Robot.elf
+09/05/2023 
+      text       data        bss      total filename
+     35308       5044      78592     118944 Pi_the_Robot.elf
+09/05/2023 
+      text       data        bss      total filename
+     35308       5044      78592     118944 Pi_the_Robot.elf
+09/05/2023 
+      text       data        bss      total filename
+     35308       5044      78592     118944 Pi_the_Robot.elf
+10/05/2023 
+      text       data        bss      total filename
+     35308       5044      78592     118944 Pi_the_Robot.elf
+10/05/2023 
+      text       data        bss      total filename
+     35308       5044      78592     118944 Pi_the_Robot.elf
