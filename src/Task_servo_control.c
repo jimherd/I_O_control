@@ -33,7 +33,7 @@ servo_states_te      RC_state;
             servo_data[i].state = DISABLED;
     }
 
-    set_servo_move(0, MOVE, +42, false);
+    set_servo_move(0, MOVE, 0, false);
     
     sample_count = 0;
     xLastWakeTime = xTaskGetTickCount ();

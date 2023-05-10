@@ -13,17 +13,12 @@
 
 #include "FreeRTOS.h"
 
-// struct stepper_data_s {
-//     bool        enable;
-//     int32_t     current_step_count;
-//     int32_t     target_step_count;
-//     int32_t     init_step_count;
-//     int32_t     current_step_delay;
-//     int32_t     coast_step_delay;
-//     bool        flip_direction;
-// };
+//==============================================================================
+// Global data
+//==============================================================================
 
 struct stepper_data_s     stepper_data[NOS_STEPPERS] = {
+    {false, GP10, GP11, false, 50, 10},
 };
 
 error_codes_te calibrate_stepper(void);
@@ -33,6 +28,8 @@ void do_step(uint32_t stepper_id);
 struct repeating_timer timer;
 
 //==============================================================================
+//==============================================================================
+// Interrupt routines
 /**
  * @brief regular timer interrupt to manage stepper motors
  * 
@@ -49,11 +46,14 @@ bool repeating_timer_callback(struct repeating_timer *t)
 }
 
 //==============================================================================
+//==============================================================================
 // Task code
 
 void Task_stepper_control(void *p) {
 
     A4988_interface_init();
+
+    calibrate_stepper();
 
     add_repeating_timer_us(1000, repeating_timer_callback, NULL, &timer);
     FOREVER {
@@ -62,6 +62,8 @@ void Task_stepper_control(void *p) {
 }
 
 //==============================================================================
+//==============================================================================
+// Functions
 /**
  * @brief   RE-calibrate stepper to compensate for lost steps
  * 
@@ -83,9 +85,9 @@ error_codes_te  status;
     status = STEPPER_CALIBRATE_FAIL;
     for (uint32_t i = 0 ; i < NOS_STEPPERS ; i++) {
         gpio_put(A4988_DIRECTION, ANTI_CLOCKWISE);
-        for (uint32_t j=0 ; j < MAX_STEPS ; j++) {
+        for (uint32_t j=0 ; j < MAX_STEPS ; j++) {  
             do_step(i);
-            if (gpio_get(LIMIT_SWITCH_1 == 1)) {
+            if (gpio_get(LIMIT_SWITCH_1 == ON)) {
                 status = OK;    // found origin point
                 break;
             }
@@ -97,13 +99,16 @@ error_codes_te  status;
 //==============================================================================
 void A4988_interface_init(void)
 {
-    gpio_init(A4988_STEP);
-    gpio_set_dir(A4988_STEP, GPIO_OUT);
-    gpio_pull_down(A4988_STEP); 
+    for (uint32_t i=0 ; i < NOS_STEPPERS ; i++) {
 
-    gpio_init(A4988_DIRECTION);
-    gpio_set_dir(A4988_DIRECTION, GPIO_OUT);
-    gpio_pull_down(A4988_DIRECTION); 
+        gpio_init(stepper_data[i].step_pin);
+        gpio_set_dir(stepper_data[i].step_pin, GPIO_OUT);
+        gpio_pull_down(stepper_data[i].step_pin); 
+
+        gpio_init(stepper_data[i].direction_pin);
+        gpio_set_dir(stepper_data[i].direction_pin, GPIO_OUT);
+        gpio_pull_down(stepper_data[i].direction_pin); 
+    }
 
     gpio_init(LIMIT_SWITCH_1);
     gpio_set_dir(LIMIT_SWITCH_1, GPIO_IN);
@@ -117,8 +122,8 @@ void A4988_interface_init(void)
 //==============================================================================
 void do_step(uint32_t stepper_id)
 {
-    gpio_put(A4988_STEP, 1);
-    busy_wait_at_least_cycles(250);  // 2uS with a 125MHz clock
-    gpio_put(A4988_STEP, 0);
-    vTaskDelay(20000);
+    gpio_put(stepper_data[stepper_id].step_pin, ON);
+    busy_wait_us(25); 
+    gpio_put(stepper_data[stepper_id].step_pin, OFF);
+    vTaskDelay(10);
 }

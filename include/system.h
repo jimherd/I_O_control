@@ -95,15 +95,22 @@ enum {UPPER_CASE, LOWER_CASE};
 
 enum {CLOCKWISE, ANTI_CLOCKWISE};
 
+enum {OFF, ON};
+
 struct stepper_data_s {
     bool        enable;
+    uint32_t    step_pin, direction_pin;
+    bool        flip_direction;
+    int32_t     init_step_count;
+    int32_t     coast_step_delay;
+
     int32_t     current_step_count;
     int32_t     target_step_count;
-    int32_t     init_step_count;
+    
     int32_t     current_step_delay;
-    int32_t     coast_step_delay;
-    bool        flip_direction;
 };
+
+
 
 //==============================================================================
 // Freertos
@@ -229,7 +236,6 @@ enum {
 };
 
 #define NOS_COMMANDS   (TOKENIZER_ERROR + 1)
-
 
 //==============================================================================
 // Extern references
