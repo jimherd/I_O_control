@@ -62,4 +62,30 @@ struct error_list_s errors[] = {
     {BAD_PORT_NUMBER,    "Bad PORT number"},
     {BAD_NOS_PARAMETERS, "Wrong number of parameters"},
     {BAD_BASE_PARAMETER, "printf int base not 10 or 16"},
+    {PARAMETER_OUTWITH_LIMITS, "A parameter is outwith its limits"},
+    {BAD_SERVO_COMMAND,  "unknown servo command"},
+    {STEPPER_CALIBRATE_FAIL, "Stepper motor calibration has failed"},
+    {BAD_STEPPER_COMMAND,  "unknown stepper motor  command"},
+};
+
+//***************************************************************************
+// set of trapezoidal profiles for stepper motor moves
+
+ struct sm_seq_s  sequences[NOS_PROFILES] = {
+    {7, {{ACCEL,12,1},{ACCEL,9,1},{ACCEL,6,1,},    // fast speed
+     {COAST,3,-1},
+     {DECEL,6,1},{DECEL<9,1},{DECEL,12,1}}},
+ };
+
+//***************************************************************************
+// General command limits : tested with "check_command" function
+// Specific limits may be tested in the command execution code
+
+struct command_limits_s    cmd_limits[NOS_COMMANDS] = {
+    [0].p_limits = {{5, 6}, {0, 63}, {0, 5}, {0, 15}, {-90, +90}, {1, 1000}},   // servo
+    [1].p_limits = {{5, 6}, {0, 63}, {0,0}, {0, 0}, {-333, +333}},              // stepper
+    [2].p_limits = {{2, 2}, {0, 63}, {0,0}},                         // sync
+    [3].p_limits = {{0, 0}, {0,  0}, {0,0}},                         // config
+    [4].p_limits = {{0, 0}, {0,  0}, {0,0}},                         // info
+    [5].p_limits = {{3, 3}, {0, 63}, {-255, +255}},                  // ping,
 };

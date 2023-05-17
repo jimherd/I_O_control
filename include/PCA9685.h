@@ -36,7 +36,7 @@ enum {R_EYEBALL, L_EYEBALL, R_EYE_LID, L_EYE_LID, R_EYE_BROW, L_EYE_BROW, MOUTH}
 #define		NOS_SERVOS	(MOUTH + 1)
 
 //==============================================================================
-// UART commands
+// servo commands
 
 typedef enum {ABS_MOVE, ABS_MOVE_SYNC, SPEED_MOVE, SPEED_MOVE_SYNC, RUN_SYNC_MOVES, T_DELAY, STOP, STOP_ALL} servo_commands_te;
 

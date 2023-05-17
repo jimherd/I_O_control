@@ -7,7 +7,6 @@
 #ifndef __SYSTEM_H__
 #define __SYSTEM_H__
 
-#include    "system.h"
 #include    "PCA9685.h"
 
 #include    "pico/stdlib.h"
@@ -85,6 +84,8 @@ enum {UPPER_CASE, LOWER_CASE};
 //stepper motor interface (A4988)
 
 #define     NOS_STEPPERS        1
+#define     MAX_ST_STEP_CMDS   16
+#define     ST_SEQUENCES        8
 
 #define     MAX_STEPS           500
 
@@ -93,24 +94,46 @@ enum {UPPER_CASE, LOWER_CASE};
 #define     LIMIT_SWITCH_1      GP12
 #define     LIMIT_SWITCH_2      GP13
 
+#define     NOS_PROFILES        5
+#define     NO_PROFILE          -1
+
 enum {CLOCKWISE, ANTI_CLOCKWISE};
 
 enum {OFF, ON};
 
-struct stepper_data_s {
-    bool        enable;
-    uint32_t    step_pin, direction_pin;
-    bool        flip_direction;
-    int32_t     init_step_count;
-    int32_t     coast_step_delay;
+typedef enum {STEPPER_MOVE, CALIBRATE} stepper_commands_te;
+typedef enum {M_DORMANT, M_INIT, M_RUNNING} profile_exec_state_te;
+typedef enum {ACCEL, COAST, DECEL} profile_state_et;
 
-    int32_t     current_step_count;
-    int32_t     target_step_count;
-    
-    int32_t     current_step_delay;
+struct stepper_data_s {
+  // config data
+    uint32_t    step_pin, direction_pin;
+    bool        flip_direction;     // default is +ve for clockwise
+    int32_t     init_step_count;    // initial position from origin
+  // dynamic data
+    int32_t     sequence_index;     // index of trapezoidal profile
+    int32_t     cmd_index;          // points to current command
+    int32_t     coast_step_count;   // profiles always have this set to 0
+    profile_exec_state_te   state;
+    int32_t     current_step_count; // from origin point
+    int32_t     target_step_count;  // from command
+    int32_t     current_step_delay, current_step_delay_count;
 };
 
+struct sm_step_cmd_s {      // single step motor command
+    profile_state_et    profile_state;
+    int32_t             count;
+    uint32_t            delta_time;
+};
 
+struct sm_seq_s {      // single stepper motor seqence
+    uint32_t    nos_cmds;
+    struct      sm_step_cmd_s  cmds[MAX_ST_STEP_CMDS];
+};
+
+// struct stepper_data_s     stepper_data[NOS_STEPPERS] = {
+//     {GP10, GP11, false, 160, NO_PROFILE, 0, 0, M_DORMANT},
+// };
 
 //==============================================================================
 // Freertos
@@ -190,17 +213,18 @@ struct task_data_s {
 };
 
 typedef enum  {
-    OK                  = 0,
-    LETTER_ERROR        = -100,
-    DOT_ERROR           = -101,
-    PLUSMINUS_ERROR     = -102,
-    BAD_COMMAND         = -103,
-    BAD_PORT_NUMBER     = -104,
-    BAD_NOS_PARAMETERS  = -105,
-    BAD_BASE_PARAMETER  = -106,
+    OK                      = 0,
+    LETTER_ERROR            = -100,
+    DOT_ERROR               = -101,
+    PLUSMINUS_ERROR         = -102,
+    BAD_COMMAND             = -103,
+    BAD_PORT_NUMBER         = -104,
+    BAD_NOS_PARAMETERS      = -105,
+    BAD_BASE_PARAMETER      = -106,
     PARAMETER_OUTWITH_LIMITS = -107,
-    BAD_SERVO_COMMAND   = -108,
-    STEPPER_CALIBRATE_FAIL = -109,
+    BAD_SERVO_COMMAND       = -108,
+    STEPPER_CALIBRATE_FAIL  = -109,
+    BAD_STEPPER_COMMAND     = -110,
 } error_codes_te;
 
 #define UNDEFINED_PORT  -1
@@ -270,6 +294,8 @@ extern const uint8_t char_type[256];
 extern struct servo_data_s     servo_data[NOS_SERVOS];
 
 extern struct token_list_s commands[NOS_COMMANDS];
+
+
 
 
 #endif /* __SYSTEM_H__ */

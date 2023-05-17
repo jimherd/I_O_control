@@ -6,19 +6,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "FreeRTOS.h"
+
+#include "pico/stdlib.h"
+#include "pico/binary_info.h"
+
+#include "externs.h"
 #include "system.h"
 #include "uart_IO.h"
 #include "string_IO.h"
 #include "sys_routines.h"
 #include "PCA9685.h"
 #include "tokenizer.h"
-
 #include  "Pico_IO.h"
 
-#include "pico/stdlib.h"
-#include "pico/binary_info.h"
-
-#include "FreeRTOS.h"
+//***************************************************************************
+// Function prototypes
 
 int32_t parse_command (void);
 int32_t convert_tokens(void);
@@ -34,19 +37,6 @@ int32_t     int_parameters[MAX_ARGC];
 float       float_parameters[MAX_ARGC];
 
 //***************************************************************************
-// General command limits : tested with "check_command" function
-// Specific limits may be tested in the command execution code
-
-struct command_limits_s    cmd_limits[NOS_COMMANDS] = {
-    [0].p_limits = {{5, 6}, {0, 63}, {0, 5}, {0, 15}, {-90, +90}, {1, 1000}},   // servo
-    [1].p_limits = {{0, 0}, {0,  0}, {0,0}},                         // stepper,
-    [2].p_limits = {{2, 2}, {0, 63}, {0,0}},                         // sync,
-    [3].p_limits = {{0, 0}, {0,  0}, {0,0}},                         // config
-    [4].p_limits = {{0, 0}, {0,  0}, {0,0}},                         // info
-    [5].p_limits = {{3, 3}, {0, 63}, {-255, +255}},                  // ping,
-};
-
-//***************************************************************************
 // Get, parse, and execute UART received command
 
 void Task_run_cmd(void *p) 
@@ -55,6 +45,7 @@ struct servo_data_s *servo_pt;
 error_codes_te status;
 static int32_t token;
 bool           reply_done;
+int32_t sm_number;
 
     status = OK;
     FOREVER {
@@ -110,6 +101,17 @@ bool           reply_done;
                 reply_done = true;
                 break;
             case TOKENIZER_STEPPER: 
+                switch (int_parameters[2]) {
+                    case STEPPER_MOVE : 
+                        sm_number = int_parameters[4];
+                        stepper_data[sm_number].sequence_index = sm_number;
+                        break;
+                    case CALIBRATE :
+                        break;
+                    default:
+                        status = BAD_STEPPER_COMMAND;
+                        break;
+                }
                 break;
             case TOKENIZER_SYNC: 
                 for( int32_t i=0; i<NOS_SERVOS; i++) {
@@ -275,3 +277,19 @@ uint32_t i;
     }
     return status;
 }
+
+//==============================================================================
+// Archive : delete after system tests
+//
+// //***************************************************************************
+// // General command limits : tested with "check_command" function
+// // Specific limits may be tested in the command execution code
+
+// struct command_limits_s    cmd_limits[NOS_COMMANDS] = {
+//     [0].p_limits = {{5, 6}, {0, 63}, {0, 5}, {0, 15}, {-90, +90}, {1, 1000}},   // servo
+//     [1].p_limits = {{5, 6}, {0, 63}, {0,0}, {0, 0}, {-333, +333}},              // stepper
+//     [2].p_limits = {{2, 2}, {0, 63}, {0,0}},                         // sync
+//     [3].p_limits = {{0, 0}, {0,  0}, {0,0}},                         // config
+//     [4].p_limits = {{0, 0}, {0,  0}, {0,0}},                         // info
+//     [5].p_limits = {{3, 3}, {0, 63}, {-255, +255}},                  // ping,
+// };
