@@ -103,8 +103,9 @@ int32_t sm_number;
             case TOKENIZER_STEPPER: 
                 switch (int_parameters[2]) {
                     case STEPPER_MOVE : 
-                        sm_number = int_parameters[4];
+                        sm_number = int_parameters[5];
                         stepper_data[sm_number].sequence_index = sm_number;
+                        stepper_data[sm_number].coast_step_count = int_parameters[4] - (sequences[sm_number].nos_cmds - 1);
                         break;
                     case CALIBRATE :
                         break;

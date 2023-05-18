@@ -33,12 +33,6 @@ char print_string_buffers[NOS_PRINT_STRING_BUFFERS][MAX_PRINT_STRING_LENGTH];
 
 struct task_data_s  task_data[NOS_TASKS];
 
-// Hardware
-
-const uint LED_PIN = PICO_DEFAULT_LED_PIN;
-const uint LOG_PIN = GP2;
-const uint BLINK_PIN = LED_PIN;
-
 // FreeRTOS components handles
 
 TaskHandle_t        taskhndl_Task_uart;

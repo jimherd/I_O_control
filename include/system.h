@@ -81,6 +81,13 @@ enum {UPPER_CASE, LOWER_CASE};
 #define I2C_SCL     GP9
 
 //==============================================================================
+// log and blink pins
+
+#define LED_PIN     PICO_DEFAULT_LED_PIN
+#define LOG_PIN     GP2
+#define BLINK_PIN   LED_PIN
+
+//==============================================================================
 //stepper motor interface (A4988)
 
 #define     NOS_STEPPERS        1
@@ -264,12 +271,6 @@ enum {
 //==============================================================================
 // Extern references
 //==============================================================================
-
-// Hardware
-
-extern const uint LED_PIN;
-extern const uint LOG_PIN;
-extern const uint BLINK_PIN;
 
 // FreeRTOS components
 
