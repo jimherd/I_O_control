@@ -5,6 +5,7 @@
 //
 
 #include "system.h"
+#include "externs.h"
 #include "sys_routines.h"
 #include "uart_IO.h"
 

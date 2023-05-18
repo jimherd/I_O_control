@@ -110,7 +110,7 @@ enum {OFF, ON};
 
 typedef enum {STEPPER_MOVE, CALIBRATE} stepper_commands_te;
 typedef enum {M_DORMANT, M_INIT, M_RUNNING} profile_exec_state_te;
-typedef enum {ACCEL, COAST, DECEL} profile_state_et;
+typedef enum {ACCEL, COAST, DECEL, SKIP} profile_state_et;
 
 struct stepper_data_s {
   // config data
@@ -268,35 +268,23 @@ enum {
 
 #define NOS_COMMANDS   (TOKENIZER_ERROR + 1)
 
-//==============================================================================
-// Extern references
-//==============================================================================
+#endif /* __SYSTEM_H__ */
 
-// FreeRTOS components
+// archive : delete later
+// // FreeRTOS components
 
-extern void Task_UART(void *p);
-extern void Task_blink(void *p);
-extern void Task_run_cmd(void *p);
-extern void Task_servo_control(void *p);
-extern void Task_stepper_control(void *p);
-
-extern QueueHandle_t       queue_print_string_buffers;
-extern QueueHandle_t       queue_free_buffers;
-
-extern EventGroupHandle_t eventgroup_uart_IO;
+// extern void Task_UART(void *p);
+// extern void Task_blink(void *p);
+// extern void Task_run_cmd(void *p);
+// extern void Task_servo_control(void *p);
+// extern void Task_stepper_control(void *p);
+// extern QueueHandle_t       queue_print_string_buffers;
+// extern QueueHandle_t       queue_free_buffers;
+// extern EventGroupHandle_t eventgroup_uart_IO;
 
 // data structures
-
-extern char print_string_buffers[NOS_PRINT_STRING_BUFFERS][MAX_PRINT_STRING_LENGTH];
-extern struct task_data_s  task_data[NOS_TASKS];
-
-extern const uint8_t char_type[256];
-
-extern struct servo_data_s     servo_data[NOS_SERVOS];
-
-extern struct token_list_s commands[NOS_COMMANDS];
-
-
-
-
-#endif /* __SYSTEM_H__ */
+// extern char print_string_buffers[NOS_PRINT_STRING_BUFFERS][MAX_PRINT_STRING_LENGTH];
+// extern struct task_data_s  task_data[NOS_TASKS];
+// extern const uint8_t char_type[256];
+// extern struct servo_data_s     servo_data[NOS_SERVOS];
+// extern struct token_list_s commands[NOS_COMMANDS];

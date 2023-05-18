@@ -7,6 +7,7 @@
 #include <stdlib.h>
 
 #include "system.h"
+#include "externs.h"
 #include "uart_IO.h"
 #include "sys_routines.h"
 #include "PCA9685.h"

@@ -5,6 +5,8 @@
 #include    <stdio.h>
 #include    <string.h>
 #include    <stdarg.h>
+
+
 #include    "pico/stdlib.h"
 #include    "pico/binary_info.h"
 
@@ -18,6 +20,7 @@
 #include    "queue.h"
 
 #include    "system.h"
+#include    "externs.h"
 #include    "sys_routines.h"
 #include    "uart_IO.h"
 #include    "string_IO.h"
