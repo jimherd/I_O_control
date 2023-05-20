@@ -43,18 +43,29 @@ struct repeating_timer timer;
  */
 bool repeating_timer_callback(struct repeating_timer *t) 
 {
+struct stepper_data_s  *sm_ptr;
+
     for (uint32_t i=0; i<NOS_STEPPERS; i++) {
-        switch (stepper_data[i].state) {
+        sm_ptr = &stepper_data[i];
+        switch (sm_ptr->state) {
             case M_DORMANT:
-                break;
+                break;    // do nothing
             case M_INIT:
+                if (sequences[sm_ptr->sequence_index].cmds[sm_ptr->cmd_index].profile_state  == SM_SKIP) {
+                    sm_ptr->cmd_index++;
+                    break;
+                }
+                if (sequences[sm_ptr->sequence_index].cmds[sm_ptr->cmd_index].profile_state  == SM_END) {
+                    sm_ptr->state = DORMANT;
+                    break;    
+                }
                 //  step_pulse(i);
               //  stepper_data[i].current_step_delay_count = sequences[stepper_data[i].profile_no].cmds[0].delta_time;
-                stepper_data[i].state = M_RUNNING;
+                sm_ptr->state = M_RUNNING;
                 break;
             case M_RUNNING :
-                stepper_data[i].current_step_delay_count--;
-                if (stepper_data[i].current_step_delay_count == 0) {
+                sm_ptr->current_step_delay_count--;
+                if (sm_ptr->step_pin == 0) {
                         // step_pulse
                 }
                 break;

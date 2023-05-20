@@ -110,7 +110,7 @@ enum {OFF, ON};
 
 typedef enum {STEPPER_MOVE, CALIBRATE} stepper_commands_te;
 typedef enum {M_DORMANT, M_INIT, M_RUNNING} profile_exec_state_te;
-typedef enum {ACCEL, COAST, DECEL, SKIP} profile_state_et;
+typedef enum {SM_ACCEL, SM_COAST, SM_DECEL, SM_SKIP, SM_END} profile_state_et;
 
 struct stepper_data_s {
   // config data
