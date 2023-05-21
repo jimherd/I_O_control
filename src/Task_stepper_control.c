@@ -15,18 +15,6 @@
 #include "FreeRTOS.h"
 
 //==============================================================================
-// Glossary for stepper motor subsystem
-//
-//  profile         : sequence of steps, typically a trapezoidal sequence
-//  sm_cmd          : set of steps at a fixed speed (i.e. fixed delay between pulses)
-//                    Consists of a delay value and a step count
-//                    "profile" consists of a list of "sm_cmd"s
-//  sm_cmd_step_cnt : step count in "sm_cmd" command
-//  sm_cmd_delay    : delay in "sm_cmd" command
-//  sm_step         : one step of the stepper motor
-//  sm_delay        : time between stepper motor pulses
-
-//==============================================================================
 // Global data
 //==============================================================================
 
@@ -57,36 +45,56 @@ bool repeating_timer_callback(struct repeating_timer *t)
 {
 struct stepper_data_s  *sm_ptr;
 
+    START_PULSE; busy_wait_us(10); STOP_PULSE;
     for (uint32_t i=0; i<NOS_STEPPERS; i++) {
         sm_ptr = &stepper_data[i];
         switch (sm_ptr->state) {
             case M_DORMANT:
                 break;    // do nothing
             case M_INIT:       // run once ate the begining of a sm_profile move
-                if (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_profile_state  == SM_SKIP) {
+                while (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_profile_state  == SM_SKIP) {
                     sm_ptr->cmd_index++;
-                    break;
                 }
                 if (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_profile_state  == SM_END) {
                     sm_ptr->state = DORMANT;
                     break;    
                 }
-                do_step(i);
-                sm_ptr->current_step_count++;
-                sm_ptr->current_step_delay_count = sequences[sm_ptr->sm_profile].cmds[0].sm_delay;
                 if (sm_ptr->state == SM_COAST) {
                     sm_ptr->current_step_count = sm_ptr->coast_step_count;
                 } else {
                     sm_ptr->current_step_count = sequences[sm_ptr->sm_profile].nos_sm_cmds;
                 }
+                sm_ptr->current_step_delay_count = sequences[sm_ptr->sm_profile].cmds[0].sm_delay;
+                do_step(i);
+                sm_ptr->current_step_count++;
                 sm_ptr->state = M_RUNNING;  // update state
                 break;
 
             case M_RUNNING :
-                sm_ptr->current_step_delay_count--;
-                if (sm_ptr->step_pin == 0) {
-                        // step_pulse
+            // Check if active delay is complete
+                if (sm_ptr->current_step_delay_count != 0) {
+                    sm_ptr->current_step_delay_count--;    
+                    break;   // delay time incomplete so wait for next clock interrupt
                 }
+            // implement next command
+            // jump over any SKIP (NOOP) commands
+                while (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_profile_state  == SM_SKIP) {
+                    sm_ptr->cmd_index++;
+                }
+            // check for end of profile execution
+                if (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_profile_state  == SM_END) {
+                    sm_ptr->state = DORMANT;   // stepper motor move complete
+                    break;    
+                }
+            // implement new command
+                if (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_profile_state == SM_COAST) {
+                    sm_ptr->current_step_count = sm_ptr->coast_step_count;
+                } else {
+                    sm_ptr->current_step_count = sequences[sm_ptr->sm_profile].nos_sm_cmds;
+                }
+                sm_ptr->current_step_delay_count = sequences[sm_ptr->sm_profile].cmds[0].sm_delay;
+                do_step(i);
+                sm_ptr->current_step_count++;
                 break;
             }
         }

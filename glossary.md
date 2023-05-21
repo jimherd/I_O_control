@@ -2,7 +2,7 @@
 ## Stepper motor subsystem ##
 
 |Name|Description|
-|--|--|
+|---|---|
 |profile |  sequence of steps, typically a trapezoidal sequence |
 | sm_cmd |set of steps at a fixed speed (i.e. fixed delay between pulses)|
 | | Consists of a delay value and a step count |
