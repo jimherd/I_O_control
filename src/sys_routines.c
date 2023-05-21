@@ -28,22 +28,22 @@
  */
 void update_task_execution_time(task_et task, uint32_t start_time, uint32_t end_time) 
 {
-uint32_t delta_time;
+uint32_t sm_delay;
 
     if (end_time > start_time) {
-        delta_time = end_time - start_time;
+        sm_delay = end_time - start_time;
     } else {
-        delta_time = (UINT32_MAX - start_time) + end_time + 1;
+        sm_delay = (UINT32_MAX - start_time) + end_time + 1;
     }
 
-    task_data[task].last_exec_time = delta_time;
+    task_data[task].last_exec_time = sm_delay;
 
-    if (delta_time < task_data[task].lowest_exec_time) {
-        task_data[task].lowest_exec_time = delta_time;
+    if (sm_delay < task_data[task].lowest_exec_time) {
+        task_data[task].lowest_exec_time = sm_delay;
     }
     
-    if (delta_time > task_data[task].highest_exec_time) {
-        task_data[task].highest_exec_time = delta_time;
+    if (sm_delay > task_data[task].highest_exec_time) {
+        task_data[task].highest_exec_time = sm_delay;
     }
 }
 

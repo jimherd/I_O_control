@@ -69,9 +69,9 @@ struct error_list_s errors[] = {
 };
 
 //***************************************************************************
-// set of trapezoidal profiles for stepper motor moves
+// set of trapezoidal sm_profiles for stepper motor moves
 
- struct sm_seq_s  sequences[NOS_PROFILES] = {
+ struct sm_profile_s  sequences[NOS_PROFILES] = {
     {7, {{SM_ACCEL,12,1},{SM_ACCEL,9,1},{SM_ACCEL,6,1,},    // fast speed
      {SM_COAST,3,-1},
      {SM_DECEL,6,1},{SM_DECEL<9,1},{SM_DECEL,12,1}}},

@@ -104,8 +104,8 @@ int32_t sm_number;
                 switch (int_parameters[2]) {
                     case STEPPER_MOVE : 
                         sm_number = int_parameters[5];
-                        stepper_data[sm_number].sequence_index = sm_number;
-                        stepper_data[sm_number].coast_step_count = abs(int_parameters[4]) - (sequences[sm_number].nos_cmds - 1);
+                        stepper_data[sm_number].sm_profile = sm_number;
+                        stepper_data[sm_number].coast_step_count = abs(int_parameters[4]) - (sequences[sm_number].nos_sm_cmds - 1);
                         stepper_data[sm_number].cmd_index = 0;
                         stepper_data[sm_number].state = M_INIT;
                         break;

@@ -15,6 +15,18 @@
 #include "FreeRTOS.h"
 
 //==============================================================================
+// Glossary for stepper motor subsystem
+//
+//  profile         : sequence of steps, typically a trapezoidal sequence
+//  sm_cmd          : set of steps at a fixed speed (i.e. fixed delay between pulses)
+//                    Consists of a delay value and a step count
+//                    "profile" consists of a list of "sm_cmd"s
+//  sm_cmd_step_cnt : step count in "sm_cmd" command
+//  sm_cmd_delay    : delay in "sm_cmd" command
+//  sm_step         : one step of the stepper motor
+//  sm_delay        : time between stepper motor pulses
+
+//==============================================================================
 // Global data
 //==============================================================================
 
@@ -50,19 +62,26 @@ struct stepper_data_s  *sm_ptr;
         switch (sm_ptr->state) {
             case M_DORMANT:
                 break;    // do nothing
-            case M_INIT:
-                if (sequences[sm_ptr->sequence_index].cmds[sm_ptr->cmd_index].profile_state  == SM_SKIP) {
+            case M_INIT:       // run once ate the begining of a sm_profile move
+                if (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_profile_state  == SM_SKIP) {
                     sm_ptr->cmd_index++;
                     break;
                 }
-                if (sequences[sm_ptr->sequence_index].cmds[sm_ptr->cmd_index].profile_state  == SM_END) {
+                if (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_profile_state  == SM_END) {
                     sm_ptr->state = DORMANT;
                     break;    
                 }
-                //  step_pulse(i);
-              //  stepper_data[i].current_step_delay_count = sequences[stepper_data[i].profile_no].cmds[0].delta_time;
-                sm_ptr->state = M_RUNNING;
+                do_step(i);
+                sm_ptr->current_step_count++;
+                sm_ptr->current_step_delay_count = sequences[sm_ptr->sm_profile].cmds[0].sm_delay;
+                if (sm_ptr->state == SM_COAST) {
+                    sm_ptr->current_step_count = sm_ptr->coast_step_count;
+                } else {
+                    sm_ptr->current_step_count = sequences[sm_ptr->sm_profile].nos_sm_cmds;
+                }
+                sm_ptr->state = M_RUNNING;  // update state
                 break;
+
             case M_RUNNING :
                 sm_ptr->current_step_delay_count--;
                 if (sm_ptr->step_pin == 0) {
@@ -153,7 +172,7 @@ void A4988_interface_init(void)
 /**
  * @brief generate a short single step pulse 
  * 
- * @param stepper_id   index of selected stepper motor move profile
+ * @param stepper_id   index of selected stepper motor move sm_profile
  */
 void inline do_step(uint32_t stepper_id)
 {
@@ -165,7 +184,7 @@ void inline do_step(uint32_t stepper_id)
 //==============================================================================
 // Archive : delete after system tests
 //
-//  struct sm_seq_s  sequences[NOS_PROFILES] = {
+//  struct sm_profile_s  sequences[NOS_PROFILES] = {
 //     {7, {{ACCEL,12,1},{ACCEL,9,1},{ACCEL,6,1,},    // fast speed
 //      {COAST,3,-1},
 //      {DECEL,6,1},{DECEL<9,1},{DECEL,12,1}}},

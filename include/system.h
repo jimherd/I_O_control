@@ -109,8 +109,8 @@ enum {CLOCKWISE, ANTI_CLOCKWISE};
 enum {OFF, ON};
 
 typedef enum {STEPPER_MOVE, CALIBRATE} stepper_commands_te;
-typedef enum {M_DORMANT, M_INIT, M_RUNNING} profile_exec_state_te;
-typedef enum {SM_ACCEL, SM_COAST, SM_DECEL, SM_SKIP, SM_END} profile_state_et;
+typedef enum {M_DORMANT, M_INIT, M_RUNNING} sm_profile_exec_state_te;
+typedef enum {SM_ACCEL, SM_COAST, SM_DECEL, SM_SKIP, SM_END} sm_profile_state_et;
 
 struct stepper_data_s {
   // config data
@@ -118,29 +118,25 @@ struct stepper_data_s {
     bool        flip_direction;     // default is +ve for clockwise
     int32_t     init_step_count;    // initial position from origin
   // dynamic data
-    int32_t     sequence_index;     // index of trapezoidal profile
+    int32_t     sm_profile;             // index of trapezoidal sm_profile
     int32_t     cmd_index;          // points to current command
-    int32_t     coast_step_count;   // profiles always have this set to 0
-    profile_exec_state_te   state;
+    int32_t     coast_step_count;   // sm_profiles always have this set to 0
+    sm_profile_exec_state_te   state;
     int32_t     current_step_count; // from origin point
     int32_t     target_step_count;  // from command
     int32_t     current_step_delay, current_step_delay_count;
 };
 
 struct sm_step_cmd_s {      // single step motor command
-    profile_state_et    profile_state;
-    int32_t             count;
-    uint32_t            delta_time;
+    sm_profile_state_et    sm_profile_state;
+    int32_t                sm_cmd_step_cnt;
+    uint32_t               sm_delay;
 };
 
-struct sm_seq_s {      // single stepper motor seqence
-    uint32_t    nos_cmds;
+struct sm_profile_s {      // single stepper motor seqence
+    uint32_t    nos_sm_cmds;
     struct      sm_step_cmd_s  cmds[MAX_ST_STEP_CMDS];
 };
-
-// struct stepper_data_s     stepper_data[NOS_STEPPERS] = {
-//     {GP10, GP11, false, 160, NO_PROFILE, 0, 0, M_DORMANT},
-// };
 
 //==============================================================================
 // Freertos

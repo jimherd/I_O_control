@@ -30,7 +30,7 @@ extern EventGroupHandle_t eventgroup_uart_IO;
 
 extern struct stepper_data_s        stepper_data[NOS_STEPPERS];
 extern struct command_limits_s      cmd_limits[NOS_COMMANDS];
-extern struct sm_seq_s              sequences[NOS_PROFILES];
+extern struct sm_profile_s              sequences[NOS_PROFILES];
 extern char print_string_buffers[NOS_PRINT_STRING_BUFFERS][MAX_PRINT_STRING_LENGTH];
 extern struct task_data_s           task_data[NOS_TASKS];
 extern const uint8_t                char_type[256];
