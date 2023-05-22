@@ -46,6 +46,7 @@ error_codes_te status;
 static int32_t token;
 bool           reply_done;
 int32_t sm_number;
+int32_t target_step_count;
 
     status = OK;
     FOREVER {
@@ -102,19 +103,27 @@ int32_t sm_number;
                 break;
             case TOKENIZER_STEPPER: 
                 switch (int_parameters[2]) {
-                    case STEPPER_MOVE : 
+                    case SM_REL_MOVE : 
                         sm_number = int_parameters[5];
+                        target_step_count = stepper_data[sm_number].current_step_count + int_parameters[4];
+                        if ((target_step_count < 0) || (target_step_count > stepper_data[sm_number].max_step_travel)) {
+                            status = BAD_STEP_VALUE;
+                            break;
+                        }
+                        stepper_data[sm_number].target_step_count = target_step_count;
                         stepper_data[sm_number].sm_profile = sm_number;
                         stepper_data[sm_number].coast_step_count = abs(int_parameters[4]) - (sequences[sm_number].nos_sm_cmds - 1);
                         stepper_data[sm_number].cmd_index = 0;
                         stepper_data[sm_number].state = M_INIT;
                         break;
-                    case CALIBRATE :
+                    case SM_ABS_MOVE :
                         break;
                     default:
                         status = BAD_STEPPER_COMMAND;
                         break;
                 }
+                print_string("%d %d\n", int_parameters[1], status);
+                reply_done = true;
                 break;
             case TOKENIZER_SYNC: 
                 for( int32_t i=0; i<NOS_SERVOS; i++) {

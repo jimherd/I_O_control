@@ -108,7 +108,7 @@ enum {CLOCKWISE, ANTI_CLOCKWISE};
 
 enum {OFF, ON};
 
-typedef enum {STEPPER_MOVE, CALIBRATE} stepper_commands_te;
+typedef enum {SM_REL_MOVE, SM_ABS_MOVE, SM_REL_MOVE_SYNC, SM_ABS_MOVE_SYNC, SM_CALIBRATE} stepper_commands_te;
 typedef enum {M_DORMANT, M_INIT, M_RUNNING} sm_profile_exec_state_te;
 typedef enum {SM_ACCEL, SM_COAST, SM_DECEL, SM_SKIP, SM_END} sm_profile_state_et;
 
@@ -117,6 +117,7 @@ struct stepper_data_s {
     uint32_t    step_pin, direction_pin;
     bool        flip_direction;     // default is +ve for clockwise
     int32_t     init_step_count;    // initial position from origin
+    int32_t     max_step_travel;
   // dynamic data
     int32_t     sm_profile;             // index of trapezoidal sm_profile
     int32_t     cmd_index;          // points to current command
@@ -228,6 +229,7 @@ typedef enum  {
     BAD_SERVO_COMMAND       = -108,
     STEPPER_CALIBRATE_FAIL  = -109,
     BAD_STEPPER_COMMAND     = -110,
+    BAD_STEP_VALUE          = -111,
 } error_codes_te;
 
 #define UNDEFINED_PORT  -1

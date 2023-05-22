@@ -19,7 +19,7 @@
 //==============================================================================
 
 struct stepper_data_s     stepper_data[NOS_STEPPERS] = {
-    {GP10, GP11, false, 160, NO_PROFILE, 0, 0, M_DORMANT},
+    {GP10, GP11, false, 160, 330, NO_PROFILE, 0, 0, M_DORMANT},
 };
 
 error_codes_te calibrate_stepper(void);
@@ -45,7 +45,7 @@ bool repeating_timer_callback(struct repeating_timer *t)
 {
 struct stepper_data_s  *sm_ptr;
 
-    START_PULSE; busy_wait_us(10); STOP_PULSE;
+    START_PULSE; 
     for (uint32_t i=0; i<NOS_STEPPERS; i++) {
         sm_ptr = &stepper_data[i];
         switch (sm_ptr->state) {
@@ -96,9 +96,10 @@ struct stepper_data_s  *sm_ptr;
                 do_step(i);
                 sm_ptr->current_step_count++;
                 break;
-            }
         }
-    return 0;
+    }
+    STOP_PULSE;
+    return true;
 }
 
 //==============================================================================
