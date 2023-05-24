@@ -27,6 +27,13 @@
 // Complie time configuration
 //==============================================================================
 
+#define     IGNORE_SM_CALIBRATION
+
+//==============================================================================
+// Macros
+//==============================================================================
+#define  FLIP_BOOLEAN(x)   ((x) ^= 1)
+
 //==============================================================================
 // Constants
 //==============================================================================
@@ -39,6 +46,26 @@
 #define     HALF_SECOND      (500/portTICK_PERIOD_MS)
 #define     ONE_SECOND       (1000/portTICK_PERIOD_MS)
 #define     TWO_SECONDS      (2000/portTICK_PERIOD_MS)
+
+//==============================================================================
+// error codes
+typedef enum  {
+    OK                      = 0,
+    LETTER_ERROR            = -100,
+    DOT_ERROR               = -101,
+    PLUSMINUS_ERROR         = -102,
+    BAD_COMMAND             = -103,
+    BAD_PORT_NUMBER         = -104,
+    BAD_NOS_PARAMETERS      = -105,
+    BAD_BASE_PARAMETER      = -106,
+    PARAMETER_OUTWITH_LIMITS = -107,
+    BAD_SERVO_COMMAND       = -108,
+    STEPPER_CALIBRATE_FAIL  = -109,
+    BAD_STEPPER_COMMAND     = -110,
+    BAD_STEP_VALUE          = -111,
+    MOVE_ON_UNCALIBRATED_MOTOR = -112,
+    EXISTING_FAULT_WITH_MOTOR  = -113,
+} error_codes_te;
 
 //==============================================================================
 // Serial comms port (UART)
@@ -104,17 +131,18 @@ enum {UPPER_CASE, LOWER_CASE};
 #define     NOS_PROFILES        5
 #define     NO_PROFILE          -1
 
-enum {CLOCKWISE, ANTI_CLOCKWISE};
+typedef enum {ANTI_CLOCKWISE=0,CLOCKWISE} sm_direction;
 
 enum {OFF, ON};
 
 typedef enum {SM_REL_MOVE, SM_ABS_MOVE, SM_REL_MOVE_SYNC, SM_ABS_MOVE_SYNC, SM_CALIBRATE} stepper_commands_te;
-typedef enum {M_DORMANT, M_INIT, M_RUNNING} sm_profile_exec_state_te;
+typedef enum {M_UNCALIBRATED, M_DORMANT, M_INIT, M_RUNNING, M_FAULT} sm_profile_exec_state_te;
 typedef enum {SM_ACCEL, SM_COAST, SM_DECEL, SM_SKIP, SM_END} sm_profile_state_et;
 
 struct stepper_data_s {
   // config data
     uint32_t    step_pin, direction_pin;
+    sm_direction direction;
     bool        flip_direction;     // default is +ve for clockwise
     int32_t     init_step_count;    // initial position from origin
     int32_t     max_step_travel;
@@ -126,6 +154,7 @@ struct stepper_data_s {
     int32_t     current_step_count; // from origin point
     int32_t     target_step_count;  // from command
     int32_t     current_step_delay, current_step_delay_count;
+    error_codes_te error;     
 };
 
 struct sm_step_cmd_s {      // single step motor command
@@ -216,21 +245,7 @@ struct task_data_s {
     };
 };
 
-typedef enum  {
-    OK                      = 0,
-    LETTER_ERROR            = -100,
-    DOT_ERROR               = -101,
-    PLUSMINUS_ERROR         = -102,
-    BAD_COMMAND             = -103,
-    BAD_PORT_NUMBER         = -104,
-    BAD_NOS_PARAMETERS      = -105,
-    BAD_BASE_PARAMETER      = -106,
-    PARAMETER_OUTWITH_LIMITS = -107,
-    BAD_SERVO_COMMAND       = -108,
-    STEPPER_CALIBRATE_FAIL  = -109,
-    BAD_STEPPER_COMMAND     = -110,
-    BAD_STEP_VALUE          = -111,
-} error_codes_te;
+
 
 #define UNDEFINED_PORT  -1
 

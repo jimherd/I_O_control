@@ -19,7 +19,7 @@
 //==============================================================================
 
 struct stepper_data_s     stepper_data[NOS_STEPPERS] = {
-    {GP10, GP11, false, 160, 330, NO_PROFILE, 0, 0, M_DORMANT},
+    {GP10, GP11, CLOCKWISE, false, 160, 330, NO_PROFILE, 0, 0, M_UNCALIBRATED},
 };
 
 error_codes_te calibrate_stepper(void);
@@ -51,7 +51,7 @@ struct stepper_data_s  *sm_ptr;
         switch (sm_ptr->state) {
             case M_DORMANT:
                 break;    // do nothing
-            case M_INIT:       // run once ate the begining of a sm_profile move
+            case M_INIT:       // run once at the begining of a sm_profile move
                 while (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_profile_state  == SM_SKIP) {
                     sm_ptr->cmd_index++;
                 }
@@ -65,6 +65,7 @@ struct stepper_data_s  *sm_ptr;
                     sm_ptr->current_step_count = sequences[sm_ptr->sm_profile].nos_sm_cmds;
                 }
                 sm_ptr->current_step_delay_count = sequences[sm_ptr->sm_profile].cmds[0].sm_delay;
+                gpio_put(sm_ptr->direction_pin, sm_ptr->direction);
                 do_step(i);
                 sm_ptr->current_step_count++;
                 sm_ptr->state = M_RUNNING;  // update state
@@ -95,6 +96,12 @@ struct stepper_data_s  *sm_ptr;
                 sm_ptr->current_step_delay_count = sequences[sm_ptr->sm_profile].cmds[0].sm_delay;
                 do_step(i);
                 sm_ptr->current_step_count++;
+                break;
+            case M_UNCALIBRATED :
+                sm_ptr->error = MOVE_ON_UNCALIBRATED_MOTOR;
+                break;
+            case M_FAULT :
+                sm_ptr->error = EXISTING_FAULT_WITH_MOTOR;
                 break;
         }
     }

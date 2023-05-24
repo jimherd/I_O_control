@@ -102,9 +102,24 @@ int32_t target_step_count;
                 reply_done = true;
                 break;
             case TOKENIZER_STEPPER: 
+    #ifndef IGNORE_SM_CALIBRATION
+                if (stepper_data[int_parameters[5]].error != OK) {  // ensure motor is not in an error state
+                    status = stepper_data[int_parameters[5]].error;
+                    break;
+                }
+    #endif
                 switch (int_parameters[2]) {
                     case SM_REL_MOVE : 
                         sm_number = int_parameters[5];
+                        if (int_parameters[4] < 0) {
+                            stepper_data[sm_number].direction = ANTI_CLOCKWISE;
+                        } else {
+                            stepper_data[sm_number].direction = CLOCKWISE;
+                        }
+                        if (stepper_data[sm_number].flip_direction == true) {
+                            FLIP_BOOLEAN(stepper_data[sm_number].direction);
+
+                        }
                         target_step_count = stepper_data[sm_number].current_step_count + int_parameters[4];
                         if ((target_step_count < 0) || (target_step_count > stepper_data[sm_number].max_step_travel)) {
                             status = BAD_STEP_VALUE;
