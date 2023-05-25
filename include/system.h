@@ -65,6 +65,7 @@ typedef enum  {
     BAD_STEP_VALUE          = -111,
     MOVE_ON_UNCALIBRATED_MOTOR = -112,
     EXISTING_FAULT_WITH_MOTOR  = -113,
+    SM_MOVE_TOO_SMALL       = -114,
 } error_codes_te;
 
 //==============================================================================
@@ -122,6 +123,7 @@ enum {UPPER_CASE, LOWER_CASE};
 #define     ST_SEQUENCES        8
 
 #define     MAX_STEPS           500
+#define     MIN_STEP_MOVE       4    // ignore very small stepper motor moves
 
 #define     A4988_STEP          GP10
 #define     A4988_DIRECTION     GP11
@@ -147,10 +149,12 @@ struct stepper_data_s {
     int32_t     init_step_count;    // initial position from origin
     int32_t     max_step_travel;
   // dynamic data
+    sm_profile_exec_state_te   state;
     int32_t     sm_profile;             // index of trapezoidal sm_profile
     int32_t     cmd_index;          // points to current command
+    int32_t     cmd_step_cnt;       // number of steps at a fixed speed
     int32_t     coast_step_count;   // sm_profiles always have this set to 0
-    sm_profile_exec_state_te   state;
+
     int32_t     current_step_count; // from origin point
     int32_t     target_step_count;  // from command
     int32_t     current_step_delay, current_step_delay_count;

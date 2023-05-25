@@ -111,6 +111,10 @@ int32_t target_step_count;
                 switch (int_parameters[2]) {
                     case SM_REL_MOVE : 
                         sm_number = int_parameters[5];
+                        if (abs(int_parameters[4]) < MIN_STEP_MOVE ) {
+                            status = SM_MOVE_TOO_SMALL;
+                            break;
+                        }
                         if (int_parameters[4] < 0) {
                             stepper_data[sm_number].direction = ANTI_CLOCKWISE;
                         } else {

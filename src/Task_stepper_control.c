@@ -19,7 +19,7 @@
 //==============================================================================
 
 struct stepper_data_s     stepper_data[NOS_STEPPERS] = {
-    {GP10, GP11, CLOCKWISE, false, 160, 330, NO_PROFILE, 0, 0, M_UNCALIBRATED},
+    {GP10, GP11, CLOCKWISE, false, 160, 330, M_DORMANT}
 };
 
 error_codes_te calibrate_stepper(void);
@@ -197,11 +197,3 @@ void inline do_step(uint32_t stepper_id)
     gpio_put(stepper_data[stepper_id].step_pin, OFF);
 }
 
-//==============================================================================
-// Archive : delete after system tests
-//
-//  struct sm_profile_s  sequences[NOS_PROFILES] = {
-//     {7, {{ACCEL,12,1},{ACCEL,9,1},{ACCEL,6,1,},    // fast speed
-//      {COAST,3,-1},
-//      {DECEL,6,1},{DECEL<9,1},{DECEL,12,1}}},
-//  };

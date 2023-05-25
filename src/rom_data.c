@@ -72,10 +72,13 @@ struct error_list_s errors[] = {
 // set of trapezoidal sm_profiles for stepper motor moves
 
  struct sm_profile_s  sequences[NOS_PROFILES] = {
-    {7, {{SM_ACCEL,12,1},{SM_ACCEL,9,1},{SM_ACCEL,6,1,},    // fast speed
-     {SM_COAST,3,-1},
-     {SM_DECEL,6,1},{SM_DECEL<9,1},{SM_DECEL,12,1}}},
-     {SM_END}
+    { 7,
+        {   {SM_ACCEL,1,12},{SM_ACCEL,1,9},{SM_ACCEL,1,6,},    // fast speed
+            {SM_COAST,1,3},
+            {SM_DECEL,1,6},{SM_DECEL,1,9},{SM_DECEL,1,12},
+            {SM_END,0,0},
+        }
+    }
  };
 
 //***************************************************************************
