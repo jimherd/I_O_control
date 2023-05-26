@@ -19,7 +19,7 @@
 //==============================================================================
 
 struct stepper_data_s     stepper_data[NOS_STEPPERS] = {
-    {GP10, GP11, CLOCKWISE, false, 160, 330, M_DORMANT}
+    {GP10, GP11, CLOCKWISE, false, 160, 330, M_DORMANT,0,0,0,0,0,0,0,0,OK}
 };
 
 error_codes_te calibrate_stepper(void);
@@ -64,20 +64,17 @@ struct stepper_data_s  *sm_ptr;
                 } else {
                     sm_ptr->current_step_count = sequences[sm_ptr->sm_profile].nos_sm_cmds;
                 }
-                sm_ptr->current_step_delay_count = sequences[sm_ptr->sm_profile].cmds[0].sm_delay;
                 gpio_put(sm_ptr->direction_pin, sm_ptr->direction);
-                do_step(i);
-                sm_ptr->current_step_count++;
                 sm_ptr->state = M_RUNNING;  // update state
                 break;
 
             case M_RUNNING :
             // Check if active delay is complete
                 if (sm_ptr->current_step_delay_count != 0) {
-                    sm_ptr->current_step_delay_count--;    
-                    break;   // delay time incomplete so wait for next clock interrupt
+                    sm_ptr->current_step_delay_count--;  
+                    sm_ptr->cmd_index++;  
+                    break;   // delay time incomplete so wait for next timer interrupt
                 }
-            // implement next command
             // jump over any SKIP (NOOP) commands
                 while (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_profile_state  == SM_SKIP) {
                     sm_ptr->cmd_index++;
@@ -91,11 +88,11 @@ struct stepper_data_s  *sm_ptr;
                 if (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_profile_state == SM_COAST) {
                     sm_ptr->current_step_count = sm_ptr->coast_step_count;
                 } else {
-                    sm_ptr->current_step_count = sequences[sm_ptr->sm_profile].nos_sm_cmds;
+                    sm_ptr->current_step_count = sequences[sm_ptr->sm_profile].cmds->sm_cmd_step_cnt;
                 }
-                sm_ptr->current_step_delay_count = sequences[sm_ptr->sm_profile].cmds[0].sm_delay;
+                sm_ptr->current_step_delay_count = sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_delay;
                 do_step(i);
-                sm_ptr->current_step_count++;
+                sm_ptr->current_step_count += sm_ptr->direction;
                 break;
             case M_UNCALIBRATED :
                 sm_ptr->error = MOVE_ON_UNCALIBRATED_MOTOR;

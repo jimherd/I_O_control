@@ -132,8 +132,8 @@ enum {UPPER_CASE, LOWER_CASE};
 
 #define     NOS_PROFILES        5
 #define     NO_PROFILE          -1
-
-typedef enum {ANTI_CLOCKWISE=0,CLOCKWISE} sm_direction;
+ 
+typedef enum {ANTI_CLOCKWISE = -1,CLOCKWISE = +1} sm_direction;
 
 enum {OFF, ON};
 
@@ -150,7 +150,7 @@ struct stepper_data_s {
     int32_t     max_step_travel;
   // dynamic data
     sm_profile_exec_state_te   state;
-    int32_t     sm_profile;             // index of trapezoidal sm_profile
+    int32_t     sm_profile;         // index of trapezoidal sm_profile
     int32_t     cmd_index;          // points to current command
     int32_t     cmd_step_cnt;       // number of steps at a fixed speed
     int32_t     coast_step_count;   // sm_profiles always have this set to 0
