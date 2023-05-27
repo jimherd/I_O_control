@@ -139,14 +139,14 @@ enum {OFF, ON};
 
 typedef enum {SM_REL_MOVE, SM_ABS_MOVE, SM_REL_MOVE_SYNC, SM_ABS_MOVE_SYNC, SM_CALIBRATE} stepper_commands_te;
 typedef enum {M_UNCALIBRATED, M_DORMANT, M_INIT, M_RUNNING, M_FAULT} sm_profile_exec_state_te;
-typedef enum {SM_ACCEL, SM_COAST, SM_DECEL, SM_SKIP, SM_END} sm_profile_state_et;
+typedef enum {SM_ACCEL, SM_COAST, SM_DECEL, SM_SKIP, SM_END} sm_command_type_et;
 
 struct stepper_data_s {
   // config data
     uint32_t    step_pin, direction_pin;
     sm_direction direction;
     bool        flip_direction;     // default is +ve for clockwise
-    int32_t     init_step_count;    // initial position from origin
+    int32_t     init_step_position; // initial position from origin
     int32_t     max_step_travel;
   // dynamic data
     sm_profile_exec_state_te   state;
@@ -162,7 +162,7 @@ struct stepper_data_s {
 };
 
 struct sm_step_cmd_s {      // single step motor command
-    sm_profile_state_et    sm_profile_state;
+    sm_command_type_et     sm_command_type;
     int32_t                sm_cmd_step_cnt;
     uint32_t               sm_delay;
 };

@@ -52,47 +52,61 @@ struct stepper_data_s  *sm_ptr;
             case M_DORMANT:
                 break;    // do nothing
             case M_INIT:       // run once at the begining of a sm_profile move
-                while (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_profile_state  == SM_SKIP) {
+                while (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_command_type  == SM_SKIP) {
                     sm_ptr->cmd_index++;
                 }
-                if (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_profile_state  == SM_END) {
+                if (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_command_type  == SM_END) {
                     sm_ptr->state = DORMANT;
                     break;    
                 }
                 if (sm_ptr->state == SM_COAST) {
-                    sm_ptr->current_step_count = sm_ptr->coast_step_count;
+                    sm_ptr->cmd_step_cnt = sm_ptr->coast_step_count;
                 } else {
-                    sm_ptr->current_step_count = sequences[sm_ptr->sm_profile].nos_sm_cmds;
+                    sm_ptr->cmd_step_cnt = sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_cmd_step_cnt;
                 }
-                gpio_put(sm_ptr->direction_pin, sm_ptr->direction);
+                if (sm_ptr->direction == CLOCKWISE) {
+                    gpio_put(sm_ptr->direction_pin, 1);
+                } else {
+                    gpio_put(sm_ptr->direction_pin, 0);
+                }
                 sm_ptr->state = M_RUNNING;  // update state
                 break;
 
             case M_RUNNING :
-            // Check if active delay is complete
+        // Check if active delay is complete
                 if (sm_ptr->current_step_delay_count != 0) {
                     sm_ptr->current_step_delay_count--;  
-                    sm_ptr->cmd_index++;  
                     break;   // delay time incomplete so wait for next timer interrupt
                 }
+        // check if more steps at this speed are required
+            if (sm_ptr->cmd_step_cnt != 0) {
+                sm_ptr->current_step_delay_count = sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_delay;
+                do_step(i);
+                sm_ptr->current_step_count += sm_ptr->direction;
+                sm_ptr->cmd_step_cnt--; 
+                break;
+            }
+        // Move onto next command
             // jump over any SKIP (NOOP) commands
-                while (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_profile_state  == SM_SKIP) {
+                sm_ptr->cmd_index++;    // point tonext command
+                while (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_command_type  == SM_SKIP) {
                     sm_ptr->cmd_index++;
                 }
             // check for end of profile execution
-                if (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_profile_state  == SM_END) {
+                if (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_command_type  == SM_END) {
                     sm_ptr->state = DORMANT;   // stepper motor move complete
                     break;    
                 }
             // implement new command
-                if (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_profile_state == SM_COAST) {
-                    sm_ptr->current_step_count = sm_ptr->coast_step_count;
+                if (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_command_type == SM_COAST) {
+                    sm_ptr->cmd_step_cnt = sm_ptr->coast_step_count;
                 } else {
-                    sm_ptr->current_step_count = sequences[sm_ptr->sm_profile].cmds->sm_cmd_step_cnt;
+                    sm_ptr->cmd_step_cnt = sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_cmd_step_cnt;
                 }
                 sm_ptr->current_step_delay_count = sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_delay;
                 do_step(i);
                 sm_ptr->current_step_count += sm_ptr->direction;
+                sm_ptr->cmd_step_cnt--; 
                 break;
             case M_UNCALIBRATED :
                 sm_ptr->error = MOVE_ON_UNCALIBRATED_MOTOR;
@@ -190,7 +204,7 @@ void A4988_interface_init(void)
 void inline do_step(uint32_t stepper_id)
 {
     gpio_put(stepper_data[stepper_id].step_pin, ON);
-    busy_wait_us(10); 
+    busy_wait_us(5); 
     gpio_put(stepper_data[stepper_id].step_pin, OFF);
 }
 
