@@ -138,12 +138,12 @@ typedef enum {ANTI_CLOCKWISE = -1,CLOCKWISE = +1} sm_direction;
 enum {OFF, ON};
 
 typedef enum {SM_REL_MOVE, SM_ABS_MOVE, SM_REL_MOVE_SYNC, SM_ABS_MOVE_SYNC, SM_CALIBRATE} stepper_commands_te;
-typedef enum {M_UNCALIBRATED, M_DORMANT, M_INIT, M_RUNNING, M_FAULT} sm_profile_exec_state_te;
-typedef enum {SM_ACCEL, SM_COAST, SM_DECEL, SM_SKIP, SM_END} sm_command_type_et;
+typedef enum {M_UNCALIBRATED, M_DORMANT, M_INIT, M_RUNNING, M_FAULT, M_SYNC} sm_profile_exec_state_te;
+typedef enum {SM_ACCEL, SM_COAST, SM_DECEL, SM_SKIP, SM_END , SM_DELAY} sm_command_type_et;
 
 struct stepper_data_s {
   // config data
-    uint32_t    step_pin, direction_pin;
+    uint32_t    step_pin, direction_pin, limit_pin;
     sm_direction direction;
     bool        flip_direction;     // default is +ve for clockwise
     int32_t     init_step_position; // initial position from origin

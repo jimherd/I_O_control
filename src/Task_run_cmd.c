@@ -110,6 +110,7 @@ int32_t target_step_count;
     #endif
                 switch (int_parameters[2]) {
                     case SM_REL_MOVE : 
+                    case SM_REL_MOVE_SYNC :
                         sm_number = int_parameters[5];
                         if (abs(int_parameters[4]) < MIN_STEP_MOVE ) {
                             status = SM_MOVE_TOO_SMALL;
@@ -122,7 +123,6 @@ int32_t target_step_count;
                         }
                         if (stepper_data[sm_number].flip_direction == true) {
                             FLIP_BOOLEAN(stepper_data[sm_number].direction);
-
                         }
                         target_step_count = stepper_data[sm_number].current_step_count + int_parameters[4];
                         if ((target_step_count < 0) || (target_step_count > stepper_data[sm_number].max_step_travel)) {
@@ -133,9 +133,36 @@ int32_t target_step_count;
                         stepper_data[sm_number].sm_profile = sm_number;
                         stepper_data[sm_number].coast_step_count = abs(int_parameters[4]) - (sequences[sm_number].nos_sm_cmds - 1);
                         stepper_data[sm_number].cmd_index = 0;
-                        stepper_data[sm_number].state = M_INIT;
+                        if (int_parameters[2] == SM_REL_MOVE) {
+                            stepper_data[sm_number].state = M_INIT;
+                        } else {
+                            stepper_data[sm_number].state = M_SYNC;
+                        }
                         break;
                     case SM_ABS_MOVE :
+                        sm_number = int_parameters[5];
+                        if ((int_parameters[4] < 0) || (int_parameters[4] > stepper_data[sm_number].max_step_travel)) {
+                            status = BAD_STEP_VALUE;
+                            break;
+                        }
+                        target_step_count = int_parameters[4] - stepper_data[sm_number].current_step_count;
+                        if (target_step_count < 0) {
+                            stepper_data[sm_number].direction = ANTI_CLOCKWISE;
+                        } else {
+                            stepper_data[sm_number].direction = CLOCKWISE;
+                        }
+                        if (stepper_data[sm_number].flip_direction == true) {
+                            FLIP_BOOLEAN(stepper_data[sm_number].direction);
+                        }
+                        stepper_data[sm_number].target_step_count = target_step_count;
+                        stepper_data[sm_number].sm_profile = sm_number;
+                        stepper_data[sm_number].coast_step_count = abs(target_step_count) - (sequences[sm_number].nos_sm_cmds - 1);
+                        stepper_data[sm_number].cmd_index = 0;
+                        if (int_parameters[2] == SM_ABS_MOVE) {
+                            stepper_data[sm_number].state = M_INIT;
+                        } else {
+                            stepper_data[sm_number].state = M_SYNC;
+                        }
                         break;
                     default:
                         status = BAD_STEPPER_COMMAND;
@@ -148,6 +175,11 @@ int32_t target_step_count;
                 for( int32_t i=0; i<NOS_SERVOS; i++) {
                     servo_pt = &servo_data[i];
                     servo_pt->sync = false;
+                }
+                for (int32_t i=0 ; i <NOS_STEPPERS;i++) {
+                    if (stepper_data[i].state == M_SYNC) {
+                        stepper_data[i].state = M_INIT;
+                    }
                 }
                 break;
             case TOKENIZER_CONFIG: 

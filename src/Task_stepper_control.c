@@ -19,7 +19,7 @@
 //==============================================================================
 
 struct stepper_data_s     stepper_data[NOS_STEPPERS] = {
-    {GP10, GP11, CLOCKWISE, false, 160, 330, M_DORMANT,0,0,0,0,0,0,0,0,OK}
+    {GP10, GP11, GP12, CLOCKWISE, false, 160, 330, M_DORMANT,0,0,0,0,0,0,0,0,OK}
 };
 
 error_codes_te calibrate_stepper(void);
@@ -51,6 +51,8 @@ struct stepper_data_s  *sm_ptr;
         switch (sm_ptr->state) {
             case M_DORMANT:
                 break;    // do nothing
+            case M_SYNC :
+                break;    // hold until run sync command is initiated
             case M_INIT:       // run once at the begining of a sm_profile move
                 while (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_command_type  == SM_SKIP) {
                     sm_ptr->cmd_index++;
