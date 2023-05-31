@@ -46,6 +46,11 @@ typedef enum {ABS_MOVE, ABS_MOVE_SYNC, SPEED_MOVE, SPEED_MOVE_SYNC, RUN_SYNC_MOV
 typedef enum {DISABLED, DORMANT, DELAY, MOVE, TIMED_MOVE, MOVE_SYNC_HOLD, TIMED_MOVE_SYNC_HOLD} servo_states_te;
 
 //==============================================================================
+// info commands
+
+enum {SERVO_INFO, STEPPER_INFO};
+
+//==============================================================================
 // structure to hold servo specific data
 //
 struct servo_data_s {

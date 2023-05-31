@@ -184,7 +184,17 @@ int32_t target_step_count;
                 break;
             case TOKENIZER_CONFIG: 
                 break;
-            case TOKENIZER_INFO: 
+            case TOKENIZER_INFO:
+                switch (int_parameters[2]) {
+                    case SERVO_INFO:
+                        print_string("%d\n", status);
+                        break;
+                    case STEPPER_INFO:
+                        print_string("%d\n", status);
+                        break;
+                    default:
+                        break;
+                }
                 break;
             case TOKENIZER_PING: 
                 print_string("%d %d %d\n", int_parameters[1], OK, (int_parameters[2] + 1));
@@ -197,7 +207,7 @@ int32_t target_step_count;
                 break;
         }  // end of outer switch
         if (reply_done == false) {
-            print_error(int_parameters[1],status);
+            print_error(int_parameters[1], status);
         }
     }
 }
