@@ -186,11 +186,17 @@ int32_t target_step_count;
                 break;
             case TOKENIZER_INFO:
                 switch (int_parameters[2]) {
+                    case SYS_INFO:
+                        print_string("%d %d %d\n", int_parameters[1], NOS_SERVOS, NOS_STEPPERS);
+                        reply_done = true;
+                        break;
                     case SERVO_INFO:
-                        print_string("%d\n", status);
+                        print_string("%d\n", int_parameters[1]);
+                        reply_done = true;
                         break;
                     case STEPPER_INFO:
-                        print_string("%d\n", status);
+                        print_string("%d\n", int_parameters[1]);
+                        reply_done = true;
                         break;
                     default:
                         break;

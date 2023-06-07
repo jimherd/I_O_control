@@ -48,7 +48,7 @@ typedef enum {DISABLED, DORMANT, DELAY, MOVE, TIMED_MOVE, MOVE_SYNC_HOLD, TIMED_
 //==============================================================================
 // info commands
 
-enum {SERVO_INFO, STEPPER_INFO};
+enum {SYS_INFO, SERVO_INFO, STEPPER_INFO};
 
 //==============================================================================
 // structure to hold servo specific data

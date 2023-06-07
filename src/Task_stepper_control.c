@@ -19,7 +19,7 @@
 //==============================================================================
 
 struct stepper_data_s     stepper_data[NOS_STEPPERS] = {
-    {GP10, GP11, GP12, CLOCKWISE, false, 160, 330, M_DORMANT,0,0,0,0,0,0,0,0,OK}
+    {GP17, GP16, GP18, CLOCKWISE, false, 160, 330, M_DORMANT,0,0,0,0,0,0,0,0,OK}
 };
 
 error_codes_te calibrate_stepper(void);
@@ -161,14 +161,14 @@ error_codes_te  status;
 
     status = STEPPER_CALIBRATE_FAIL;
     for (uint32_t i = 0 ; i < NOS_STEPPERS ; i++) {
-        gpio_put(A4988_DIRECTION, ANTI_CLOCKWISE);
+        gpio_put(stepper_data[i].direction_pin, ANTI_CLOCKWISE);
         for (uint32_t j=0 ; j < MAX_STEPS ; j++) {  
             do_step(i);
             vTaskDelay(10);
-            if (gpio_get(LIMIT_SWITCH_1 == ON)) {
+            if (gpio_get(stepper_data[i].limit_pin) == ON) {
                 status = OK;    // found origin point
                 break;
-            }
+           }
         }
     }
     return status;
@@ -188,13 +188,13 @@ void A4988_interface_init(void)
         gpio_pull_down(stepper_data[i].direction_pin); 
     }
 
-    gpio_init(LIMIT_SWITCH_1);
-    gpio_set_dir(LIMIT_SWITCH_1, GPIO_IN);
-    gpio_pull_down(LIMIT_SWITCH_1); 
+    // gpio_init(LIMIT_SWITCH_1);
+    // gpio_set_dir(LIMIT_SWITCH_1, GPIO_IN);
+    // gpio_pull_down(LIMIT_SWITCH_1); 
 
-    gpio_init(LIMIT_SWITCH_2);
-    gpio_set_dir(LIMIT_SWITCH_2, GPIO_IN);
-    gpio_pull_down(LIMIT_SWITCH_2); 
+    // gpio_init(LIMIT_SWITCH_2);
+    // gpio_set_dir(LIMIT_SWITCH_2, GPIO_IN);
+    // gpio_pull_down(LIMIT_SWITCH_2); 
 }
 
 //==============================================================================

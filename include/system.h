@@ -126,10 +126,10 @@ enum {UPPER_CASE, LOWER_CASE};
 #define     MAX_STEPS           500
 #define     MIN_STEP_MOVE       4    // ignore very small stepper motor moves
 
-#define     A4988_STEP          GP10
-#define     A4988_DIRECTION     GP11
-#define     LIMIT_SWITCH_1      GP12
-#define     LIMIT_SWITCH_2      GP13
+// #define     A4988_STEP          GP17
+// #define     A4988_DIRECTION     GP16
+// #define     LIMIT_SWITCH_1      GP12
+// #define     LIMIT_SWITCH_2      GP13
 
 #define     NOS_PROFILES        5
 #define     NO_PROFILE          -1

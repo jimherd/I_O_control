@@ -90,6 +90,6 @@ struct command_limits_s    cmd_limits[NOS_COMMANDS] = {
     [1].p_limits = {{5, 6}, {0, 63}, {0,0}, {0, 0}, {-333, +333}},              // stepper
     [2].p_limits = {{2, 2}, {0, 63}, {0,0}},                         // sync
     [3].p_limits = {{0, 0}, {0,  0}, {0,0}},                         // config
-    [4].p_limits = {{0, 0}, {0,  0}, {0,0}},                         // info
+    [4].p_limits = {{3, 3}, {0, 63}, {0,5}},                         // info
     [5].p_limits = {{3, 3}, {0, 63}, {-255, +255}},                  // ping,
 };
