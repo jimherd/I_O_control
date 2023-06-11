@@ -111,6 +111,10 @@ int32_t target_step_count;
                 switch (int_parameters[2]) {
                     case SM_REL_MOVE : 
                     case SM_REL_MOVE_SYNC :
+                        if (stepper_data[int_parameters[5]].error != OK) {  // ensure motor is not in an error state
+                            status = stepper_data[int_parameters[5]].error;
+                            break;  // existing error => abort move
+                        }
                         sm_number = int_parameters[5];
                         if (abs(int_parameters[4]) < MIN_STEP_MOVE ) {
                             status = SM_MOVE_TOO_SMALL;
@@ -140,6 +144,10 @@ int32_t target_step_count;
                         }
                         break;
                     case SM_ABS_MOVE :
+                        if (stepper_data[int_parameters[5]].error != OK) {  // ensure motor is not in an error state
+                            status = stepper_data[int_parameters[5]].error;
+                            break;   // existing error => abort move
+                        }
                         sm_number = int_parameters[5];
                         if ((int_parameters[4] < 0) || (int_parameters[4] > stepper_data[sm_number].max_step_travel)) {
                             status = BAD_STEP_VALUE;
@@ -163,6 +171,8 @@ int32_t target_step_count;
                         } else {
                             stepper_data[sm_number].state = M_SYNC;
                         }
+                        break;
+                    case SM_CALIBRATE : 
                         break;
                     default:
                         status = BAD_STEPPER_COMMAND;

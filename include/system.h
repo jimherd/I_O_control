@@ -67,6 +67,7 @@ typedef enum  {
     MOVE_ON_UNCALIBRATED_MOTOR = -112,
     EXISTING_FAULT_WITH_MOTOR  = -113,
     SM_MOVE_TOO_SMALL       = -114,
+    LIMIT_SWITCH_ERROR      = -115,
 } error_codes_te;
 
 //==============================================================================
