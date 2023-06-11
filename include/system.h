@@ -126,17 +126,13 @@ enum {UPPER_CASE, LOWER_CASE};
 #define     MAX_STEPS           500
 #define     MIN_STEP_MOVE       4    // ignore very small stepper motor moves
 
-// #define     A4988_STEP          GP17
-// #define     A4988_DIRECTION     GP16
-// #define     LIMIT_SWITCH_1      GP12
-// #define     LIMIT_SWITCH_2      GP13
-
 #define     NOS_PROFILES        5
 #define     NO_PROFILE          -1
  
-typedef enum {ANTI_CLOCKWISE = -1,CLOCKWISE = +1} sm_direction;
+typedef enum {ANTI_CLOCKWISE = 1,CLOCKWISE = 0} sm_direction;
 
 enum {OFF, ON};
+enum {ASSERTED_LOW, ASSERTED_HIGH};
 
 typedef enum {SM_REL_MOVE, SM_ABS_MOVE, SM_REL_MOVE_SYNC, SM_ABS_MOVE_SYNC, SM_CALIBRATE} stepper_commands_te;
 typedef enum {M_UNCALIBRATED, M_DORMANT, M_INIT, M_RUNNING, M_FAULT, M_SYNC} sm_profile_exec_state_te;
@@ -144,7 +140,11 @@ typedef enum {SM_ACCEL, SM_COAST, SM_DECEL, SM_SKIP, SM_END , SM_DELAY} sm_comma
 
 struct stepper_data_s {
   // config data
-    uint32_t    step_pin, direction_pin, limit_pin;
+    int32_t     steps_per_rev;
+    int32_t     gearbox_ratio;
+    int32_t     microstep_value;
+    float       steps_per_degree;   //calculated at run time
+    uint32_t    step_pin, direction_pin, R_limit_pin, L_limit_pin;
     sm_direction direction;
     bool        flip_direction;     // default is +ve for clockwise
     int32_t     init_step_position; // initial position from origin
@@ -157,6 +157,7 @@ struct stepper_data_s {
     int32_t     coast_step_count;   // sm_profiles always have this set to 0
 
     int32_t     current_step_count; // from origin point
+    int32_t     max_step_count;
     int32_t     target_step_count;  // from command
     int32_t     current_step_delay, current_step_delay_count;
     error_codes_te error;     

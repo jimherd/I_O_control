@@ -19,7 +19,7 @@
 //==============================================================================
 
 struct stepper_data_s     stepper_data[NOS_STEPPERS] = {
-    {GP17, GP16, GP18, CLOCKWISE, false, 160, 330, M_DORMANT,0,0,0,0,0,0,0,0,OK}
+    {200, 5, 2, 0, GP17, GP16, GP18, GP19, CLOCKWISE, false, 160, 330, M_DORMANT,0,0,0,0,0,0,0,0,0,OK}
 };
 
 error_codes_te calibrate_stepper(void);
@@ -154,21 +154,87 @@ void Task_stepper_control(void *p) {
  * 
  *          Routine uses simple pulse code rather then the interrupt driven
  *          software used for normal moves.
+ * 
+ *          Limit pin is asserted low and both (L and R) are commonned.
  */
 error_codes_te calibrate_stepper(void)
 {
 error_codes_te  status;
+uint32_t    i, j;
 
     status = STEPPER_CALIBRATE_FAIL;
-    for (uint32_t i = 0 ; i < NOS_STEPPERS ; i++) {
+    for (i = 0 ; i < NOS_STEPPERS ; i++) {
+        // ensure stepper is not at engaging either limit switch. Move if necessary.
+        if (stepper_data[i].L_limit_pin == ASSERTED_LOW) {
+            gpio_put(stepper_data[i].direction_pin, ANTI_CLOCKWISE);
+            for (j=0 ; j < MAX_STEPS ; j++) { 
+                do_step(i);
+                vTaskDelay(10);
+                if (gpio_get(stepper_data[i].L_limit_pin) != ASSERTED_LOW) {
+                    stepper_data[i].current_step_count = 0;
+                    status = OK;    // found origin point
+                    break;
+                }
+                if (status == STEPPER_CALIBRATE_FAIL) {
+                    stepper_data[i].error = STEPPER_CALIBRATE_FAIL;
+                    return status;
+                }
+           }
+        }
+        if (stepper_data[i].R_limit_pin == ASSERTED_LOW) {
+            gpio_put(stepper_data[i].direction_pin, CLOCKWISE);
+            for (j=0 ; j < MAX_STEPS ; j++) { 
+                do_step(i);
+                vTaskDelay(10);
+                if (gpio_get(stepper_data[i].L_limit_pin) != ASSERTED_LOW) {
+                    stepper_data[i].current_step_count = 0;
+                    status = OK;    // found origin point
+                    break;
+                }
+                if (status == STEPPER_CALIBRATE_FAIL) {
+                    stepper_data[i].error = STEPPER_CALIBRATE_FAIL;
+                    return status;
+                }
+           }
+        }
+        // move ti RIGHT limt switch
         gpio_put(stepper_data[i].direction_pin, ANTI_CLOCKWISE);
-        for (uint32_t j=0 ; j < MAX_STEPS ; j++) {  
+        for (j=0 ; j < MAX_STEPS ; j++) {  
             do_step(i);
             vTaskDelay(10);
-            if (gpio_get(stepper_data[i].limit_pin) == ON) {
+            if (gpio_get(stepper_data[i].L_limit_pin) == ASSERTED_LOW) {
+                stepper_data[i].current_step_count = 0;
                 status = OK;    // found origin point
                 break;
            }
+        }
+        if (status == STEPPER_CALIBRATE_FAIL) {
+            stepper_data[i].error = STEPPER_CALIBRATE_FAIL;
+            return status;
+        }
+        // move to left limit switch and record step count
+        status = STEPPER_CALIBRATE_FAIL;
+        gpio_put(stepper_data[i].direction_pin, CLOCKWISE);
+        for (j=0 ; j < MAX_STEPS ; j++) {  
+            do_step(i);
+            stepper_data[i].current_step_count += 1;
+            vTaskDelay(10);
+            if (gpio_get(stepper_data[i].R_limit_pin) == ASSERTED_LOW) {
+                stepper_data[i].max_step_count = j;
+                status = OK;    // found end limit
+                break;
+           }
+        }
+        if (status == STEPPER_CALIBRATE_FAIL) {
+            stepper_data[i].error = STEPPER_CALIBRATE_FAIL;
+            return status;
+        }
+        // move to mid position
+        gpio_put(stepper_data[i].direction_pin, ANTI_CLOCKWISE);
+        for (j=0 ; j < (stepper_data[i].max_step_count >> 1) ; j++) {
+            do_step(i);
+            stepper_data[i].current_step_count -= 1;
+            vTaskDelay(10);
         }
     }
     return status;
@@ -185,16 +251,19 @@ void A4988_interface_init(void)
 
         gpio_init(stepper_data[i].direction_pin);
         gpio_set_dir(stepper_data[i].direction_pin, GPIO_OUT);
-        gpio_pull_down(stepper_data[i].direction_pin); 
+        gpio_pull_down(stepper_data[i].direction_pin);
+        
+        gpio_init(stepper_data[i].L_limit_pin);
+        gpio_set_dir(stepper_data[i].L_limit_pin, GPIO_IN);
+        gpio_pull_up(stepper_data[i].L_limit_pin);
+
+        gpio_init(stepper_data[i].R_limit_pin);
+        gpio_set_dir(stepper_data[i].R_limit_pin, GPIO_IN);
+        gpio_pull_up(stepper_data[i].R_limit_pin);
+
+        stepper_data[i].steps_per_degree 
+                = (float)(stepper_data[i].steps_per_rev * stepper_data[i].gearbox_ratio * stepper_data[i].microstep_value) / 360.0;
     }
-
-    // gpio_init(LIMIT_SWITCH_1);
-    // gpio_set_dir(LIMIT_SWITCH_1, GPIO_IN);
-    // gpio_pull_down(LIMIT_SWITCH_1); 
-
-    // gpio_init(LIMIT_SWITCH_2);
-    // gpio_set_dir(LIMIT_SWITCH_2, GPIO_IN);
-    // gpio_pull_down(LIMIT_SWITCH_2); 
 }
 
 //==============================================================================
@@ -203,10 +272,11 @@ void A4988_interface_init(void)
  * 
  * @param stepper_id   index of selected stepper motor move sm_profile
  */
+//void inline do_step(uint32_t stepper_id)
 void inline do_step(uint32_t stepper_id)
 {
     gpio_put(stepper_data[stepper_id].step_pin, ON);
-    busy_wait_us(5); 
+    busy_wait_us(1); 
     gpio_put(stepper_data[stepper_id].step_pin, OFF);
 }
 
