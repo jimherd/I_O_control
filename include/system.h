@@ -118,7 +118,7 @@ enum {UPPER_CASE, LOWER_CASE};
 #define BLINK_PIN   LED_PIN
 
 //==============================================================================
-//stepper motor interface (A4988)
+//stepper motor interface (TMC2208)
 
 #define     NOS_STEPPERS        1
 #define     MAX_ST_STEP_CMDS   16

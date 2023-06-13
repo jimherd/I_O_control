@@ -23,7 +23,7 @@ struct stepper_data_s     stepper_data[NOS_STEPPERS] = {
 };
 
 error_codes_te calibrate_stepper(uint32_t stepper_no);
-void A4988_interface_init(void);
+void TMC2208_interface_init(void);
 void do_step(uint32_t stepper_id);
 
 struct repeating_timer timer;
@@ -151,7 +151,7 @@ void Task_stepper_control(void *p)
 {
     struct stepper_data_s  *sm_ptr;
 
-    A4988_interface_init();
+    TMC2208_interface_init();
 
     for (uint32_t i=0; i<NOS_STEPPERS; i++) {
         calibrate_stepper(i);
@@ -265,7 +265,7 @@ status = STEPPER_CALIBRATE_FAIL;
 }
 
 //==============================================================================
-void A4988_interface_init(void)
+void TMC2208_interface_init(void)
 {
     for (uint32_t i=0 ; i < NOS_STEPPERS ; i++) {
 
