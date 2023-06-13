@@ -44,6 +44,7 @@ struct repeating_timer timer;
 bool repeating_timer_callback(struct repeating_timer *t) 
 {
 struct stepper_data_s  *sm_ptr;
+error_codes_te  status;
 
     START_PULSE; 
     for (uint32_t i=0; i<NOS_STEPPERS; i++) {
@@ -81,19 +82,19 @@ struct stepper_data_s  *sm_ptr;
                     break;   // delay time incomplete so wait for next timer interrupt
                 }
         // check if more steps at this speed are required
-            if (sm_ptr->cmd_step_cnt != 0) {
+                if (sm_ptr->cmd_step_cnt != 0) {
                 // check for unexpected trigerring of a limit switch
-                if (gpio_get(sm_ptr->R_limit_pin) == ASSERTED_LOW || gpio_get(sm_ptr->R_limit_pin) == ASSERTED_LOW) {
-                    sm_ptr->state = M_FAULT;   // a limit switch has been activated
-                    sm_ptr->error = LIMIT_SWITCH_ERROR;
+                    if (gpio_get(sm_ptr->R_limit_pin) == ASSERTED_LOW || gpio_get(sm_ptr->R_limit_pin) == ASSERTED_LOW) {
+                        sm_ptr->state = M_FAULT;   // a limit switch has been activated
+                        sm_ptr->error = LIMIT_SWITCH_ERROR;
+                        break;
+                    }
+                    sm_ptr->current_step_delay_count = sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_delay;
+                    do_step(i);
+                    sm_ptr->current_step_count += sm_ptr->direction;
+                    sm_ptr->cmd_step_cnt--; 
                     break;
                 }
-                sm_ptr->current_step_delay_count = sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_delay;
-                do_step(i);
-                sm_ptr->current_step_count += sm_ptr->direction;
-                sm_ptr->cmd_step_cnt--; 
-                break;
-            }
         // Move onto next command
             // jump over any SKIP (NOOP) commands
                 sm_ptr->cmd_index++;    // point tonext command
@@ -123,7 +124,15 @@ struct stepper_data_s  *sm_ptr;
                 sm_ptr->cmd_step_cnt--; 
                 break;
             case M_UNCALIBRATED :
-                sm_ptr->error = MOVE_ON_UNCALIBRATED_MOTOR;
+                if (sm_ptr->state == M_UNCALIBRATED) {
+                    cancel_repeating_timer(&timer);
+                    status = calibrate_stepper(i);
+                    add_repeating_timer_us(1000, repeating_timer_callback, NULL, &timer);
+                }
+                if (status == OK) {
+                    sm_ptr->state = M_DORMANT;
+                }
+                // error set by calibrate routine
                 break;
             case M_FAULT :
                 sm_ptr->error = EXISTING_FAULT_WITH_MOTOR;
@@ -151,14 +160,6 @@ void Task_stepper_control(void *p)
     add_repeating_timer_us(1000, repeating_timer_callback, NULL, &timer);
     FOREVER {
         vTaskDelay(1000);    // all the work is done in the callback routine
-        for (uint32_t i=0; i<NOS_STEPPERS; i++) {
-            sm_ptr = &stepper_data[i];
-            if (sm_ptr->state == M_UNCALIBRATED) {
-                cancel_repeating_timer(&timer);
-                calibrate_stepper(i);
-                add_repeating_timer_us(1000, repeating_timer_callback, NULL, &timer);
-            }
-        }
     }
 }
 

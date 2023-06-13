@@ -41,12 +41,12 @@ float       float_parameters[MAX_ARGC];
 
 void Task_run_cmd(void *p) 
 {
-struct servo_data_s *servo_pt;
-error_codes_te status;
-static int32_t token;
-bool           reply_done;
-int32_t sm_number;
-int32_t target_step_count;
+struct servo_data_s     *servo_pt;
+error_codes_te          status;
+static int32_t          token;
+bool                    reply_done;
+int32_t                 sm_number;
+int32_t                 target_step_count;
 
     status = OK;
     FOREVER {
@@ -173,7 +173,8 @@ int32_t target_step_count;
                         }
                         break;
                     case SM_CALIBRATE : 
-                        break;
+                        stepper_data[sm_number].state = M_UNCALIBRATED;
+                        break;  // set system to do a calibration on this motor
                     default:
                         status = BAD_STEPPER_COMMAND;
                         break;

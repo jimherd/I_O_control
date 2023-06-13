@@ -124,7 +124,7 @@ enum {UPPER_CASE, LOWER_CASE};
 #define     MAX_ST_STEP_CMDS   16
 #define     ST_SEQUENCES        8
 
-#define     MAX_STEPS           500
+#define     MAX_STEPS           1000
 #define     MIN_STEP_MOVE       4    // ignore very small stepper motor moves
 
 #define     NOS_PROFILES        5
