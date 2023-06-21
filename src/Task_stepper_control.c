@@ -19,8 +19,12 @@
 //==============================================================================
 
 struct stepper_data_s     stepper_data[NOS_STEPPERS] = {
-    {200, 5, 2, 0, GP17, GP16, GP18, GP19, CLOCKWISE, false, 160, 330, M_DORMANT,0,0,0,0,0,0,0,0,0,OK}
+    {200, 5, 2, 0, GP17, GP16, GP18, GP19, CLOCKWISE, false, 160, false, 330, 0,0, OK, M_DORMANT,0,0,0,0,0,0}
 };
+
+//==============================================================================
+// Function templates
+//==============================================================================
 
 error_codes_te calibrate_stepper(uint32_t stepper_no);
 void TMC2208_interface_init(void);
@@ -34,11 +38,15 @@ struct repeating_timer timer;
 /**
  * @brief regular timer interrupt to manage stepper motors
  * 
- * @param t 
+ * @param t         Pointer to timer structure
  * @return true 
  * @return false 
  * 
  * @notes
+ *      
+ *  1.  Set error if attempt to move an uncalibrated motor.
+ *  2.  Calibration activity causes interrupt driven stepper motor activity
+ *      to be suspended. (May be changed in future)
  *      
  */
 bool repeating_timer_callback(struct repeating_timer *t) 
@@ -55,6 +63,10 @@ error_codes_te  status;
             case M_SYNC :
                 break;    // hold until run sync command is initiated
             case M_INIT:       // run once at the begining of a sm_profile move
+                if (sm_ptr->calibrated == false) {
+                    sm_ptr->error = MOVE_ON_UNCALIBRATED_MOTOR;
+                    break;
+                }
                 while (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_command_type  == SM_SKIP) {
                     sm_ptr->cmd_index++;
                 }
@@ -76,6 +88,10 @@ error_codes_te  status;
                 break;
 
             case M_RUNNING :
+                if (sm_ptr->calibrated == false) {
+                    sm_ptr->error = MOVE_ON_UNCALIBRATED_MOTOR;
+                    break;
+                }
         // Check if active delay is complete
                 if (sm_ptr->current_step_delay_count != 0) {
                     sm_ptr->current_step_delay_count--;  
@@ -130,12 +146,16 @@ error_codes_te  status;
                     add_repeating_timer_us(1000, repeating_timer_callback, NULL, &timer);
                 }
                 if (status == OK) {
+                    sm_ptr->calibrated = true;
                     sm_ptr->state = M_DORMANT;
                 }
                 // error set by calibrate routine
                 break;
             case M_FAULT :
                 sm_ptr->error = EXISTING_FAULT_WITH_MOTOR;
+                break;
+            default :
+                sm_ptr->error = UNKNOWN_STEPPER_MOTOR_STATE;
                 break;
         }
     }

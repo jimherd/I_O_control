@@ -129,7 +129,7 @@ int32_t                 target_step_count;
                             FLIP_BOOLEAN(stepper_data[sm_number].direction);
                         }
                         target_step_count = stepper_data[sm_number].current_step_count + int_parameters[4];
-                        if ((target_step_count < 0) || (target_step_count > stepper_data[sm_number].max_step_travel)) {
+                        if ((target_step_count < 0) || (target_step_count > stepper_data[sm_number].max_step_count)) {
                             status = BAD_STEP_VALUE;
                             break;
                         }
@@ -149,7 +149,7 @@ int32_t                 target_step_count;
                             break;   // existing error => abort move
                         }
                         sm_number = int_parameters[5];
-                        if ((int_parameters[4] < 0) || (int_parameters[4] > stepper_data[sm_number].max_step_travel)) {
+                        if ((int_parameters[4] < 0) || (int_parameters[4] > stepper_data[sm_number].max_step_count)) {
                             status = BAD_STEP_VALUE;
                             break;
                         }

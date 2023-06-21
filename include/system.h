@@ -51,23 +51,24 @@
 // error codes
 
 typedef enum  {
-    OK                      = 0,
-    LETTER_ERROR            = -100,
-    DOT_ERROR               = -101,
-    PLUSMINUS_ERROR         = -102,
-    BAD_COMMAND             = -103,
-    BAD_PORT_NUMBER         = -104,
-    BAD_NOS_PARAMETERS      = -105,
-    BAD_BASE_PARAMETER      = -106,
-    PARAMETER_OUTWITH_LIMITS = -107,
-    BAD_SERVO_COMMAND       = -108,
-    STEPPER_CALIBRATE_FAIL  = -109,
-    BAD_STEPPER_COMMAND     = -110,
-    BAD_STEP_VALUE          = -111,
-    MOVE_ON_UNCALIBRATED_MOTOR = -112,
-    EXISTING_FAULT_WITH_MOTOR  = -113,
-    SM_MOVE_TOO_SMALL       = -114,
-    LIMIT_SWITCH_ERROR      = -115,
+    OK                          = 0,
+    LETTER_ERROR                = -100,
+    DOT_ERROR                   = -101,
+    PLUSMINUS_ERROR             = -102,
+    BAD_COMMAND                 = -103,
+    BAD_PORT_NUMBER             = -104,
+    BAD_NOS_PARAMETERS          = -105,
+    BAD_BASE_PARAMETER          = -106,
+    PARAMETER_OUTWITH_LIMITS    = -107,
+    BAD_SERVO_COMMAND           = -108,
+    STEPPER_CALIBRATE_FAIL      = -109,
+    BAD_STEPPER_COMMAND         = -110,
+    BAD_STEP_VALUE              = -111,
+    MOVE_ON_UNCALIBRATED_MOTOR  = -112,
+    EXISTING_FAULT_WITH_MOTOR   = -113,
+    SM_MOVE_TOO_SMALL           = -114,
+    LIMIT_SWITCH_ERROR          = -115,
+    UNKNOWN_STEPPER_MOTOR_STATE = -116,
 } error_codes_te;
 
 //==============================================================================
@@ -140,7 +141,7 @@ typedef enum {M_UNCALIBRATED, M_DORMANT, M_INIT, M_RUNNING, M_FAULT, M_SYNC} sm_
 typedef enum {SM_ACCEL, SM_COAST, SM_DECEL, SM_SKIP, SM_END , SM_DELAY} sm_command_type_et;
 
 struct stepper_data_s {
-  // config data
+  // constant config data set at power-on time
     int32_t     steps_per_rev;
     int32_t     gearbox_ratio;
     int32_t     microstep_value;
@@ -149,19 +150,20 @@ struct stepper_data_s {
     sm_direction direction;
     bool        flip_direction;     // default is +ve for clockwise
     int32_t     init_step_position; // initial position from origin
-    int32_t     max_step_travel;
-  // dynamic data
-    sm_profile_exec_state_te   state;
+  // set when motor is calibrated
+    bool        calibrated;
+    int32_t     max_step_count;
+  // set per move
     int32_t     sm_profile;         // index of trapezoidal sm_profile
+    int32_t     target_step_count;  // from command
+    error_codes_te error;   
+  // dynamic data changed as motor moves
+    sm_profile_exec_state_te   state;
     int32_t     cmd_index;          // points to current command
     int32_t     cmd_step_cnt;       // number of steps at a fixed speed
     int32_t     coast_step_count;   // sm_profiles always have this set to 0
-
     int32_t     current_step_count; // from origin point
-    int32_t     max_step_count;
-    int32_t     target_step_count;  // from command
-    int32_t     current_step_delay, current_step_delay_count;
-    error_codes_te error;     
+    int32_t     current_step_delay, current_step_delay_count; 
 };
 
 struct sm_step_cmd_s {      // single step motor command
