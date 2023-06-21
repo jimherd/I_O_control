@@ -281,6 +281,7 @@ status = STEPPER_CALIBRATE_FAIL;
             stepper_data[stepper_no].current_step_count -= 1;
             vTaskDelay(10);
     }
+    stepper_data[stepper_no].calibrated = true;
     return status;
 }
 

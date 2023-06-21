@@ -32,7 +32,16 @@
 //==============================================================================
 // Macros
 //==============================================================================
+
 #define  FLIP_BOOLEAN(x)   ((x) ^= 1)
+
+#define     START_PULSE         gpio_put(LOG_PIN, 1)
+#define     STOP_PULSE          gpio_put(LOG_PIN, 0)
+
+#define     FOREVER     for(;;)
+#define     HANG        for(;;)
+
+#define     ATTRIBUTE_PACKED     __attribute__ ((__packed__))
 
 //==============================================================================
 // Constants
@@ -140,6 +149,8 @@ typedef enum {SM_REL_MOVE, SM_ABS_MOVE, SM_REL_MOVE_SYNC, SM_ABS_MOVE_SYNC, SM_C
 typedef enum {M_UNCALIBRATED, M_DORMANT, M_INIT, M_RUNNING, M_FAULT, M_SYNC} sm_profile_exec_state_te;
 typedef enum {SM_ACCEL, SM_COAST, SM_DECEL, SM_SKIP, SM_END , SM_DELAY} sm_command_type_et;
 
+// Stepper motor data structure
+
 struct stepper_data_s {
   // constant config data set at power-on time
     int32_t     steps_per_rev;
@@ -195,18 +206,6 @@ struct sm_profile_s {      // single stepper motor seqence
 #define   TASK_PRIORITYHIGH             5
 #define   TASK_PRIORITYREALTIME         6
 #define   TASK_PRIORITYERROR            7
-
-//==============================================================================
-// Macros
-//==============================================================================
-
-#define     START_PULSE         gpio_put(LOG_PIN, 1)
-#define     STOP_PULSE          gpio_put(LOG_PIN, 0)
-
-#define     FOREVER     for(;;)
-#define     HANG        for(;;)
-
-#define     ATTRIBUTE_PACKED     __attribute__ ((__packed__))
 
 //==============================================================================
 // Print task information

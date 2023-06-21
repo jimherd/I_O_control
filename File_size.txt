@@ -1681,3 +1681,6 @@
 21/06/2023 
       text       data        bss      total filename
      38748       5252      78592     122592 Pi_the_Robot.elf
+21/06/2023 
+      text       data        bss      total filename
+     38748       5252      78592     122592 Pi_the_Robot.elf
