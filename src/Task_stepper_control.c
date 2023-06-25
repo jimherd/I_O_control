@@ -197,7 +197,7 @@ void Task_stepper_control(void *p)
  *          two known positions.  Calibration involves moving the stepper to
  *          one of the endstop to find a zero position (kown as the origin).
  * 
- *          Routine uses simple pulse code rather then the interrupt driven
+ *          Routine uses simple pulse code rather than the interrupt driven
  *          software used for normal moves.
  * 
  *         
