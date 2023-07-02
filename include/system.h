@@ -139,6 +139,8 @@ enum {UPPER_CASE, LOWER_CASE};
 
 #define     NOS_PROFILES        5
 #define     NO_PROFILE          -1
+
+#define     CALIBRATE_SPEED_DELAY   5       // number of mS between calibrate step pulses
  
 typedef enum {ANTI_CLOCKWISE = 1,CLOCKWISE = 0} sm_direction;
 
@@ -146,8 +148,17 @@ enum {OFF, ON};
 enum {ASSERTED_LOW, ASSERTED_HIGH};
 
 typedef enum {SM_REL_MOVE, SM_ABS_MOVE, SM_REL_MOVE_SYNC, SM_ABS_MOVE_SYNC, SM_CALIBRATE} stepper_commands_te;
-typedef enum {M_UNCALIBRATED, M_DORMANT, M_INIT, M_RUNNING, M_FAULT, M_SYNC} sm_profile_exec_state_te;
 typedef enum {SM_ACCEL, SM_COAST, SM_DECEL, SM_SKIP, SM_END , SM_DELAY} sm_command_type_et;
+
+// Stepper motor run state machine states
+
+typedef enum {
+    STATE_SM_UNCALIBRATED, STATE_SM_DORMANT, STATE_SM_INIT, STATE_SM_RUNNING, STATE_SM_FAULT, STATE_SM_SYNC,
+    STATE_SM_CALIB_S0, STATE_SM_CALIB_S1, STATE_SM_CALIB_S2, STATE_SM_CALIB_S3, STATE_SM_CALIB_S4,
+        STATE_SM_CALIB_S5, STATE_SM_CALIB_S6, STATE_SM_CALIB_S7, STATE_SM_CALIB_S8, STATE_SM_CALIB_S9, 
+        STATE_SM_CALIB_S10, STATE_SM_CALIB_S11,
+} sm_profile_exec_state_te;
+
 
 // Stepper motor data structure
 
@@ -175,6 +186,7 @@ struct stepper_data_s {
     int32_t     coast_step_count;   // sm_profiles always have this set to 0
     int32_t     current_step_count; // from origin point
     int32_t     current_step_delay, current_step_delay_count; 
+    int32_t     temp_count;
 };
 
 struct sm_step_cmd_s {      // single step motor command
@@ -215,18 +227,20 @@ struct sm_profile_s {      // single stepper motor seqence
 #define     MAX_PRINT_STRING_LENGTH     128
 
 //==============================================================================
-// queue element for serial print facility
+// Command string index values
 //
-// Queue to print task  holds list of used indexes pointing to string to be printed
-// Queue from print task holds list of indexes pointing to free string buffers
+// Common
+//
+#define     PRIMARY_CMD_INDEX       0
+#define     PORT_INDEX              1
 
+// Stepper command
 
+#define     STEP_MOTOR_CMD_INDEX    2
+#define     STEP_MOTOR_NO_INDEX     3
+#define     STEP_MOTOR_ANGLE_INDEX        4
 
-// Format of queues to/from print task
-
-// struct string_buffer_s {
-//     uint32_t    buffer_index;
-// };
+// servo command
 
 //==============================================================================
 // 
@@ -252,8 +266,6 @@ struct task_data_s {
         uint32_t    highest_exec_time;
     };
 };
-
-
 
 #define UNDEFINED_PORT  -1
 

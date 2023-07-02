@@ -103,24 +103,24 @@ int32_t                 target_step_count;
                 break;
             case TOKENIZER_STEPPER: 
     #ifndef IGNORE_SM_CALIBRATION
-                if (stepper_data[int_parameters[5]].error != OK) {  // ensure motor is not in an error state
+                if (stepper_data[int_parameters[3]].error != OK) {  // ensure motor is not in an error state
                     status = stepper_data[int_parameters[5]].error;
                     break;
                 }
     #endif
-                switch (int_parameters[2]) {
+                switch (int_parameters[STEP_MOTOR_CMD_INDEX]) { 
                     case SM_REL_MOVE : 
                     case SM_REL_MOVE_SYNC :
-                        if (stepper_data[int_parameters[5]].error != OK) {  // ensure motor is not in an error state
-                            status = stepper_data[int_parameters[5]].error;
+                        if (stepper_data[int_parameters[STEP_MOTOR_NO_INDEX]].error != OK) {  // ensure motor is not in an error state
+                            status = stepper_data[int_parameters[STEP_MOTOR_NO_INDEX]].error;
                             break;  // existing error => abort move
                         }
-                        sm_number = int_parameters[5];
-                        if (abs(int_parameters[4]) < MIN_STEP_MOVE ) {
+                        sm_number = int_parameters[STEP_MOTOR_NO_INDEX];
+                        if (abs(int_parameters[STEP_MOTOR_ANGLE_INDEX]) < MIN_STEP_MOVE ) {
                             status = SM_MOVE_TOO_SMALL;
                             break;
                         }
-                        if (int_parameters[4] < 0) {
+                        if (int_parameters[STEP_MOTOR_ANGLE_INDEX] < 0) {
                             stepper_data[sm_number].direction = ANTI_CLOCKWISE;
                         } else {
                             stepper_data[sm_number].direction = CLOCKWISE;
@@ -128,32 +128,32 @@ int32_t                 target_step_count;
                         if (stepper_data[sm_number].flip_direction == true) {
                             FLIP_BOOLEAN(stepper_data[sm_number].direction);
                         }
-                        target_step_count = stepper_data[sm_number].current_step_count + int_parameters[4];
+                        target_step_count = stepper_data[sm_number].current_step_count + int_parameters[STEP_MOTOR_ANGLE_INDEX];
                         if ((target_step_count < 0) || (target_step_count > stepper_data[sm_number].max_step_count)) {
                             status = BAD_STEP_VALUE;
                             break;
                         }
                         stepper_data[sm_number].target_step_count = target_step_count;
                         stepper_data[sm_number].sm_profile = sm_number;
-                        stepper_data[sm_number].coast_step_count = abs(int_parameters[4]) - (sequences[sm_number].nos_sm_cmds - 1);
+                        stepper_data[sm_number].coast_step_count = abs(int_parameters[STEP_MOTOR_ANGLE_INDEX]) - (sequences[sm_number].nos_sm_cmds - 1);
                         stepper_data[sm_number].cmd_index = 0;
-                        if (int_parameters[2] == SM_REL_MOVE) {
-                            stepper_data[sm_number].state = M_INIT;
+                        if (int_parameters[STEP_MOTOR_CMD_INDEX] == SM_REL_MOVE) {
+                            stepper_data[sm_number].state = STATE_SM_INIT;
                         } else {
-                            stepper_data[sm_number].state = M_SYNC;
+                            stepper_data[sm_number].state = STATE_SM_SYNC;
                         }
                         break;
                     case SM_ABS_MOVE :
-                        if (stepper_data[int_parameters[5]].error != OK) {  // ensure motor is not in an error state
-                            status = stepper_data[int_parameters[5]].error;
+                        if (stepper_data[int_parameters[STEP_MOTOR_NO_INDEX]].error != OK) {  // ensure motor is not in an error state
+                            status = stepper_data[int_parameters[STEP_MOTOR_NO_INDEX]].error;
                             break;   // existing error => abort move
                         }
-                        sm_number = int_parameters[5];
-                        if ((int_parameters[4] < 0) || (int_parameters[4] > stepper_data[sm_number].max_step_count)) {
+                        sm_number = int_parameters[STEP_MOTOR_NO_INDEX];
+                        if ((int_parameters[STEP_MOTOR_ANGLE_INDEX] < 0) || (int_parameters[STEP_MOTOR_ANGLE_INDEX] > stepper_data[sm_number].max_step_count)) {
                             status = BAD_STEP_VALUE;
                             break;
                         }
-                        target_step_count = int_parameters[4] - stepper_data[sm_number].current_step_count;
+                        target_step_count = int_parameters[STEP_MOTOR_ANGLE_INDEX] - stepper_data[sm_number].current_step_count;
                         if (target_step_count < 0) {
                             stepper_data[sm_number].direction = ANTI_CLOCKWISE;
                         } else {
@@ -166,14 +166,14 @@ int32_t                 target_step_count;
                         stepper_data[sm_number].sm_profile = sm_number;
                         stepper_data[sm_number].coast_step_count = abs(target_step_count) - (sequences[sm_number].nos_sm_cmds - 1);
                         stepper_data[sm_number].cmd_index = 0;
-                        if (int_parameters[2] == SM_ABS_MOVE) {
-                            stepper_data[sm_number].state = M_INIT;
+                        if (int_parameters[STEP_MOTOR_NO_INDEX] == SM_ABS_MOVE) {
+                            stepper_data[sm_number].state = STATE_SM_INIT;
                         } else {
-                            stepper_data[sm_number].state = M_SYNC;
+                            stepper_data[sm_number].state = STATE_SM_SYNC;
                         }
                         break;
                     case SM_CALIBRATE : 
-                        stepper_data[sm_number].state = M_UNCALIBRATED;
+                        stepper_data[sm_number].state = STATE_SM_UNCALIBRATED;
                         break;  // set system to do a calibration on this motor
                     default:
                         status = BAD_STEPPER_COMMAND;
@@ -188,8 +188,8 @@ int32_t                 target_step_count;
                     servo_pt->sync = false;
                 }
                 for (int32_t i=0 ; i <NOS_STEPPERS;i++) {
-                    if (stepper_data[i].state == M_SYNC) {
-                        stepper_data[i].state = M_INIT;
+                    if (stepper_data[i].state == STATE_SM_SYNC) {
+                        stepper_data[i].state = STATE_SM_INIT;
                     }
                 }
                 break;
