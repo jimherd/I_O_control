@@ -108,6 +108,7 @@ int32_t                 target_step_count;
                     break;
                 }
     #endif
+                sm_number = int_parameters[STEP_MOTOR_NO_INDEX];
                 switch (int_parameters[STEP_MOTOR_CMD_INDEX]) { 
                     case SM_REL_MOVE : 
                     case SM_REL_MOVE_SYNC :

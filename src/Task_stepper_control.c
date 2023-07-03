@@ -19,7 +19,8 @@
 //==============================================================================
 
 struct stepper_data_s     stepper_data[NOS_STEPPERS] = {
-    {200, 5, 2, 0, GP17, GP16, GP18, GP19, CLOCKWISE, false, 160, false, 330, 0,0, OK, STATE_SM_DORMANT,0,0,0,0,0,0}
+ //   {200, 5, 2, 0, GP17, GP16, GP18, GP19, CLOCKWISE, false, 160, false, 330, 0,0, OK, STATE_SM_DORMANT,0,0,0,0,0,0}
+    {200, 1, 2, 0, GP17, GP16, GP18, GP19, CLOCKWISE, false, 100, false, 330, 0,0, OK, STATE_SM_DORMANT,0,0,0,0,0,0}
 };
 
 //==============================================================================
@@ -46,8 +47,7 @@ struct repeating_timer timer;
  * @notes
  *      
  *  1.  Set error if attempt to move an uncalibrated motor.
- *  2.  Calibration activity causes interrupt driven stepper motor activity
- *      to be suspended. (May be changed in future)
+ *  2.  Mealy state machine to drive stepper motors
  *      
  */
 bool repeating_timer_callback(struct repeating_timer *t) 
@@ -81,11 +81,6 @@ error_codes_te  status;
                     sm_ptr->cmd_step_cnt = sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_cmd_step_cnt;
                 }
                 set_SM_direction(i, sm_ptr->direction);
-                // if (sm_ptr->direction == CLOCKWISE) {
-                //     gpio_put(sm_ptr->direction_pin, 1);
-                // } else {
-                //     gpio_put(sm_ptr->direction_pin, 0);
-                // }
                 sm_ptr->state = STATE_SM_RUNNING;  // update state
                 break;
 
@@ -142,20 +137,16 @@ error_codes_te  status;
                 sm_ptr->cmd_step_cnt--; 
                 break;
             case STATE_SM_UNCALIBRATED :
-                if (sm_ptr->calibrated == true) {
-                    sm_ptr->state = STATE_SM_DORMANT;
-                }
                 sm_ptr->temp_count = MAX_STEPS;
+                set_SM_direction(i, CLOCKWISE);
                 sm_ptr->state = STATE_SM_CALIB_S0;
                 break;
             case STATE_SM_CALIB_S0 : // ensure motor is not triggering LEFT limit switch
-                set_SM_direction(i, CLOCKWISE);
                 if (gpio_get(sm_ptr->L_limit_pin) == ASSERTED_LOW) {
-                    do_step(i); // and stay in sthis state until clear of LEFT limit switch
+                    do_step(i); // and stay in this state until clear of LEFT limit switch
                     sm_ptr->temp_count--;
                     if (sm_ptr->temp_count <= 0) {
                         sm_ptr->error = STEPPER_CALIBRATE_FAIL;
-                        sm_ptr->temp_count = MAX_STEPS;
                         sm_ptr->state = STATE_SM_DORMANT;
                         break;
                     }
@@ -164,6 +155,7 @@ error_codes_te  status;
                     sm_ptr->state = STATE_SM_CALIB_S1;
                 }
                 break;
+    // states S1,S2,S3 to move to LEFT limit
             case STATE_SM_CALIB_S1 :
                 do_step(i);
                 if (CALIBRATE_SPEED_DELAY != 0) {
@@ -182,21 +174,23 @@ error_codes_te  status;
             case STATE_SM_CALIB_S3 :
                 if (gpio_get(sm_ptr->L_limit_pin) == ASSERTED_LOW) {
                     sm_ptr->current_step_count = 0;
+                    sm_ptr->temp_count = MAX_STEPS;
+                    set_SM_direction(i, CLOCKWISE);
                     sm_ptr->state = STATE_SM_CALIB_S4;
                 } else {
                     sm_ptr->state = STATE_SM_CALIB_S1;
                 }
                 break;
+    // states S4,S5,S6 to move to RIGHT limit
             case STATE_SM_CALIB_S4 :
                 do_step(i);
+                sm_ptr->current_step_count++;
                 sm_ptr->temp_count--;
                 if (sm_ptr->temp_count <= 0) {
                     sm_ptr->error = STEPPER_CALIBRATE_FAIL;
-                    sm_ptr->temp_count = MAX_STEPS;
                     sm_ptr->state = STATE_SM_DORMANT;
                     break;
                 }
-                sm_ptr->current_step_count++;
                 if (CALIBRATE_SPEED_DELAY != 0) {
                     sm_ptr->current_step_delay_count = CALIBRATE_SPEED_DELAY;
                     sm_ptr->state = STATE_SM_CALIB_S5;
@@ -211,28 +205,30 @@ error_codes_te  status;
                 } 
                 break;
             case STATE_SM_CALIB_S6 :
-                if (gpio_get(sm_ptr->L_limit_pin) == ASSERTED_LOW) {
+                if (gpio_get(sm_ptr->R_limit_pin) == ASSERTED_LOW) {
                     sm_ptr->state = STATE_SM_CALIB_S7;
                 } else {
                     sm_ptr->state = STATE_SM_CALIB_S4;
                 }
                 break;
+    // Prepare to move to initial position
             case STATE_SM_CALIB_S7 :
                 sm_ptr->max_step_count = sm_ptr->current_step_count;
                 sm_ptr->calibrated = true;
                 set_SM_direction(i, ANTI_CLOCKWISE);
-                sm_ptr->temp_count = sm_ptr->max_step_count - sm_ptr->cmd_step_cnt;
+                sm_ptr->temp_count = sm_ptr->max_step_count - sm_ptr->init_step_position;
                 sm_ptr->state = STATE_SM_CALIB_S8;
                 break;
+    // states S8,S9,S10 to move to initial position             
             case STATE_SM_CALIB_S8 :
                 do_step(i);
+                sm_ptr->current_step_count--;
                 sm_ptr->temp_count--;
                 if (sm_ptr->temp_count <= 0) {
                     sm_ptr->error = OK;
                     sm_ptr->state = STATE_SM_DORMANT;
                     break;
                 }
-                sm_ptr->current_step_count--;
                 if (CALIBRATE_SPEED_DELAY != 0) {
                     sm_ptr->current_step_delay_count = CALIBRATE_SPEED_DELAY;
                     sm_ptr->state = STATE_SM_CALIB_S9;
@@ -253,6 +249,7 @@ error_codes_te  status;
                     sm_ptr->state = STATE_SM_CALIB_S8;
                 }
                 break;
+    // calibrate complete
             case STATE_SM_CALIB_S11 :
                 sm_ptr->error = OK;
                 sm_ptr->state = STATE_SM_DORMANT;
@@ -392,7 +389,7 @@ status = STEPPER_CALIBRATE_FAIL;
             stepper_data[stepper_no].current_step_count -= 1;
             vTaskDelay(10);
     }
-    stepper_data[stepper_no].calibrated = true;
+    //stepper_data[stepper_no].calibrated = true;
     return status;
 }
 
