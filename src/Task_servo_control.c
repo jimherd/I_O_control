@@ -46,10 +46,10 @@ servo_states_te      RC_state;
         for (uint8_t i = 0; i < NOS_SERVOS; i++) {
             switch (servo_data[i].state) {
                 case DISABLED :
-                    PCA9685_set_zero(i);       // ensure servo is off
+                    PCA9685_set_zero(i);    
                     break;
                 case DORMANT :
-                    break;        // do nothing but leave PWN at current value
+                    break;        // do nothing but less
                 case DELAY :
                     servo_data[i].counter--;   // count down for delay
                     if (servo_data[i].counter == 0) {
@@ -59,7 +59,9 @@ servo_states_te      RC_state;
                 case MOVE :
                     PCA9685_set_servo(i, servo_data[i].angle);
                     if (servo_data[i].sync != true) {
-                        servo_data[i].state = DORMANT;
+                    int32_t delta_angle = abs(servo_data[i].angle - angle);
+                    int32_t travel_time_count = ((delta_angle * 5) / 10) + 1;
+                        servo_data[i].counter = travel_time_count; 
                     }
                     break;
                 case TIMED_MOVE :

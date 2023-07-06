@@ -65,7 +65,7 @@ struct error_list_s errors[] = {
     {PARAMETER_OUTWITH_LIMITS, "A parameter is outwith its limits"},
     {BAD_SERVO_COMMAND,  "unknown servo command"},
     {STEPPER_CALIBRATE_FAIL, "Stepper motor calibration has failed"},
-    {BAD_STEPPER_COMMAND,  "unknown stepper motor  command"},
+    {BAD_STEPPER_COMMAND,  "unknown stepper motor command"},
 };
 
 //***************************************************************************
@@ -85,7 +85,8 @@ struct error_list_s errors[] = {
 // General command limits : tested with "check_command" function
 // Specific limits may be tested in the command execution code
 
-struct command_limits_s    cmd_limits[NOS_COMMANDS] = {
+struct command_limits_s    cmd_limits[NOS_COMMANDS] = {     
+// paramter            2       3        4       5          6         7
     [0].p_limits = {{5, 6}, {0, 63}, {0, 5}, {0, 15}, {-90, +90}, {1, 1000}},   // servo
     [1].p_limits = {{5, 6}, {0, 63}, {0, 4}, {0, 0}, {-333, +333}},             // stepper
     [2].p_limits = {{2, 2}, {0, 63}, {0,0}},                                    // sync

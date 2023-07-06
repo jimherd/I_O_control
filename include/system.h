@@ -78,6 +78,7 @@ typedef enum  {
     SM_MOVE_TOO_SMALL           = -114,
     LIMIT_SWITCH_ERROR          = -115,
     UNKNOWN_STEPPER_MOTOR_STATE = -116,
+    STEPPER_BUSY                = -117,
 } error_codes_te;
 
 //==============================================================================
@@ -238,7 +239,7 @@ struct sm_profile_s {      // single stepper motor seqence
 
 #define     STEP_MOTOR_CMD_INDEX    2
 #define     STEP_MOTOR_NO_INDEX     3
-#define     STEP_MOTOR_ANGLE_INDEX        4
+#define     STEP_MOTOR_ANGLE_INDEX  4
 
 // servo command
 
@@ -302,22 +303,3 @@ enum {
 #define NOS_COMMANDS   (TOKENIZER_ERROR + 1)
 
 #endif /* __SYSTEM_H__ */
-
-// archive : delete later
-// // FreeRTOS components
-
-// extern void Task_UART(void *p);
-// extern void Task_blink(void *p);
-// extern void Task_run_cmd(void *p);
-// extern void Task_servo_control(void *p);
-// extern void Task_stepper_control(void *p);
-// extern QueueHandle_t       queue_print_string_buffers;
-// extern QueueHandle_t       queue_free_buffers;
-// extern EventGroupHandle_t eventgroup_uart_IO;
-
-// data structures
-// extern char print_string_buffers[NOS_PRINT_STRING_BUFFERS][MAX_PRINT_STRING_LENGTH];
-// extern struct task_data_s  task_data[NOS_TASKS];
-// extern const uint8_t char_type[256];
-// extern struct servo_data_s     servo_data[NOS_SERVOS];
-// extern struct token_list_s commands[NOS_COMMANDS];

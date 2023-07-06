@@ -102,12 +102,13 @@ int32_t                 target_step_count;
                 reply_done = true;
                 break;
             case TOKENIZER_STEPPER: 
-    #ifndef IGNORE_SM_CALIBRATION
+                if (stepper_data[int_parameters[3]].state != STATE_SM_DORMANT) {
+                    status = STEPPER_BUSY;
+                }
                 if (stepper_data[int_parameters[3]].error != OK) {  // ensure motor is not in an error state
                     status = stepper_data[int_parameters[5]].error;
                     break;
                 }
-    #endif
                 sm_number = int_parameters[STEP_MOTOR_NO_INDEX];
                 switch (int_parameters[STEP_MOTOR_CMD_INDEX]) { 
                     case SM_REL_MOVE : 
@@ -369,18 +370,3 @@ uint32_t i;
     return status;
 }
 
-//==============================================================================
-// Archive : delete after system tests
-//
-// //***************************************************************************
-// // General command limits : tested with "check_command" function
-// // Specific limits may be tested in the command execution code
-
-// struct command_limits_s    cmd_limits[NOS_COMMANDS] = {
-//     [0].p_limits = {{5, 6}, {0, 63}, {0, 5}, {0, 15}, {-90, +90}, {1, 1000}},   // servo
-//     [1].p_limits = {{5, 6}, {0, 63}, {0,0}, {0, 0}, {-333, +333}},              // stepper
-//     [2].p_limits = {{2, 2}, {0, 63}, {0,0}},                         // sync
-//     [3].p_limits = {{0, 0}, {0,  0}, {0,0}},                         // config
-//     [4].p_limits = {{0, 0}, {0,  0}, {0,0}},                         // info
-//     [5].p_limits = {{3, 3}, {0, 63}, {-255, +255}},                  // ping,
-// };
