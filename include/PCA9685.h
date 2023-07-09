@@ -13,62 +13,8 @@
 #define __PCA9685_H__
 
 #include    "system.h"
-#include    "PCA9685.h"
 
 #include    "pico/stdlib.h"
-
-#define     PCA9685_address     0x40
-
-#define		PCA9685_servo_frequency		50   // hertz
-#define		PCA9685_50Hz_PRE_SCALER		138  // TUNED : calc = 123
-  // refer to datasheet for calculation
-
-#define		SERVO_TRIM_MIN		110
-#define     SERVO_TRIM_MAX		590
-
-#define		MID_POINT_COUNT		307
-#define		COUNT_1mS			205
-#define		MAX_ANGLE			 90
-
-typedef enum  {SERVO, MOTOR} servo_type_te;
-enum {R_EYEBALL, L_EYEBALL, R_EYE_LID, L_EYE_LID, R_EYE_BROW, L_EYE_BROW, MOUTH};
-
-#define		NOS_SERVOS	(MOUTH + 1)
-
-//==============================================================================
-// servo commands
-
-typedef enum {ABS_MOVE, ABS_MOVE_SYNC, SPEED_MOVE, SPEED_MOVE_SYNC, RUN_SYNC_MOVES, T_DELAY, STOP, STOP_ALL} servo_commands_te;
-
-//==============================================================================
-// Servo task execution states
-
-typedef enum {DISABLED, DORMANT, DELAY, MOVE, TIMED_MOVE, MOVE_SYNC_HOLD, TIMED_MOVE_SYNC_HOLD} servo_states_te;
-
-//==============================================================================
-// info commands
-
-enum {SYS_INFO, SERVO_INFO, STEPPER_INFO};
-
-//==============================================================================
-// structure to hold servo specific data
-//
-struct servo_data_s {
-	servo_states_te	state;
-	bool			sync;
-	servo_type_te	type;
-	int16_t			angle;			// current value
-	int16_t			angle_target;
-	int16_t			speed_value;
-	int16_t			init_angle;		// power-on state
-	bool			flip;
-	int16_t			angle_min, angle_max;
-	uint16_t		pulse_offset;
-	uint32_t		counter;
-	float			gradient;
-	float   		y_intercept;
-	uint32_t		t_end;
-};
 
 //==============================================================================
 // register set for PCA9685 device
@@ -219,13 +165,13 @@ void  PCA9685_set_sleep(bool mode);
 void  PCA9685_set_auto_increment(bool mode);
 void  PCA9685_reset(void);
 void PCA9685_set_servo_freq(void);
-void  PCA9685_set_servo(uint32_t servo_no, int32_t position);
+error_codes_te PCA9685_set_servo(uint32_t servo_no, int32_t position);
 void  PCA9685_set_zero(uint32_t servo_no);
-void  set_servo_move(  uint8_t            servo_no,
-                       servo_commands_te  servo_state,
-                       int16_t            servo_angle,
-                       bool               servo_sync
-                    );
+void  set_servo_move(uint8_t servo_no,
+                    servo_commands_te  servo_state,
+                    int16_t            servo_angle,
+                    bool               servo_sync
+);
 void    set_servo_speed_move( uint8_t             servo_no,
     						  servo_commands_te   servo_state,
                               int16_t             servo_angle,

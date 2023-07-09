@@ -55,7 +55,7 @@ bool repeating_timer_callback(struct repeating_timer *t)
 struct stepper_data_s  *sm_ptr;
 error_codes_te  status;
 
-    START_PULSE; 
+    // START_PULSE; 
     for (uint32_t i=0; i<NOS_STEPPERS; i++) {
         sm_ptr = &stepper_data[i];
         switch (sm_ptr->state) {
@@ -72,7 +72,7 @@ error_codes_te  status;
                     sm_ptr->cmd_index++;
                 }
                 if (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_command_type  == SM_END) {
-                    sm_ptr->state = DORMANT;
+                    sm_ptr->state = STATE_SM_DORMANT;
                     break;    
                 }
                 if (sm_ptr->state == SM_COAST) {
@@ -116,7 +116,7 @@ error_codes_te  status;
                 }
             // check for end of profile execution
                 if (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_command_type  == SM_END) {
-                    sm_ptr->state = DORMANT;   // stepper motor move complete
+                    sm_ptr->state = STATE_SM_DORMANT;   // stepper motor move complete
                     break;    
                 }
             // implement new command
@@ -262,7 +262,7 @@ error_codes_te  status;
                 break;
         }
     }
-    STOP_PULSE;
+    // STOP_PULSE;
     return true;
 }
 

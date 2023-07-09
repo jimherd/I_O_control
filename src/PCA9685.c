@@ -16,6 +16,9 @@
 #include "hardware/i2c.h"
 
 //==============================================================================
+// Function templates
+
+//==============================================================================
 // servo data with initial values
 
 struct servo_data_s     servo_data[NOS_SERVOS] = {
@@ -158,7 +161,7 @@ void PCA9685_set_servo_freq(void){
  * -angle  =>  subtract from 1.5mS pulse
  * Therefore need only calculate for abs(angle)
  */
-void  PCA9685_set_servo(uint32_t servo_no, int32_t angle)
+error_codes_te  PCA9685_set_servo(uint32_t servo_no, int32_t angle)
 {
 uint8_t     PCA9685_i2c_packet[5];
 int32_t    PWM_ON_time, PWM_OFF_time, pulse_change;
@@ -179,11 +182,11 @@ uint8_t     PCA9685_chan_address;
         PWM_OFF_time += servo_data_pt->pulse_offset;  // set OFF time
         PWM_ON_time = servo_data_pt->pulse_offset;    // set ON time
     } else {
-        return;
+        return OK;
     }
 
     if (servo_data_pt->sync == true) {
-        return;    // delay execution of the move until later sync command
+        return OK;    // delay execution of the move until later sync command
     }
     //
     // execute servo move
@@ -219,11 +222,11 @@ uint8_t  PCA9685_i2c_packet[5];
  * @param servo_angle 
  * @param servo_sync 
  */
-void    set_servo_move( uint8_t            servo_no,
-                        servo_commands_te  servo_state,
-                        int16_t            servo_angle,
-                        bool               servo_sync 
-                      )
+void  set_servo_move (uint8_t  servo_no,
+                    servo_commands_te  servo_state,
+                    int16_t            servo_angle,
+                    bool               servo_sync
+)
 {
 struct servo_data_s  *servo_data_pt;
 
@@ -232,6 +235,7 @@ struct servo_data_s  *servo_data_pt;
     servo_data_pt->state = servo_state;
     servo_data_pt->angle = servo_angle;
     servo_data_pt->sync  = servo_sync;
+    return;
 }
 
 //==============================================================================

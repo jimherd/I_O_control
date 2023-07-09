@@ -7,7 +7,8 @@
 #ifndef __SYSTEM_H__
 #define __SYSTEM_H__
 
-#include    "PCA9685.h"
+#include    "system.h"
+//#include    "PCA9685.h"
 
 #include    "pico/stdlib.h"
 #include    "Pico_IO.h"
@@ -61,24 +62,24 @@
 
 typedef enum  {
     OK                          = 0,
-    LETTER_ERROR                = -100,
-    DOT_ERROR                   = -101,
-    PLUSMINUS_ERROR             = -102,
-    BAD_COMMAND                 = -103,
-    BAD_PORT_NUMBER             = -104,
-    BAD_NOS_PARAMETERS          = -105,
-    BAD_BASE_PARAMETER          = -106,
-    PARAMETER_OUTWITH_LIMITS    = -107,
-    BAD_SERVO_COMMAND           = -108,
-    STEPPER_CALIBRATE_FAIL      = -109,
-    BAD_STEPPER_COMMAND         = -110,
-    BAD_STEP_VALUE              = -111,
-    MOVE_ON_UNCALIBRATED_MOTOR  = -112,
-    EXISTING_FAULT_WITH_MOTOR   = -113,
-    SM_MOVE_TOO_SMALL           = -114,
-    LIMIT_SWITCH_ERROR          = -115,
-    UNKNOWN_STEPPER_MOTOR_STATE = -116,
-    STEPPER_BUSY                = -117,
+    LETTER_ERROR                = 100,
+    DOT_ERROR                   = 101,
+    PLUSMINUS_ERROR             = 102,
+    BAD_COMMAND                 = 103,
+    BAD_PORT_NUMBER             = 104,
+    BAD_NOS_PARAMETERS          = 105,
+    BAD_BASE_PARAMETER          = 106,
+    PARAMETER_OUTWITH_LIMITS    = 107,
+    BAD_SERVO_COMMAND           = 108,
+    STEPPER_CALIBRATE_FAIL      = 109,
+    BAD_STEPPER_COMMAND         = 110,
+    BAD_STEP_VALUE              = 111,
+    MOVE_ON_UNCALIBRATED_MOTOR  = 112,
+    EXISTING_FAULT_WITH_MOTOR   = 113,
+    SM_MOVE_TOO_SMALL           = 114,
+    LIMIT_SWITCH_ERROR          = 115,
+    UNKNOWN_STEPPER_MOTOR_STATE = 116,
+    STEPPER_BUSY                = 117,
 } error_codes_te;
 
 //==============================================================================
@@ -127,6 +128,50 @@ enum {UPPER_CASE, LOWER_CASE};
 #define LED_PIN     PICO_DEFAULT_LED_PIN
 #define LOG_PIN     GP2
 #define BLINK_PIN   LED_PIN
+
+//==============================================================================
+//servo motor interface (PCA9685A)
+
+#define     PCA9685_address     0x40
+
+#define		PCA9685_servo_frequency		 50  // hertz
+#define		PCA9685_50Hz_PRE_SCALER		138  // TUNED : calc = 123
+  // refer to datasheet for calculation
+
+#define		SERVO_TRIM_MIN		110
+#define     SERVO_TRIM_MAX		590
+
+#define		MID_POINT_COUNT		307
+#define		COUNT_1mS			205
+#define		MAX_ANGLE			 90
+
+enum {R_EYEBALL, L_EYEBALL, R_EYE_LID, L_EYE_LID, R_EYE_BROW, L_EYE_BROW, MOUTH};
+
+#define		NOS_SERVOS	(MOUTH + 1)
+
+typedef enum  {SERVO, MOTOR} servo_type_te;
+
+typedef enum {ABS_MOVE, ABS_MOVE_SYNC, SPEED_MOVE, SPEED_MOVE_SYNC, RUN_SYNC_MOVES, T_DELAY, STOP, STOP_ALL} servo_commands_te;
+typedef enum {DISABLED, DORMANT, DELAY, MOVE, TIMED_MOVE, MOVE_SYNC_HOLD, TIMED_MOVE_SYNC_HOLD} servo_states_te;
+
+enum {SYS_INFO, SERVO_INFO, STEPPER_INFO};
+
+struct servo_data_s {
+	servo_states_te	state;
+	bool			sync;
+	servo_type_te	type;
+	int32_t			angle;			// current value
+	int32_t			angle_target;
+	int32_t			speed_value;
+	int32_t			init_angle;		// power-on state
+	bool			flip;
+	int32_t			angle_min, angle_max;
+	uint32_t		pulse_offset;
+	uint32_t		counter;
+	float			gradient;
+	float   		y_intercept;
+	uint32_t		t_end;
+};
 
 //==============================================================================
 //stepper motor interface (TMC2208)

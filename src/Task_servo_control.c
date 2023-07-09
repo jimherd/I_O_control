@@ -25,7 +25,7 @@ TickType_t  xLastWakeTime;
 BaseType_t  xWasDelayed;
 uint32_t    start_time, end_time;
 uint32_t    sample_count;
-int32_t     angle;
+int32_t     angle, delta_angle, travel_time_count;
 
 servo_states_te      RC_state;
 
@@ -40,10 +40,10 @@ servo_states_te      RC_state;
     xLastWakeTime = xTaskGetTickCount ();
     FOREVER {
         xWasDelayed = xTaskDelayUntil( &xLastWakeTime, TASK_SERVO_CONTROL_FREQUENCY_TICK_COUNT );
-        // START_PULSE;
+        START_PULSE;
         start_time = time_us_32();
         sample_count++;
-        for (uint8_t i = 0; i < NOS_SERVOS; i++) {
+        for (uint32_t i = 0; i < NOS_SERVOS; i++) {
             switch (servo_data[i].state) {
                 case DISABLED :
                     PCA9685_set_zero(i);    
@@ -59,9 +59,10 @@ servo_states_te      RC_state;
                 case MOVE :
                     PCA9685_set_servo(i, servo_data[i].angle);
                     if (servo_data[i].sync != true) {
-                    int32_t delta_angle = abs(servo_data[i].angle - angle);
-                    int32_t travel_time_count = ((delta_angle * 5) / 10) + 1;
+                    delta_angle = abs(servo_data[i].angle - servo_data[i].angle_target);
+                    travel_time_count = ((delta_angle * 5) / 10) + 1;
                         servo_data[i].counter = travel_time_count; 
+                        servo_data[i].state = DELAY;
                     }
                     break;
                 case TIMED_MOVE :
@@ -85,7 +86,7 @@ servo_states_te      RC_state;
 
         end_time = time_us_32();
         update_task_execution_time(TASK_SERVO_CONTROL, start_time, end_time);   
-        // STOP_PULSE;
+        STOP_PULSE;
     }
 }
 
