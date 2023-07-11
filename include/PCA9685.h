@@ -167,12 +167,12 @@ void  PCA9685_reset(void);
 void PCA9685_set_servo_freq(void);
 error_codes_te PCA9685_set_servo(uint32_t servo_no, int32_t position);
 void  PCA9685_set_zero(uint32_t servo_no);
-void  set_servo_move(uint8_t servo_no,
+error_codes_te  set_servo_move(uint8_t servo_no,
                     servo_commands_te  servo_state,
                     int16_t            servo_angle,
                     bool               servo_sync
 );
-void    set_servo_speed_move( uint8_t             servo_no,
+error_codes_te    set_servo_speed_move( uint8_t             servo_no,
     						  servo_commands_te   servo_state,
                               int16_t             servo_angle,
                               int16_t             time_for_move,  // units of 100ms

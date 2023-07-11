@@ -74,25 +74,25 @@ int32_t                 target_step_count;
             case TOKENIZER_SERVO: 
                 switch (int_parameters[2]) {
                     case ABS_MOVE: 
-                        set_servo_move( int_parameters[3], MOVE, int_parameters[4], false);
+                        status = set_servo_move( int_parameters[3], MOVE, int_parameters[4], false);
                         break;
                     case ABS_MOVE_SYNC: 
-                        set_servo_move( int_parameters[3], MOVE, int_parameters[4], true);
+                        status = set_servo_move( int_parameters[3], MOVE, int_parameters[4], true);
                         break;
                     case SPEED_MOVE: 
                         set_servo_speed_move(int_parameters[3], TIMED_MOVE, int_parameters[4], int_parameters[5], false);
                         break;
                     case SPEED_MOVE_SYNC: 
-                        set_servo_speed_move(int_parameters[3], TIMED_MOVE, int_parameters[4], int_parameters[5], true);
+                        status = set_servo_speed_move(int_parameters[3], TIMED_MOVE, int_parameters[4], int_parameters[5], true);
                         break;
                     case RUN_SYNC_MOVES: 
-                        set_servo_move(int_parameters[2], int_parameters[3], int_parameters[4], false);
+                        status = set_servo_move(int_parameters[2], int_parameters[3], int_parameters[4], false);
                         break;
                     case STOP:
-                        set_servo_move(DORMANT, int_parameters[3], int_parameters[4], false);  
+                        status = set_servo_move(int_parameters[2], int_parameters[3], int_parameters[4], false);  
                         break;
                     case STOP_ALL: 
-                        set_servo_move(int_parameters[2], int_parameters[3], int_parameters[4], false);
+                        status = set_servo_move(int_parameters[2], int_parameters[3], int_parameters[4], false);
                         break;
                     default:
                         status = BAD_SERVO_COMMAND;

@@ -44,13 +44,13 @@ const uint8_t char_type[256] = {
 };
 
 struct token_list_s commands[] = {
-    {"servo", TOKENIZER_SERVO},
+    {"servo",   TOKENIZER_SERVO},
     {"stepper", TOKENIZER_STEPPER},
-    {"delay", TOKENIZER_TDELAY},
-    {"sync", TOKENIZER_SYNC},
-    {"config", TOKENIZER_CONFIG},
-    {"info", TOKENIZER_INFO},
-    {"ping", TOKENIZER_PING}
+    {"sync",    TOKENIZER_SYNC},
+    {"config",  TOKENIZER_CONFIG},
+    {"info",    TOKENIZER_INFO},
+    {"ping",    TOKENIZER_PING},
+    {"delay",   TOKENIZER_TDELAY},
 };
 
 struct error_list_s errors[] = {
@@ -86,11 +86,25 @@ struct error_list_s errors[] = {
 // Specific limits may be tested in the command execution code
 
 struct command_limits_s    cmd_limits[NOS_COMMANDS] = {     
-// paramter            2       3        4       5          6         7
+// paramter        NOS_PAR     1        2       3          4         5
     [0].p_limits = {{5, 6}, {0, 63}, {0, 5}, {0, 15}, {-90, +90}, {1, 1000}},   // servo
     [1].p_limits = {{5, 6}, {0, 63}, {0, 4}, {0, 0}, {-333, +333}},             // stepper
     [2].p_limits = {{2, 2}, {0, 63}, {0,0}},                                    // sync
     [3].p_limits = {{0, 0}, {0,  0}, {0,0}},                                    // config
     [4].p_limits = {{3, 3}, {0, 63}, {0,5}},                                    // info
     [5].p_limits = {{3, 3}, {0, 63}, {-255, +255}},                             // ping,
+    [6].p_limits = {{3, 3}, {0, 63}, {0, 50000}},                               // delay
+};
+
+//==============================================================================
+// servo data with initial values
+
+struct servo_data_s     servo_data[NOS_SERVOS] = {
+    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45,  0},
+    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 10},
+    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 20},
+    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 30},
+    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 40},
+    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 50},
+    {DORMANT, false, MOTOR, 0, 0, 0, 45, false, -45, +45, 60},
 };

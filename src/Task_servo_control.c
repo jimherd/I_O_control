@@ -31,7 +31,7 @@ servo_states_te      RC_state;
 
     init_PCA9685_servo_IO();
     for (uint8_t i = 0; i < NOS_SERVOS ; i++) {
-            servo_data[i].state = DISABLED;
+            servo_data[i].state = DORMANT;
     }
 
     set_servo_move(0, MOVE, 0, false);

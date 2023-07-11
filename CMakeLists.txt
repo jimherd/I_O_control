@@ -29,7 +29,7 @@ pico_sdk_init()
 
 # add gcc compiler options
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wunused-result ")    # -fshort-enums
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fshort-enums -Wunused-result ")    # -fshort-enums
 
 # collect all source .c files
 FILE(GLOB Pico_source_files ${CMAKE_SOURCE_DIR}/src/*.c)

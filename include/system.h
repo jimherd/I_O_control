@@ -8,7 +8,6 @@
 #define __SYSTEM_H__
 
 #include    "system.h"
-//#include    "PCA9685.h"
 
 #include    "pico/stdlib.h"
 #include    "Pico_IO.h"
@@ -62,24 +61,25 @@
 
 typedef enum  {
     OK                          = 0,
-    LETTER_ERROR                = 100,
-    DOT_ERROR                   = 101,
-    PLUSMINUS_ERROR             = 102,
-    BAD_COMMAND                 = 103,
-    BAD_PORT_NUMBER             = 104,
-    BAD_NOS_PARAMETERS          = 105,
-    BAD_BASE_PARAMETER          = 106,
-    PARAMETER_OUTWITH_LIMITS    = 107,
-    BAD_SERVO_COMMAND           = 108,
-    STEPPER_CALIBRATE_FAIL      = 109,
-    BAD_STEPPER_COMMAND         = 110,
-    BAD_STEP_VALUE              = 111,
-    MOVE_ON_UNCALIBRATED_MOTOR  = 112,
-    EXISTING_FAULT_WITH_MOTOR   = 113,
-    SM_MOVE_TOO_SMALL           = 114,
-    LIMIT_SWITCH_ERROR          = 115,
-    UNKNOWN_STEPPER_MOTOR_STATE = 116,
-    STEPPER_BUSY                = 117,
+    LETTER_ERROR                = -100,
+    DOT_ERROR                   = -101,
+    PLUSMINUS_ERROR             = -102,
+    BAD_COMMAND                 = -103,
+    BAD_PORT_NUMBER             = -104,
+    BAD_NOS_PARAMETERS          = -105,
+    BAD_BASE_PARAMETER          = -106,
+    PARAMETER_OUTWITH_LIMITS    = -107,
+    BAD_SERVO_COMMAND           = -108,
+    STEPPER_CALIBRATE_FAIL      = -109,
+    BAD_STEPPER_COMMAND         = -110,
+    BAD_STEP_VALUE              = -111,
+    MOVE_ON_UNCALIBRATED_MOTOR  = -112,
+    EXISTING_FAULT_WITH_MOTOR   = -113,
+    SM_MOVE_TOO_SMALL           = -114,
+    LIMIT_SWITCH_ERROR          = -115,
+    UNKNOWN_STEPPER_MOTOR_STATE = -116,
+    STEPPER_BUSY                = -117,
+    SERVO_BUSY                  = -118,
 } error_codes_te;
 
 //==============================================================================

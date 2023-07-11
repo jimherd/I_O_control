@@ -12,24 +12,25 @@
 
 #include  "system.h"
 #include  "PCA9685.h"
+#include  "externs.h"
 
 #include "hardware/i2c.h"
 
 //==============================================================================
 // Function templates
 
-//==============================================================================
-// servo data with initial values
+// //==============================================================================
+// // servo data with initial values
 
-struct servo_data_s     servo_data[NOS_SERVOS] = {
-    {true, false, SERVO, 0, 0, 0, 45, false, -45, +45,  0},
-    {true, false, SERVO, 0, 0, 0, 45, false, -45, +45, 10},
-    {true, false, SERVO, 0, 0, 0, 45, false, -45, +45, 20},
-    {true, false, SERVO, 0, 0, 0, 45, false, -45, +45, 30},
-    {true, false, SERVO, 0, 0, 0, 45, false, -45, +45, 40},
-    {true, false, SERVO, 0, 0, 0, 45, false, -45, +45, 50},
-    {true, false, MOTOR, 0, 0, 0, 45, false, -45, +45, 60},
-};
+// struct servo_data_s     servo_data[NOS_SERVOS] = {
+//     {true, false, SERVO, 0, 0, 0, 45, false, -45, +45,  0},
+//     {true, false, SERVO, 0, 0, 0, 45, false, -45, +45, 10},
+//     {true, false, SERVO, 0, 0, 0, 45, false, -45, +45, 20},
+//     {true, false, SERVO, 0, 0, 0, 45, false, -45, +45, 30},
+//     {true, false, SERVO, 0, 0, 0, 45, false, -45, +45, 40},
+//     {true, false, SERVO, 0, 0, 0, 45, false, -45, +45, 50},
+//     {true, false, MOTOR, 0, 0, 0, 45, false, -45, +45, 60},
+// };
 uPCA9685_REG__MODE1     PCA9685_reg_mode1;
 
 //==============================================================================
@@ -222,20 +223,25 @@ uint8_t  PCA9685_i2c_packet[5];
  * @param servo_angle 
  * @param servo_sync 
  */
-void  set_servo_move (uint8_t  servo_no,
-                    servo_commands_te  servo_state,
-                    int16_t            servo_angle,
-                    bool               servo_sync
-)
+error_codes_te  set_servo_move (
+    uint8_t             servo_no,
+    servo_commands_te   servo_state,
+    int16_t             servo_angle,
+    bool                servo_sync
+    )
 {
 struct servo_data_s  *servo_data_pt;
 
     servo_data_pt = &servo_data[servo_no];
 
-    servo_data_pt->state = servo_state;
-    servo_data_pt->angle = servo_angle;
-    servo_data_pt->sync  = servo_sync;
-    return;
+    if (servo_data_pt->state == DORMANT) {
+        servo_data_pt->state = servo_state;
+        servo_data_pt->angle = servo_angle;
+        servo_data_pt->sync  = servo_sync;
+        return OK;
+    } else {
+        return SERVO_BUSY;
+    }
 }
 
 //==============================================================================
@@ -248,24 +254,29 @@ struct servo_data_s  *servo_data_pt;
  * @param time_for_move     move time in units of 100mS
  * @param servo_sync        true/false
  */
-void    set_servo_speed_move(   uint8_t             servo_no,
-                                servo_commands_te   servo_state,
-                                int16_t             servo_angle,
-                                int16_t             time_for_move,
-                                bool                servo_sync 
-                            )
+error_codes_te    set_servo_speed_move (   
+    uint8_t             servo_no,
+    servo_commands_te   servo_state,
+    int16_t             servo_angle,
+    int16_t             time_for_move,
+    bool                servo_sync 
+    )
 {
 struct servo_data_s  *servo_data_pt;
 
     servo_data_pt = &servo_data[servo_no];
-
-    servo_data_pt->gradient    = ((float)(servo_angle - servo_data_pt->angle) / (float)time_for_move);
-    servo_data_pt->y_intercept = (float)servo_data_pt->angle;
-    servo_data_pt->state       = servo_state;
-    servo_data_pt->angle       = servo_angle;
-    servo_data_pt->sync        = servo_sync;
-    servo_data_pt->counter     = 0;
-    servo_data_pt->t_end       = time_for_move;
+    if (servo_data_pt->state == DORMANT) {
+        servo_data_pt->gradient    = ((float)(servo_angle - servo_data_pt->angle) / (float)time_for_move);
+        servo_data_pt->y_intercept = (float)servo_data_pt->angle;
+        servo_data_pt->state       = servo_state;
+        servo_data_pt->angle       = servo_angle;
+        servo_data_pt->sync        = servo_sync;
+        servo_data_pt->counter     = 0;
+        servo_data_pt->t_end       = time_for_move;
+        return OK;
+    } else {
+        return SERVO_BUSY;
+    }
 }
 
     
