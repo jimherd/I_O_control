@@ -231,17 +231,20 @@ error_codes_te  set_servo_move (
     )
 {
 struct servo_data_s  *servo_data_pt;
+error_codes_te volatile state;
 
     servo_data_pt = &servo_data[servo_no];
 
+    state = OK;
     if (servo_data_pt->state == DORMANT) {
         servo_data_pt->state = servo_state;
         servo_data_pt->angle = servo_angle;
         servo_data_pt->sync  = servo_sync;
         return OK;
     } else {
-        return SERVO_BUSY;
+        state =  SERVO_BUSY;
     }
+    return state;
 }
 
 //==============================================================================

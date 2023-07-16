@@ -43,7 +43,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-#define     NOS_STRING_CMDS     (TOKENIZER_PING + 1)
+#define     NOS_STRING_CMDS     (TOKENIZER_TDELAY + 1)
 
 uint32_t string_to_token(struct token_list_s *tk_list, char *string)
 {

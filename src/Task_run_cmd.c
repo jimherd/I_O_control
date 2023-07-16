@@ -336,9 +336,6 @@ int32_t convert_tokens(void)
                 break;
         }
     }
-    // if ((arg_type[1] != MODE_I) || (int_parameters[1] > 63)) {
-    //     return BAD_PORT_NUMBER;
-    // }
     return OK;
 }
 
