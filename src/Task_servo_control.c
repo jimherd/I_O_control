@@ -57,28 +57,27 @@ servo_states_te      RC_state;
                     }
                     break;
                 case MOVE :
-                    PCA9685_set_servo(i, servo_data[i].angle);
-                    if (servo_data[i].sync != true) {
-                        delta_angle = abs(servo_data[i].angle - servo_data[i].angle_target);
-                        travel_time_count = ((delta_angle * 5) / 10) + 1;
-                        servo_data[i].counter = travel_time_count; 
-                        servo_data[i].state = DELAY;
+                    if (servo_data[i].sync == true) {
+                        break;
                     }
+                    PCA9685_set_servo(i, servo_data[i].angle);
+                    delta_angle = abs(servo_data[i].angle - servo_data[i].angle_target);
+                    travel_time_count = ((delta_angle * 5) / 10) + 1;
+                    servo_data[i].counter = travel_time_count; 
+                    servo_data[i].state = DELAY;
                     break;
                 case TIMED_MOVE :
+                    if (servo_data[i].sync == true) {
+                        break;
+                    }
                     if (servo_data[i].counter == servo_data[i].t_end) {
-                        if (servo_data[i].sync != true) {
-                            servo_data[i].state = DORMANT;
-                        }
+                        servo_data[i].state = DORMANT;
                     } else {
                         angle = (int32_t)(servo_data[i].gradient * (float)servo_data[i].counter) + servo_data[i].y_intercept;
                         PCA9685_set_servo(i, angle);
                         servo_data[i].counter++;
                     }
                     break;
-                case MOVE_SYNC_HOLD :
-                case TIMED_MOVE_SYNC_HOLD :
-                    break;      // do nothing until sync command
                 default :
                     break;
             }

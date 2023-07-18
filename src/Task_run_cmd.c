@@ -80,7 +80,7 @@ int32_t                 target_step_count;
                         status = set_servo_move( int_parameters[3], MOVE, int_parameters[4], true);
                         break;
                     case SPEED_MOVE: 
-                        set_servo_speed_move(int_parameters[3], TIMED_MOVE, int_parameters[4], int_parameters[5], false);
+                        status = set_servo_speed_move(int_parameters[3], TIMED_MOVE, int_parameters[4], int_parameters[5], false);
                         break;
                     case SPEED_MOVE_SYNC: 
                         status = set_servo_speed_move(int_parameters[3], TIMED_MOVE, int_parameters[4], int_parameters[5], true);
