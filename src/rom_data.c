@@ -100,11 +100,11 @@ struct command_limits_s    cmd_limits[NOS_COMMANDS] = {
 // servo data with initial values
 
 struct servo_data_s     servo_data[NOS_SERVOS] = {
-    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45,  0},
-    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 10},
-    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 20},
-    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 30},
-    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 40},
-    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 50},
-    {DORMANT, false, MOTOR, 0, 0, 0, 45, false, -45, +45, 60},
+    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45,  0, 10},
+    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 10, 10},
+    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 20, 10},
+    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 30, 10},
+    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 40, 10},
+    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 50, 10},
+    {DORMANT, false, MOTOR, 0, 0, 0, 45, false, -45, +45, 60, 10},
 };

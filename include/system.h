@@ -167,6 +167,7 @@ struct servo_data_s {
 	bool			flip;
 	int32_t			angle_min, angle_max;
 	uint32_t		pulse_offset;
+    uint32_t        mS_per_degree;
 	uint32_t		counter;
 	float			gradient;
 	float   		y_intercept;

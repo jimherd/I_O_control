@@ -62,7 +62,7 @@ servo_states_te      RC_state;
                     }
                     PCA9685_set_servo(i, servo_data[i].angle);
                     delta_angle = abs(servo_data[i].angle - servo_data[i].angle_target);
-                    travel_time_count = ((delta_angle * 5) / 10) + 1;
+                    travel_time_count = ((delta_angle * servo_data[i].mS_per_degree) / TASK_SERVO_CONTROL_FREQUENCY_TICK_COUNT) + 1;
                     servo_data[i].counter = travel_time_count; 
                     servo_data[i].state = DELAY;
                     break;
@@ -85,7 +85,7 @@ servo_states_te      RC_state;
 
         end_time = time_us_32();
         update_task_execution_time(TASK_SERVO_CONTROL, start_time, end_time);   
-        busy_wait_us_32(500); STOP_PULSE;
+        STOP_PULSE;
     }
 }
 
