@@ -219,13 +219,13 @@ uint8_t  PCA9685_i2c_packet[5];
  * @brief Set the servo channel object
  * 
  * @param servo_no 
- * @param servo_cmd 
+ * @param servo_state 
  * @param servo_angle 
  * @param servo_sync 
  */
 error_codes_te  set_servo_move (
     uint8_t             servo_no,
-    servo_commands_te   servo_state,
+    servo_states_te     servo_state,
     int16_t             servo_angle,
     bool                servo_sync
     )
@@ -236,7 +236,7 @@ error_codes_te volatile status;
     servo_data_pt = &servo_data[servo_no];
 
     status = OK;
-    if (servo_data_pt->state == DORMANT) {
+    if ((servo_data_pt->state == DORMANT) || (servo_data_pt->state == DISABLED)) {
         servo_data_pt->state = servo_state;
         servo_data_pt->angle = servo_angle;
         servo_data_pt->sync  = servo_sync;
@@ -245,6 +245,23 @@ error_codes_te volatile status;
         status =  SERVO_BUSY;
     }
     return status;
+}
+
+error_codes_te set_servo_state(
+        uint8_t             servo_no,
+        servo_states_te     servo_state,
+        uint8_t             enable_mode  // 0=diable, 1=enable
+)
+{
+struct servo_data_s  *servo_data_pt;
+
+    servo_data_pt = &servo_data[servo_no];
+    if (enable_mode == 1){
+        servo_data_pt->state = DORMANT;
+    } else {
+        servo_data_pt->state = DISABLED;
+    }
+    return OK;
 }
 
 //==============================================================================

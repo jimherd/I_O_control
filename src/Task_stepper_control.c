@@ -19,8 +19,8 @@
 //==============================================================================
 
 struct stepper_data_s     stepper_data[NOS_STEPPERS] = {
- //   {200, 5, 2, 0, GP17, GP16, GP18, GP19, CLOCKWISE, false, 160, false, 330, 0,0, OK, STATE_SM_DORMANT,0,0,0,0,0,0}
-    {200, 1, 2, 0, GP17, GP16, GP18, GP19, CLOCKWISE, false, 100, false, 330, 0,0, OK, STATE_SM_DORMANT,0,0,0,0,0,0}
+ //   {200, 5, 2, 0, GP17, GP16, GP18, GP19, CLOCKWISE, false, 160, false, 200, -30, +30, 0,0, OK, STATE_SM_DORMANT,0,0,0,0,0,0}
+    {200, 1, 2, 0, GP17, GP16, GP18, GP19, CLOCKWISE, false, 100, false, 200, -30, +30, 0,0, OK, STATE_SM_DORMANT,0,0,0,0,0,0}
 };
 
 //==============================================================================
@@ -31,6 +31,7 @@ error_codes_te calibrate_stepper(uint32_t stepper_no);
 void TMC2208_interface_init(void);
 void do_step(uint32_t stepper_id);
 void set_SM_direction(uint32_t stepper_id, sm_direction direction);
+void  init_stepper_motor_data(void);
 
 struct repeating_timer timer;
 
@@ -104,13 +105,17 @@ error_codes_te  status;
                     }
                     sm_ptr->current_step_delay_count = sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_delay;
                     do_step(i);
-                    sm_ptr->current_step_count += sm_ptr->direction;
+                    if (sm_ptr->direction == CLOCKWISE) {
+                        sm_ptr->current_step_count++;
+                    } else {
+                        sm_ptr->current_step_count--;
+                    }
                     sm_ptr->cmd_step_cnt--; 
                     break;
                 }
         // Move onto next command
             // jump over any SKIP (NOOP) commands
-                sm_ptr->cmd_index++;    // point tonext command
+                sm_ptr->cmd_index++;    // point to next command
                 while (sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_command_type  == SM_SKIP) {
                     sm_ptr->cmd_index++;
                 }
@@ -133,7 +138,11 @@ error_codes_te  status;
                 }
                 sm_ptr->current_step_delay_count = sequences[sm_ptr->sm_profile].cmds[sm_ptr->cmd_index].sm_delay;
                 do_step(i);
-                sm_ptr->current_step_count += sm_ptr->direction;
+                if (sm_ptr->direction == CLOCKWISE) {
+                    sm_ptr->current_step_count++;   
+                } else {
+                    sm_ptr->current_step_count--;
+                }
                 sm_ptr->cmd_step_cnt--; 
                 break;
             case STATE_SM_UNCALIBRATED :
@@ -274,6 +283,7 @@ void Task_stepper_control(void *p)
 {
     struct stepper_data_s  *sm_ptr;
 
+    init_stepper_motor_data();
     TMC2208_interface_init();
 
     for (uint32_t i=0; i<NOS_STEPPERS; i++) {
@@ -315,7 +325,6 @@ status = STEPPER_CALIBRATE_FAIL;
     // ensure stepper is not triggering either limit switches. Move if necessary.
     if (stepper_data[stepper_no].L_limit_pin == ASSERTED_LOW) {
         set_SM_direction(stepper_no, ANTI_CLOCKWISE);
-//            gpio_put(stepper_data[stepper_no].direction_pin, ANTI_CLOCKWISE);
         for (j = 0; j < MAX_STEPS; j++) {
             do_step(i);
             vTaskDelay(10);
@@ -332,7 +341,6 @@ status = STEPPER_CALIBRATE_FAIL;
     }
     if (stepper_data[stepper_no].R_limit_pin == ASSERTED_LOW) {
         set_SM_direction(stepper_no, CLOCKWISE);
-//      gpio_put(stepper_data[stepper_no].direction_pin, CLOCKWISE);
         for (j = 0; j < MAX_STEPS; j++) {
             do_step(stepper_no);
             vTaskDelay(10);
@@ -349,47 +357,44 @@ status = STEPPER_CALIBRATE_FAIL;
     }
     // move to origin point limit switch
     set_SM_direction(stepper_no, ANTI_CLOCKWISE);
-//    gpio_put(stepper_data[stepper_no].direction_pin, ANTI_CLOCKWISE);
     for (j = 0; j < MAX_STEPS; j++) {
-            do_step(stepper_no);
-            vTaskDelay(10);
-            if (gpio_get(stepper_data[stepper_no].L_limit_pin) == ASSERTED_LOW) {
-                stepper_data[stepper_no].current_step_count = 0;
-                status = OK;  // found origin point
-                break;
-            }
+        do_step(stepper_no);
+        vTaskDelay(10);
+        if (gpio_get(stepper_data[stepper_no].L_limit_pin) == ASSERTED_LOW) {
+            stepper_data[stepper_no].current_step_count = 0;
+            status = OK;  // found origin point
+            break;
+        }
     }
     if (status == STEPPER_CALIBRATE_FAIL) {
-            stepper_data[stepper_no].error = STEPPER_CALIBRATE_FAIL;
-            return status;
+        stepper_data[stepper_no].error = STEPPER_CALIBRATE_FAIL;
+        return status;
     }
     // move to maximum point limit switch and record step count
     status = STEPPER_CALIBRATE_FAIL;
     set_SM_direction(stepper_no, CLOCKWISE);
-//    gpio_put(stepper_data[stepper_no].direction_pin, CLOCKWISE);
     for (j = 0; j < MAX_STEPS; j++) {
-            do_step(stepper_no);
-            stepper_data[stepper_no].current_step_count += 1;
-            vTaskDelay(10);
-            if (gpio_get(stepper_data[stepper_no].R_limit_pin) == ASSERTED_LOW) {
-                stepper_data[stepper_no].max_step_count = j;
-                status = OK;  // found end limit
-                break;
-            }
+        do_step(stepper_no);
+        stepper_data[stepper_no].current_step_count += 1;
+        vTaskDelay(10);
+        if (gpio_get(stepper_data[stepper_no].R_limit_pin) == ASSERTED_LOW) {
+            stepper_data[stepper_no].max_step_count = j;
+            status = OK;  // found end limit
+            break;
+        }
     }
     if (status == STEPPER_CALIBRATE_FAIL) {
         stepper_data[stepper_no].error = STEPPER_CALIBRATE_FAIL;
         return status;
     }
     // move to mid position
-//    gpio_put(stepper_data[stepper_no].direction_pin, ANTI_CLOCKWISE);
     set_SM_direction(stepper_no, ANTI_CLOCKWISE);
     for (j = 0; j < (stepper_data[stepper_no].max_step_count >> 1); j++) {
-            do_step(stepper_no);
-            stepper_data[stepper_no].current_step_count -= 1;
-            vTaskDelay(10);
+        do_step(stepper_no);
+        stepper_data[stepper_no].current_step_count -= 1;
+        vTaskDelay(10);
     }
-    //stepper_data[stepper_no].calibrated = true;
+    stepper_data[stepper_no].calibrated = true;
     return status;
 }
 
@@ -414,8 +419,6 @@ void TMC2208_interface_init(void)
         gpio_set_dir(stepper_data[i].R_limit_pin, GPIO_IN);
         gpio_pull_up(stepper_data[i].R_limit_pin);
 
-        stepper_data[i].steps_per_degree 
-                = (float)(stepper_data[i].steps_per_rev * stepper_data[i].gearbox_ratio * stepper_data[i].microstep_value) / 360.0;
     }
 }
 
@@ -448,5 +451,25 @@ void inline set_SM_direction(uint32_t stepper_id, sm_direction direction)
         }
     }
     gpio_put(stepper_data[stepper_id].direction_pin, direction);
+}
+
+/**
+ * @brief set some initial runtime parameters
+ * 
+ * 1. set temp value for max_step_count (refined by calibration)
+ * 2. calculate steps per degree
+ * 
+ */
+void  init_stepper_motor_data(void) {
+
+struct stepper_data_s  *sm_ptr;
+error_codes_te  status;
+
+    for (uint32_t i=0; i<NOS_STEPPERS; i++) {
+        sm_ptr = &stepper_data[i];
+        sm_ptr->max_step_count = sm_ptr->steps_per_rev + sm_ptr->gearbox_ratio;
+        sm_ptr->steps_per_degree 
+            = (float)(sm_ptr->steps_per_rev * sm_ptr->gearbox_ratio * sm_ptr->microstep_value) / 360.0;
+    }
 }
 

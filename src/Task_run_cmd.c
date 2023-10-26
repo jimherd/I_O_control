@@ -46,7 +46,7 @@ error_codes_te          status;
 static int32_t          token;
 bool                    reply_done;
 int32_t                 sm_number;
-int32_t                 target_step_count;
+int32_t                 rel_nos_steps, abs_nos_steps, move_count, move_angle;
 
     status = OK;
     FOREVER {
@@ -72,28 +72,30 @@ int32_t                 target_step_count;
         status = OK;
         switch (token) {
             case TOKENIZER_SERVO: 
-                switch (int_parameters[2]) {
+                switch (int_parameters[SERVO_CMD_INDEX]) {
                     case ABS_MOVE: 
-                        status = set_servo_move( int_parameters[3], MOVE, int_parameters[4], false);
+                        status = set_servo_move( int_parameters[SERVO_NUMBER_INDEX], MOVE, int_parameters[SERVO_ANGLE_INDEX], false);
                         break;
                     case ABS_MOVE_SYNC: 
-                        status = set_servo_move( int_parameters[3], MOVE, int_parameters[4], true);
+                        status = set_servo_move( int_parameters[SERVO_NUMBER_INDEX], MOVE, int_parameters[SERVO_ANGLE_INDEX], true);
                         break;
                     case SPEED_MOVE: 
-                        status = set_servo_speed_move(int_parameters[3], TIMED_MOVE, int_parameters[4], int_parameters[5], false);
+                        status = set_servo_speed_move(int_parameters[SERVO_NUMBER_INDEX], TIMED_MOVE, int_parameters[SERVO_ANGLE_INDEX], int_parameters[SERVO_SPEED_INDEX], false);
                         break;
                     case SPEED_MOVE_SYNC: 
-                        status = set_servo_speed_move(int_parameters[3], TIMED_MOVE, int_parameters[4], int_parameters[5], true);
+                        status = set_servo_speed_move(int_parameters[SERVO_NUMBER_INDEX], TIMED_MOVE, int_parameters[SERVO_ANGLE_INDEX], int_parameters[SERVO_SPEED_INDEX], true);
                         break;
                     case RUN_SYNC_MOVES: 
-                        status = set_servo_move(int_parameters[2], int_parameters[3], int_parameters[4], false);
+                        status = set_servo_move(int_parameters[SERVO_CMD_INDEX], int_parameters[SERVO_NUMBER_INDEX], int_parameters[SERVO_ANGLE_INDEX], false);
                         break;
                     case STOP:
-                        status = set_servo_move(int_parameters[2], int_parameters[3], int_parameters[4], false);  
+                        status = set_servo_move(int_parameters[SERVO_CMD_INDEX], int_parameters[SERVO_NUMBER_INDEX], int_parameters[SERVO_ANGLE_INDEX], false);  
                         break;
                     case STOP_ALL: 
-                        status = set_servo_move(int_parameters[2], int_parameters[3], int_parameters[4], false);
+                        status = set_servo_move(int_parameters[SERVO_CMD_INDEX], int_parameters[SERVO_NUMBER_INDEX], int_parameters[SERVO_ANGLE_INDEX], false);
                         break;
+                    case ENABLE :
+                        status = set_servo_state(int_parameters[SERVO_NUMBER_INDEX], DISABLED, int_parameters[SERVO_ANGLE_INDEX]);
                     default:
                         status = BAD_SERVO_COMMAND;
                         break;
@@ -101,16 +103,18 @@ int32_t                 target_step_count;
                 print_string("%d %d\n", int_parameters[1], status);
                 reply_done = true;
                 break;
+
             case TOKENIZER_STEPPER: 
-                if (stepper_data[int_parameters[3]].state != STATE_SM_DORMANT) {
+                if (stepper_data[int_parameters[STEP_MOTOR_NO_INDEX]].state != STATE_SM_DORMANT) {
                     status = STEPPER_BUSY;
                 }
-                if (stepper_data[int_parameters[3]].error != OK) {  // ensure motor is not in an error state
-                    status = stepper_data[int_parameters[5]].error;
+                if (stepper_data[int_parameters[STEP_MOTOR_NO_INDEX]].error != OK) {  // ensure motor is not in an error state
+                    status = stepper_data[int_parameters[3]].error;
                     break;
                 }
                 sm_number = int_parameters[STEP_MOTOR_NO_INDEX];
                 switch (int_parameters[STEP_MOTOR_CMD_INDEX]) { 
+
                     case SM_REL_MOVE : 
                     case SM_REL_MOVE_SYNC :
                         if (stepper_data[int_parameters[STEP_MOTOR_NO_INDEX]].error != OK) {  // ensure motor is not in an error state
@@ -122,7 +126,14 @@ int32_t                 target_step_count;
                             status = SM_MOVE_TOO_SMALL;
                             break;
                         }
-                        if (int_parameters[STEP_MOTOR_ANGLE_INDEX] < 0) {
+
+                        rel_nos_steps = (int32_t)(stepper_data[sm_number].steps_per_degree * int_parameters[STEP_MOTOR_ANGLE_INDEX]);
+                        move_count = stepper_data[sm_number].current_step_count + rel_nos_steps;
+                        if ((move_count < 0) || (move_count > stepper_data[sm_number].max_step_count)) {
+                            status = BAD_STEP_VALUE;
+                            break;
+                        }
+                        if (rel_nos_steps < 0) {
                             stepper_data[sm_number].direction = ANTI_CLOCKWISE;
                         } else {
                             stepper_data[sm_number].direction = CLOCKWISE;
@@ -130,14 +141,9 @@ int32_t                 target_step_count;
                         if (stepper_data[sm_number].flip_direction == true) {
                             FLIP_BOOLEAN(stepper_data[sm_number].direction);
                         }
-                        target_step_count = stepper_data[sm_number].current_step_count + int_parameters[STEP_MOTOR_ANGLE_INDEX];
-                        if ((target_step_count < 0) || (target_step_count > stepper_data[sm_number].max_step_count)) {
-                            status = BAD_STEP_VALUE;
-                            break;
-                        }
-                        stepper_data[sm_number].target_step_count = target_step_count;
-                        stepper_data[sm_number].sm_profile = sm_number;
-                        stepper_data[sm_number].coast_step_count = abs(int_parameters[STEP_MOTOR_ANGLE_INDEX]) - (sequences[sm_number].nos_sm_cmds - 1);
+                        stepper_data[sm_number].target_step_count = abs(rel_nos_steps);
+                        stepper_data[sm_number].sm_profile = 0;
+                        stepper_data[sm_number].coast_step_count = (abs(rel_nos_steps) - (sequences[sm_number].nos_sm_cmds - 1));
                         stepper_data[sm_number].cmd_index = 0;
                         if (int_parameters[STEP_MOTOR_CMD_INDEX] == SM_REL_MOVE) {
                             stepper_data[sm_number].state = STATE_SM_INIT;
@@ -145,18 +151,22 @@ int32_t                 target_step_count;
                             stepper_data[sm_number].state = STATE_SM_SYNC;
                         }
                         break;
+
                     case SM_ABS_MOVE :
                         if (stepper_data[int_parameters[STEP_MOTOR_NO_INDEX]].error != OK) {  // ensure motor is not in an error state
                             status = stepper_data[int_parameters[STEP_MOTOR_NO_INDEX]].error;
                             break;   // existing error => abort move
                         }
                         sm_number = int_parameters[STEP_MOTOR_NO_INDEX];
-                        if ((int_parameters[STEP_MOTOR_ANGLE_INDEX] < 0) || (int_parameters[STEP_MOTOR_ANGLE_INDEX] > stepper_data[sm_number].max_step_count)) {
+                        move_angle = int_parameters[STEP_MOTOR_ANGLE_INDEX];
+                        if ((move_angle < stepper_data[sm_number].soft_left_limit) || (move_angle > stepper_data[sm_number].soft_right_limit)) {
                             status = BAD_STEP_VALUE;
                             break;
                         }
-                        target_step_count = int_parameters[STEP_MOTOR_ANGLE_INDEX] - stepper_data[sm_number].current_step_count;
-                        if (target_step_count < 0) {
+                        
+                        abs_nos_steps = (int32_t)(stepper_data[sm_number].steps_per_degree * (move_angle + stepper_data[sm_number].soft_right_limit));
+                        move_count = abs(stepper_data[sm_number].current_step_count - abs_nos_steps);
+                        if (abs_nos_steps < 0) {
                             stepper_data[sm_number].direction = ANTI_CLOCKWISE;
                         } else {
                             stepper_data[sm_number].direction = CLOCKWISE;
@@ -164,9 +174,9 @@ int32_t                 target_step_count;
                         if (stepper_data[sm_number].flip_direction == true) {
                             FLIP_BOOLEAN(stepper_data[sm_number].direction);
                         }
-                        stepper_data[sm_number].target_step_count = target_step_count;
+                        stepper_data[sm_number].target_step_count = abs(move_count);
                         stepper_data[sm_number].sm_profile = sm_number;
-                        stepper_data[sm_number].coast_step_count = abs(target_step_count) - (sequences[sm_number].nos_sm_cmds - 1);
+                        stepper_data[sm_number].coast_step_count = abs(move_count - (sequences[sm_number].nos_sm_cmds - 1));
                         stepper_data[sm_number].cmd_index = 0;
                         if (int_parameters[STEP_MOTOR_NO_INDEX] == SM_ABS_MOVE) {
                             stepper_data[sm_number].state = STATE_SM_INIT;
@@ -184,6 +194,7 @@ int32_t                 target_step_count;
                 print_string("%d %d\n", int_parameters[1], status);
                 reply_done = true;
                 break;
+
             case TOKENIZER_SYNC: 
                 for( int32_t i=0; i<NOS_SERVOS; i++) {
                     servo_pt = &servo_data[i];
@@ -195,9 +206,11 @@ int32_t                 target_step_count;
                     }
                 }
                 break;
-            case TOKENIZER_CONFIG: 
+
+            case TOKENIZER_SET: 
                 break;
-            case TOKENIZER_INFO:
+
+            case TOKENIZER_GET:
                 switch (int_parameters[2]) {
                     case SYS_INFO:
                         print_string("%d %d %d\n", int_parameters[1], NOS_SERVOS, NOS_STEPPERS);
@@ -215,13 +228,16 @@ int32_t                 target_step_count;
                         break;
                 }
                 break;
+
             case TOKENIZER_PING: 
                 print_string("%d %d %d\n", int_parameters[1], OK, (int_parameters[2] + 1));
                 reply_done = true;
                 break;
+
             case TOKENIZER_TDELAY:
                 vTaskDelay(int_parameters[2]);
                 break;
+                
             default: 
                 break;
         }  // end of outer switch

@@ -47,8 +47,8 @@ struct token_list_s commands[] = {
     {"servo",   TOKENIZER_SERVO},
     {"stepper", TOKENIZER_STEPPER},
     {"sync",    TOKENIZER_SYNC},
-    {"config",  TOKENIZER_CONFIG},
-    {"info",    TOKENIZER_INFO},
+    {"set",     TOKENIZER_SET},
+    {"get",     TOKENIZER_GET},
     {"ping",    TOKENIZER_PING},
     {"delay",   TOKENIZER_TDELAY},
 };
@@ -87,7 +87,7 @@ struct error_list_s errors[] = {
 
 struct command_limits_s    cmd_limits[NOS_COMMANDS] = {     
 // paramter        NOS_PAR     1        2       3          4         5
-    [0].p_limits = {{5, 6}, {0, 63}, {0, 5}, {0, 15}, {-90, +90}, {1, 1000}},   // servo
+    [0].p_limits = {{5, 6}, {0, 63}, {0, 7}, {0, 15}, {-90, +90}, {1, 1000}},   // servo
     [1].p_limits = {{5, 6}, {0, 63}, {0, 4}, {0, 0}, {-333, +333}},             // stepper
     [2].p_limits = {{2, 2}, {0, 63}, {0,0}},                                    // sync
     [3].p_limits = {{0, 0}, {0,  0}, {0,0}},                                    // config
@@ -105,6 +105,8 @@ struct servo_data_s     servo_data[NOS_SERVOS] = {
     {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 20, 10},
     {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 30, 10},
     {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 40, 10},
+    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 50, 10},
+    {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 50, 10},
     {DORMANT, false, SERVO, 0, 0, 0, 45, false, -45, +45, 50, 10},
     {DORMANT, false, MOTOR, 0, 0, 0, 45, false, -45, +45, 60, 10},
 };

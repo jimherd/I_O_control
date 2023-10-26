@@ -145,13 +145,13 @@ enum {UPPER_CASE, LOWER_CASE};
 #define		COUNT_1mS			205
 #define		MAX_ANGLE			 90
 
-enum {R_EYEBALL, L_EYEBALL, R_EYE_LID, L_EYE_LID, R_EYE_BROW, L_EYE_BROW, MOUTH};
+enum {L_EYE_LR, L_EYE_UD, L_EYE_LID, L_EYE_BROW, R_EYE_LR, R_EYE_UD, R_EYE_LID, R_EYE_BROW, MOUTH};
 
 #define		NOS_SERVOS	(MOUTH + 1)
 
 typedef enum  {SERVO, MOTOR} servo_type_te;
 
-typedef enum {ABS_MOVE, ABS_MOVE_SYNC, SPEED_MOVE, SPEED_MOVE_SYNC, RUN_SYNC_MOVES, T_DELAY, STOP, STOP_ALL} servo_commands_te;
+typedef enum {ABS_MOVE, ABS_MOVE_SYNC, SPEED_MOVE, SPEED_MOVE_SYNC, RUN_SYNC_MOVES, T_DELAY, STOP, STOP_ALL, ENABLE} servo_commands_te;
 typedef enum {DISABLED, DORMANT, DELAY, MOVE, TIMED_MOVE} servo_states_te;
 
 enum {SYS_INFO, SERVO_INFO, STEPPER_INFO};
@@ -189,7 +189,8 @@ struct servo_data_s {
 
 #define     CALIBRATE_SPEED_DELAY   5       // number of mS between calibrate step pulses
  
-typedef enum {ANTI_CLOCKWISE = 1,CLOCKWISE = 0} sm_direction;
+typedef enum {CLOCKWISE = 0, ANTI_CLOCKWISE = 1} sm_direction;
+enum {CLOCKWISE_COUNT_VALUE = +1, ANTI_CLOCKWISE_COUNT_VALUE = -1};
 
 enum {OFF, ON};
 enum {ASSERTED_LOW, ASSERTED_HIGH};
@@ -202,8 +203,8 @@ typedef enum {SM_ACCEL, SM_COAST, SM_DECEL, SM_SKIP, SM_END , SM_DELAY} sm_comma
 typedef enum {
     STATE_SM_UNCALIBRATED, STATE_SM_DORMANT, STATE_SM_INIT, STATE_SM_RUNNING, STATE_SM_FAULT, STATE_SM_SYNC,
     STATE_SM_CALIB_S0, STATE_SM_CALIB_S1, STATE_SM_CALIB_S2, STATE_SM_CALIB_S3, STATE_SM_CALIB_S4,
-        STATE_SM_CALIB_S5, STATE_SM_CALIB_S6, STATE_SM_CALIB_S7, STATE_SM_CALIB_S8, STATE_SM_CALIB_S9, 
-        STATE_SM_CALIB_S10, STATE_SM_CALIB_S11,
+    STATE_SM_CALIB_S5, STATE_SM_CALIB_S6, STATE_SM_CALIB_S7, STATE_SM_CALIB_S8, STATE_SM_CALIB_S9, 
+    STATE_SM_CALIB_S10, STATE_SM_CALIB_S11,
 } sm_profile_exec_state_te;
 
 
@@ -222,6 +223,7 @@ struct stepper_data_s {
   // set when motor is calibrated
     bool        calibrated;
     int32_t     max_step_count;
+    int32_t     soft_left_limit, soft_right_limit;   // in angle for 0 centre
   // set per move
     int32_t     sm_profile;         // index of trapezoidal sm_profile
     int32_t     target_step_count;  // from command
@@ -277,17 +279,23 @@ struct sm_profile_s {      // single stepper motor seqence
 // Command string index values
 //
 // Common
-//
+
 #define     PRIMARY_CMD_INDEX       0
 #define     PORT_INDEX              1
 
 // Stepper command
 
-#define     STEP_MOTOR_CMD_INDEX    2
-#define     STEP_MOTOR_NO_INDEX     3
-#define     STEP_MOTOR_ANGLE_INDEX  4
+#define     STEP_MOTOR_CMD_INDEX        2
+#define     STEP_MOTOR_NO_INDEX         3
+#define     STEP_MOTOR_ANGLE_INDEX      4
+#define     STEP_MOTOR_PROFILE_INDEX    5
 
 // servo command
+
+#define     SERVO_CMD_INDEX     2
+#define     SERVO_NUMBER_INDEX  3
+#define     SERVO_ANGLE_INDEX   4
+#define     SERVO_SPEED_INDEX   5
 
 //==============================================================================
 // 
@@ -339,8 +347,8 @@ enum {
     TOKENIZER_SERVO,
     TOKENIZER_STEPPER,
     TOKENIZER_SYNC,
-    TOKENIZER_CONFIG,
-    TOKENIZER_INFO,
+    TOKENIZER_SET,
+    TOKENIZER_GET,
     TOKENIZER_PING,
     TOKENIZER_TDELAY,
     TOKENIZER_ERROR,

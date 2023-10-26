@@ -117,7 +117,7 @@ int main()
 
     xTaskCreate(Task_stepper_control,
                 "Stepper_motor_control_task",
-                configMINIMAL_STACK_SIZE,
+                512,     // configMINIMAL_STACK_SIZE,
                 NULL,
                 TASK_PRIORITYNORMAL,
                 &taskhndl_Task_stepper_control
