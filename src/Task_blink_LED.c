@@ -23,7 +23,7 @@ void Task_blink(void *p) {
         gpio_put(BLINK_PIN, 1);
         vTaskDelay(200);
         gpio_put(BLINK_PIN, 0);
-        vTaskDelay(5000);
+        vTaskDelay(300);
     }
 }
 

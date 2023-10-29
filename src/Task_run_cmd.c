@@ -96,6 +96,7 @@ int32_t                 rel_nos_steps, abs_nos_steps, move_count, move_angle;
                         break;
                     case ENABLE :
                         status = set_servo_state(int_parameters[SERVO_NUMBER_INDEX], DISABLED, int_parameters[SERVO_ANGLE_INDEX]);
+                        break;
                     default:
                         status = BAD_SERVO_COMMAND;
                         break;
