@@ -24,7 +24,7 @@
 #include    "system.h"
 #include    "externs.h"
 #include    "sys_routines.h"
-#include    "uart_IO.h"
+#include    "display.h"
 #include    "string_IO.h"
 #include    "min_printf.h"
 
@@ -53,12 +53,29 @@ void uart1_sys_init(void)
     gpio_init(DISPLAY_RESET_PIN);
     gpio_set_dir(DISPLAY_RESET_PIN, GPIO_IN);
     gpio_put(DISPLAY_RESET_PIN, 0);
+    gpio_disable_pulls(DISPLAY_RESET_PIN);
+}
+
+void Task_display_control(void *p) {
+
+    uart1_sys_init();
+    reset_4D_display();
+
+    FOREVER {
+        vTaskDelay(1000);
+    }
 }
 
 /**
  * @brief generate a reset pulse for the display
  * 
  * @return * void 
+ * 
+ * @note
+ *      Display reset line should be driven by an open-drain output,
+ *      but this is not available on the rp2040.  However, it can be
+ *      approximated by switching the reset line from input to output
+ *      and finally back to input.
  */
 void reset_4D_display(void)
 {

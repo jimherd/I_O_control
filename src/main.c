@@ -41,6 +41,7 @@ TaskHandle_t        taskhndl_Task_blink;
 TaskHandle_t        taskhndl_Task_run_cmd;
 TaskHandle_t        taskhndl_Task_servo_control;
 TaskHandle_t        taskhndl_Task_stepper_control;
+TaskHandle_t        taskhndl_Task_display_control;
 
 QueueHandle_t       queue_print_string_buffers;
 QueueHandle_t       queue_free_buffers;
@@ -118,9 +119,17 @@ int main()
     xTaskCreate(Task_stepper_control,
                 "Stepper_motor_control_task",
                 512,     // configMINIMAL_STACK_SIZE,
-                NULL,
+                NULL, 
                 TASK_PRIORITYNORMAL,
                 &taskhndl_Task_stepper_control
+    );
+
+    xTaskCreate(Task_display_control,
+                "4D_System_displaycontrol_task",
+                512,     // configMINIMAL_STACK_SIZE,
+                NULL,
+                TASK_PRIORITYNORMAL,
+                &taskhndl_Task_display_control
     );
 
     queue_print_string_buffers = xQueueCreate(NOS_PRINT_STRING_BUFFERS+1, sizeof(uint32_t));
