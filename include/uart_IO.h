@@ -34,7 +34,7 @@ struct ring_buffer_s {
 
 static void uart_interrupt_handler(void);
 
-void uart_sys_init(void);
+void uart0_sys_init(void);
 void uart_println(char *str);
 char uart_getchar(void);
 int32_t uart_readline(char *string);

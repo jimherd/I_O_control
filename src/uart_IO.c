@@ -95,7 +95,7 @@ void Task_UART(void *p) {
 uint32_t    xLastWakeTime, start_time, end_time;
 uint32_t    string_index;
 
-    uart_sys_init();
+    uart0_sys_init();
 
     xLastWakeTime = xTaskGetTickCount ();
     FOREVER {
@@ -113,7 +113,7 @@ uint32_t    string_index;
 /**
  * @brief Initialise uart subsystem and associated interrupts
  */
-void uart_sys_init(void)
+void uart0_sys_init(void)
 {
     ring_buffer_in.in_pt   = 0;
     ring_buffer_in.out_pt  = 0;
@@ -122,10 +122,10 @@ void uart_sys_init(void)
     ring_buffer_out.out_pt = 0;
     ring_buffer_out.count  = 0;
 
-    gpio_set_function(UART_TX_PIN, GPIO_FUNC_UART);
-    gpio_set_function(UART_RX_PIN, GPIO_FUNC_UART);
+    gpio_set_function(UART0_TX_PIN, GPIO_FUNC_UART);
+    gpio_set_function(UART0_RX_PIN, GPIO_FUNC_UART);
 
-    uart_init(uart0, BAUD_RATE);
+    uart_init(uart0, UART0_BAUD_RATE);
     uart_set_hw_flow(uart0, false, false);
     uart_set_format(uart0, 8, 1, UART_PARITY_NONE);
     uart_set_fifo_enabled(uart0, true);

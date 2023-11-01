@@ -85,11 +85,11 @@ typedef enum  {
 //==============================================================================
 // Serial comms port (UART)
 
-#define UART_TX_PIN     GP0
-#define UART_RX_PIN     GP1
+#define UART0_TX_PIN     GP0
+#define UART0_RX_PIN     GP1
 
-#define UART_ID uart0
-#define BAUD_RATE 115200
+#define UART0_ID uart0
+#define UART0_BAUD_RATE 115200
 
 #define LINE_AVAILABLE  0   // bit in eventgroup_uart_IO
 
@@ -114,6 +114,18 @@ enum {LETTER, NUMBER, DOT, PLUSMINUS, NULTERM, END, SEPARATOR, OTHER};
 
 enum {BASE_10 = 10, BASE_16 = 16};
 enum {UPPER_CASE, LOWER_CASE};
+
+//==============================================================================
+// Serial display port (UART) - 4D System display
+
+#define UART1_TX_PIN     GP4
+#define UART1_RX_PIN     GP5
+
+#define UART1_ID uart1
+#define UART1_BAUD_RATE 9600
+
+#define DISPLAY_RESET_PIN  GP3
+#define DISPLAY_WAIT_US    25
 
 //==============================================================================
 //I2C port
