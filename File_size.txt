@@ -2095,3 +2095,6 @@
 01/11/2023 
       text       data        bss      total filename
      40780       5312      80836     126928 Pi_the_Robot.elf
+05/11/2023 
+      text       data        bss      total filename
+     40780       5312      80836     126928 Pi_the_Robot.elf
