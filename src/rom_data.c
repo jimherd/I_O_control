@@ -110,3 +110,5 @@ struct servo_data_s     servo_data[NOS_SERVOS] = {
     {DORMANT, false, SERVO, 0, 0, 0, 45, false, -30, +30, 50, 10},
     {DORMANT, false, MOTOR, 0, 0, 0, 45, false, -45, +45, 60, 10},
 };
+
+

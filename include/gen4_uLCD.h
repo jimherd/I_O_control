@@ -1,7 +1,7 @@
-/////////////////////////// GenieC 07/08/2020 //////////////////////////////
+/////////////////////////// gen4_uLCDC 07/08/2020 //////////////////////////////
 //
-//      Library to utilize the 4D Systems Genie interface to displays
-//      that have been created using the Visi-Genie creator platform.
+//      Library to utilize the 4D Systems gen4_uLCD interface to displays
+//      that have been created using the Visi-gen4_uLCD creator platform.
 //      This is intended to be used a generic library for platforms
 //      supporting the C programming language.
 //
@@ -30,40 +30,27 @@
 //
 //      Copyright (c) 2012-2020 4D Systems Pty Ltd, Sydney, Australia
 /*********************************************************************
- * This file is part of GenieC:
- *    GenieC is free software: you can redistribute it and/or modify
+ * This file is part of gen4_uLCDC:
+ *    gen4_uLCDC is free software: you can redistribute it and/or modify
  *    it under the terms of the GNU Lesser General Public License as
  *    published by the Free Software Foundation, either version 3 of the
  *    License, or (at your option) any later version.
  *
- *    GenieC is distributed in the hope that it will be useful,
+ *    gen4_uLCDC is distributed in the hope that it will be useful,
  *    but WITHOUT ANY WARRANTY; without even the implied warranty of
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *    GNU Lesser General Public License for more details.
  *
  *    You should have received a copy of the GNU Lesser General Public
- *    License along with GenieC.
+ *    License along with gen4_uLCDC.
  *    If not, see <http://www.gnu.org/licenses/>.
  *********************************************************************/
 
-#ifndef VISI_GENIE_H_
-#define VISI_GENIE_H_
+#ifndef GEN4_uLCD_H_
+#define GEN4_uLCD_H_
 
-// #include "stdint.h"
-// #include "string.h"
-
-// #ifndef bool
-// #define bool	uint8_t
-// #endif
-
-// #ifndef true
-// #define true	(1==1)
-// #define false	(!true)
-// #endif
-
-// #ifndef NULL
-// #define NULL	0
-// #endif
+#include "stdint.h"
+#include "string.h"
 
 // #ifndef lowByte
 // #define lowByte(x) ((int8_t)((x) & 0xFF))
@@ -73,125 +60,156 @@
 // #define highByte(x) ((int8_t)(((x) >> 8) & 0xFF))
 // #endif
 
-
-// // Based on Arduino Library v1.4.5 [04-08-2017]
-// #define GENIE_VERSION		"v1.0.2 - 07-08-2020" // DD-MM-YYYY
-
 // // Do not modify current values. Recommended settings.
 // #define DISPLAY_TIMEOUT         2000
 // #define AUTO_PING_CYCLE         1250
 
 // Structure to store replys returned from a display
-#define GENIE_FRAME_SIZE        6
+#define GEN4_uLCD_FRAME_SIZE        6
 
-#define MAX_GENIE_EVENTS    	16    // MUST be a power of 2
+#define MAX_GEN4_uLCD_EVENTS    	16    // MUST be a power of 2
 
-#define GENIE_ACK               0x06
-#define GENIE_NAK               0x15
-#define GENIE_PING              0x80
-#define GENIE_READY             0x81
-#define GENIE_DISCONNECTED      0x82
+#define GEN4_uLCD_ACK               0x06
+#define GEN4_uLCD_NAK               0x15
+#define GEN4_uLCD_PING              0x80
+#define GEN4_uLCD_READY             0x81
+#define GEN4_uLCD_DISCONNECTED      0x82
 
+#define MAX_COMMAND_DATA_BYTES	64
 
-typedef enum {
-	GENIE_READ_OBJ,
-	GENIE_WRITE_OBJ,
-	GENIE_WRITE_STR,
-	GENIE_WRITE_STRU,
-	GENIE_WRITE_CONTRAST,
-	GENIE_REPORT_OBJ,
-	GENIE_REPORT_EVENT = 7,
-	GENIEM_WRITE_BYTES,
-	GENIEM_WRITE_DBYTES,
-	GENIEM_REPORT_BYTES,
-	GENIEM_REPORT_DBYTES,
-	GENIE_WRITE_INH_LABEL
-} GenieCommand;
 
 typedef enum {
-	GENIE_OBJ_DIPSW,
-	GENIE_OBJ_KNOB,
-	GENIE_OBJ_ROCKERSW,
-	GENIE_OBJ_ROTARYSW,
-	GENIE_OBJ_SLIDER,
-	GENIE_OBJ_TRACKBAR,
-	GENIE_OBJ_WINBUTTON,
-	GENIE_OBJ_ANGULAR_METER,
-	GENIE_OBJ_COOL_GAUGE,
-	GENIE_OBJ_CUSTOM_DIGITS,
-	GENIE_OBJ_FORM,
-	GENIE_OBJ_GAUGE,
-	GENIE_OBJ_IMAGE,
-	GENIE_OBJ_KEYBOARD,
-	GENIE_OBJ_LED,
-	GENIE_OBJ_LED_DIGITS,
-	GENIE_OBJ_METER,
-	GENIE_OBJ_STRINGS,
-	GENIE_OBJ_THERMOMETER,
-	GENIE_OBJ_USER_LED,
-	GENIE_OBJ_VIDEO,
-	GENIE_OBJ_STATIC_TEXT,
-	GENIE_OBJ_SOUND,
-	GENIE_OBJ_TIMER,
-	GENIE_OBJ_SPECTRUM,
-	GENIE_OBJ_SCOPE,
-	GENIE_OBJ_TANK,
-	GENIE_OBJ_USERIMAGES,
-	GENIE_OBJ_PINOUTPUT,
-	GENIE_OBJ_PININPUT,
-	GENIE_OBJ_4DBUTTON,
-	GENIE_OBJ_ANIBUTTON,
-	GENIE_OBJ_COLORPICKER,
-	GENIE_OBJ_USERBUTTON,
-	GENIE_OBJ_MAGIC_RESERVED,
-	GENIE_OBJ_SMARTGAUGE,
-	GENIE_OBJ_SMARTSLIDER,
-	GENIE_OBJ_SMARTKNOB,
-	GENIE_OBJ_ILED_DIGITS_H,
-	GENIE_OBJ_IANGULAR_METER,
-	GENIE_OBJ_IGAUGE,
-	GENIE_OBJ_ILABELB,
-	GENIE_OBJ_IUSER_GAUGE,
-	GENIE_OBJ_IMEDIA_GAUGE,
-	GENIE_OBJ_IMEDIA_THERMOMETER,
-	GENIE_OBJ_ILED,
-	GENIE_OBJ_IMEDIA_LED,
-	GENIE_OBJ_ILED_DIGITS_L,
-	GENIE_OBJ_ILED_DIGITS,
-	GENIE_OBJ_INEEDLE,
-	GENIE_OBJ_IRULER,
-	GENIE_OBJ_ILED_DIGIT,
-	GENIE_OBJ_IBUTTOND,
-	GENIE_OBJ_IBUTTONE,
-	GENIE_OBJ_IMEDIA_BUTTON,
-	GENIE_OBJ_ITOGGLE_INPUT,
-	GENIE_OBJ_IDIAL,
-	GENIE_OBJ_IMEDIA_ROTARY,
-	GENIE_OBJ_IROTARY_INPUT,
-	GENIE_OBJ_ISWITCH,
-	GENIE_OBJ_ISWITCHB,
-	GENIE_OBJ_ISLIDERE,
-	GENIE_OBJ_IMEDIA_SLIDER,
-	GENIE_OBJ_ISLIDERH,
-	GENIE_OBJ_ISLIDERG,
-	GENIE_OBJ_ISLIDERF,
-	GENIE_OBJ_ISLIDERD,
-	GENIE_OBJ_ISLIDERC,
-	GENIE_OBJ_ILINEAR_INPUT
-} GenieObject;
+	GEN4_uLCD_READ_OBJ,
+	GEN4_uLCD_WRITE_OBJ,
+	GEN4_uLCD_WRITE_STR,
+	GEN4_uLCD_WRITE_STRU,
+	GEN4_uLCD_WRITE_CONTRAST,
+	GEN4_uLCD_REPORT_OBJ,
+	GEN4_uLCD_REPORT_EVENT = 7,
+} gen4_uLCDCommand;
 
-// // For backwards compatibility
-// #define GENIE_OBJ_ISMARTGAUGE	GENIE_OBJ_SMARTGAUGE
-// #define GENIE_OBJ_ISMARTSLIDER	GENIE_OBJ_SMARTSLIDER
-// #define GENIE_OBJ_ISMARTKNOB	GENIE_OBJ_SMARTKNOB
+typedef enum {
+	GEN4_uLCD_OBJ_DIPSW,
+	GEN4_uLCD_OBJ_KNOB,
+	GEN4_uLCD_OBJ_ROCKERSW,
+	GEN4_uLCD_OBJ_ROTARYSW,
+	GEN4_uLCD_OBJ_SLIDER,
+	GEN4_uLCD_OBJ_TRACKBAR,
+	GEN4_uLCD_OBJ_WINBUTTON,
+	GEN4_uLCD_OBJ_ANGULAR_METER,
+	GEN4_uLCD_OBJ_COOL_GAUGE,
+	GEN4_uLCD_OBJ_CUSTOM_DIGITS,
+	GEN4_uLCD_OBJ_FORM,
+	GEN4_uLCD_OBJ_GAUGE,
+	GEN4_uLCD_OBJ_IMAGE,
+	GEN4_uLCD_OBJ_KEYBOARD,
+	GEN4_uLCD_OBJ_LED,
+	GEN4_uLCD_OBJ_LED_DIGITS,
+	GEN4_uLCD_OBJ_METER,
+	GEN4_uLCD_OBJ_STRINGS,
+	GEN4_uLCD_OBJ_THERMOMETER,
+	GEN4_uLCD_OBJ_USER_LED,
+	GEN4_uLCD_OBJ_VIDEO,
+	GEN4_uLCD_OBJ_STATIC_TEXT,
+	GEN4_uLCD_OBJ_SOUND,
+	GEN4_uLCD_OBJ_TIMER,
+	GEN4_uLCD_OBJ_SPECTRUM,
+	GEN4_uLCD_OBJ_SCOPE,
+	GEN4_uLCD_OBJ_TANK,
+	GEN4_uLCD_OBJ_USERIMAGES,
+	GEN4_uLCD_OBJ_PINOUTPUT,
+	GEN4_uLCD_OBJ_PININPUT,
+	GEN4_uLCD_OBJ_4DBUTTON,
+	GEN4_uLCD_OBJ_ANIBUTTON,
+	GEN4_uLCD_OBJ_COLORPICKER,
+	GEN4_uLCD_OBJ_USERBUTTON,
+	GEN4_uLCD_OBJ_MAGIC_RESERVED,
+	GEN4_uLCD_OBJ_SMARTGAUGE,
+	GEN4_uLCD_OBJ_SMARTSLIDER,
+	GEN4_uLCD_OBJ_SMARTKNOB,
+	GEN4_uLCD_OBJ_ILED_DIGITS_H,
+	GEN4_uLCD_OBJ_IANGULAR_METER,
+	GEN4_uLCD_OBJ_IGAUGE,
+	GEN4_uLCD_OBJ_ILABELB,
+	GEN4_uLCD_OBJ_IUSER_GAUGE,
+	GEN4_uLCD_OBJ_IMEDIA_GAUGE,
+	GEN4_uLCD_OBJ_IMEDIA_THERMOMETER,
+	GEN4_uLCD_OBJ_ILED,
+	GEN4_uLCD_OBJ_IMEDIA_LED,
+	GEN4_uLCD_OBJ_ILED_DIGITS_L,
+	GEN4_uLCD_OBJ_ILED_DIGITS,
+	GEN4_uLCD_OBJ_INEEDLE,
+	GEN4_uLCD_OBJ_IRULER,
+	GEN4_uLCD_OBJ_ILED_DIGIT,
+	GEN4_uLCD_OBJ_IBUTTOND,
+	GEN4_uLCD_OBJ_IBUTTONE,
+	GEN4_uLCD_OBJ_IMEDIA_BUTTON,
+	GEN4_uLCD_OBJ_ITOGGLE_INPUT,
+	GEN4_uLCD_OBJ_IDIAL,
+	GEN4_uLCD_OBJ_IMEDIA_ROTARY,
+	GEN4_uLCD_OBJ_IROTARY_INPUT,
+	GEN4_uLCD_OBJ_ISWITCH,
+	GEN4_uLCD_OBJ_ISWITCHB,
+	GEN4_uLCD_OBJ_ISLIDERE,
+	GEN4_uLCD_OBJ_IMEDIA_SLIDER,
+	GEN4_uLCD_OBJ_ISLIDERH,
+	GEN4_uLCD_OBJ_ISLIDERG,
+	GEN4_uLCD_OBJ_ISLIDERF,
+	GEN4_uLCD_OBJ_ISLIDERD,
+	GEN4_uLCD_OBJ_ISLIDERC,
+	GEN4_uLCD_OBJ_ILINEAR_INPUT
+} gen4_uLCD_Object;
 
-// typedef struct {
-//     uint8_t        cmd;
-//     uint8_t        object;
-//     uint8_t        index;
-//     uint8_t        data_msb;
-//     uint8_t        data_lsb;
-// } FrameReportObj;
+//==============================================================================
+// Structure to hold a command to be sent to the display
+//
+// Although each command is of a fixed length; the seven commands have
+// different lengths.  The last byte of the command is a checksum.
+//
+typedef struct {
+	uint8_t		cmd_length;
+    uint8_t		cmd;
+    uint8_t		object;
+    uint8_t		index;
+    uint8_t		data[MAX_COMMAND_DATA_BYTES];
+} gen4_uLCD_cmd_packet;
+
+//==============================================================================
+// Structure to hold a reply from a sent command
+
+typedef struct {
+    uint8_t        cmd;
+    uint8_t        object;
+    uint8_t        index;
+    uint8_t        data_msb;
+    uint8_t        data_lsb;
+} ReportObj;
+
+typedef enum  { ACK_NAK, NAK_REPORT , NAK_CMD , NAK_REPLY, ILLEGAL } display_reply_type_et;
+typedef enum  { HOST_TO_DISPLAY, DISPLAY_TO_HOST } display_cmd_direction_et;
+
+#define		NOS_GEN4_uLCD_CMDS  8
+
+#define		ACK		0x06
+#define     NACK	0x15
+
+
+typedef struct {
+	display_cmd_direction_et  direction;
+	int8_t					  length;
+	display_reply_type_et	  reply_type;
+} display_cmd_reply_data;
+
+display_cmd_reply_data display_cmd_info[NOS_GEN4_uLCD_CMDS] = {
+	{ HOST_TO_DISPLAY,  4, NAK_REPORT},	    // 0 = READ_OBJ
+	{ HOST_TO_DISPLAY,  6, ACK_NAK},	    // 1 = WRITE_OBJ
+	{ HOST_TO_DISPLAY, -1, ACK_NAK},	    // 2 = WRITE_STR
+	{ HOST_TO_DISPLAY, -1, ACK_NAK},	    // 3 = WRITE_STRU
+	{ HOST_TO_DISPLAY,  3, ACK_NAK},	    // 4 = WRITE_CONTRAST
+	{ DISPLAY_TO_HOST,  6, NAK_REPLY},	    // 5 = REPORT_OBJ
+	{ HOST_TO_DISPLAY,  0, ILLEGAL},	    // 6 = illegal op
+	{ DISPLAY_TO_HOST,  6, NAK_REPLY},	    // 7 = REPORT_EVENT
+};
 
 // typedef struct {
 //     uint8_t         cmd;
@@ -206,25 +224,25 @@ typedef enum {
 //     int16_t wordValue[2];
 // } FloatLongFrame;
 
-// /////////////////////////////////////////////////////////////////////
-// // The Genie frame definition
-// //
-// // The union allows the data to be referenced as an array of uint8_t
-// // or a structure of type FrameReportObj, eg
-// //
-// //    genieFrame f;
-// //    f.bytes[4];
-// //    f.reportObject.data_lsb
-// //
-// //    both methods get the same byte
-// //
+/////////////////////////////////////////////////////////////////////
+// The gen4_uLCD frame definition
+//
+// The union allows the data to be referenced as an array of uint8_t
+// or a structure of type FrameReportObj, eg
+//
+//    genieFrame f;
+//    f.bytes[4];
+//    f.reportObject.data_lsb
+//
+//    both methods get the same byte
+//
 // typedef union {
-//     uint8_t             bytes[GENIE_FRAME_SIZE];
+//     uint8_t             bytes[GEN4_uLCD_FRAME_SIZE];
 //     FrameReportObj      reportObject;
 // } genieFrame;
 
 // typedef struct {
-//     genieFrame    	frames[MAX_GENIE_EVENTS];
+//     genieFrame    	frames[MAX_GEN4_uLCD_EVENTS];
 //     uint8_t        	rd_index;
 //     uint8_t        	wr_index;
 //     uint8_t        	n_events;
@@ -249,7 +267,7 @@ typedef enum {
 // volatile bool     pingRequest; // used internally by the library, do not touch.
 // volatile uint8_t  recover_pulse; // pulse for offline autoping, use genie.recover(x) to change it from sketch.
 // volatile bool     autoPing; // used internally by the library, do not touch.
-// volatile uint16_t GENIE_CMD_TIMEOUT; // force disconnection trigger if ACK times out
+// volatile uint16_t GEN4_uLCD_CMD_TIMEOUT; // force disconnection trigger if ACK times out
 // volatile uint32_t autoPingTimer; // timer for autoPinger() function
 // volatile bool     displayDetected; // display is online/offline state
 // volatile uint32_t displayDetectTimer; // timer for lcd to be aware if connected
@@ -293,7 +311,7 @@ typedef enum {
 // uint8_t		geniePing();
 // uint16_t	genieEnableAutoPing(uint16_t interval);
 
-// // Genie Magic functions (ViSi-Genie Pro Only)
+// // gen4_uLCD Magic functions (ViSi-gen4_uLCD Pro Only)
 
 // #define		genieWriteMagicBytes(index, bytes, len)		_genieWriteMagicBytes(index, bytes, len, 0);
 // uint16_t    _genieWriteMagicBytes(uint16_t index, uint8_t *bytes, uint16_t len, uint8_t report);
@@ -313,4 +331,4 @@ typedef enum {
 // extern uint8_t geniePeekByte(void);
 // extern void geniePutByte(uint8_t);
 
-#endif /* VISI_GENIE_H_ */
+#endif /* VISI_GEN4_uLCD_H_ */
