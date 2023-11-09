@@ -141,15 +141,15 @@ typedef struct gen4_uLCD_cmd_packet_ts {
 } gen4_uLCD_cmd_packet_ts;
 
 //==============================================================================
-// Structure to hold a reply from a sent command
+// Structure to hold a reply from a READ_OBJ command
 
-// typedef struct ReportObj_ts {
-//     uint8_t        cmd;
-//     uint8_t        object;
-//     uint8_t        index;
-//     uint8_t        data_msb;
-//     uint8_t        data_lsb;
-// };
+typedef struct  {
+    uint8_t        cmd;
+    uint8_t        object;
+    uint8_t        index;
+    uint8_t        data_msb;
+    uint8_t        data_lsb;
+} gen4_uLCD_data_packet_ts;
 
 //==============================================================================
 // Function prototypes
@@ -163,11 +163,7 @@ error_codes_te    gen4_uLCD_WriteContrast(uint8_t value);
 
 #endif  /* __GEN4_uLCD_H__ */
 
-// typedef struct {
-// 	display_cmd_direction_te  direction;
-// 	int8_t					  length;
-// 	display_reply_type_et	  reply_type;
-// } display_cmd_reply_data;
+
 
 // typedef struct {
 //     uint8_t         cmd;

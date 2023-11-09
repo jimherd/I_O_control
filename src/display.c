@@ -34,8 +34,8 @@ void Task_display_control(void *p)
 error_codes_te   status;
 
     uart1_sys_init();
-    gen4_uLCD_init();
     reset_4D_display();
+    gen4_uLCD_init();
     
     FOREVER {
         gen4_uLCD_WriteContrast(5);

@@ -88,6 +88,8 @@ typedef enum  {
     GEN4_uLCD_WRITE_OBJ_TIMEOUT = -121,
     GEN4_uLCD_WRITE_CONTRAST_FAIL    = -122,
     GEN4_uLCD_WRITE_CONTRAST_TIMEOUT = -123,
+    GEN4_uLCD_READ_OBJ_FAIL     = -124,
+    GEN4_uLCD_READ_OBJ_TIMEOUT  = -125,
 } error_codes_te;
 
 //==============================================================================

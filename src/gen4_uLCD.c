@@ -20,6 +20,7 @@
 //==============================================================================
 
 gen4_uLCD_cmd_packet_ts    uLCD_cmd;
+gen4_uLCD_data_packet_ts   uLCD_reply_data;
 bool 	displayDetected = false;
 
 //==============================================================================
@@ -121,19 +122,39 @@ error_codes_te  gen4_uLCD_init(void)
  * @param index 
  * @return uint8_t 
  */
-error_codes_te gen_uLCD_ReadObject(uint16_t object, uint16_t index) {
+error_codes_te gen_uLCD_ReadObject(uint16_t object, uint16_t index) 
+{
+uint8_t  checksum, reply_byte;
 
-	if ( !displayDetected )
-		return -1;
-	// uint8_t checksum;
-	// geniePutByte((uint8_t)GEN4_uLCD_READ_OBJ);
-	// checksum = GEN4_uLCD_READ_OBJ;
-	// geniePutByte(object);
-	// checksum ^= object;
-	// geniePutByte(index);
-	// checksum ^= index;
-	// geniePutByte(checksum);GEN4_uLCD_NOT_DETECTED
-	return 0;
+    //  if (displayDetected == false) {
+	// 	return GEN4_uLCD_NOT_DETECTED;
+	//  }
+	 uLCD_cmd.cmd_length = display_cmd_info[GEN4_uLCD_READ_OBJ].length;
+
+	 uLCD_cmd.data[0] = GEN4_uLCD_READ_OBJ;
+	 uLCD_cmd.data[1] = object;
+	 uLCD_cmd.data[2] = index;
+
+	for (int i=0, checksum = 0 ; i < uLCD_cmd.cmd_length ; i++) {
+		checksum ^= uLCD_cmd.data[i];
+	}
+	uLCD_cmd.data[3] = checksum;
+	uart_write_blocking(uart1, &uLCD_cmd.data[0], uLCD_cmd.cmd_length);
+//
+// Reply from the display is either an NACK or a 6 byte 
+//
+	if (uart_is_readable_within_us(uart1, 100000) == true) {
+		reply_byte = uart_getc(uart1);		// read first byte to check for NACK
+		if (reply_byte == GEN4_uLCD_NAK) {
+			return GEN4_uLCD_READ_OBJ_FAIL;
+		} else {
+			uLCD_reply_data.cmd = reply_byte;
+			uart_read_blocking(uart1, &uLCD_reply_data.object, (uLCD_cmd.cmd_length-1));  // timeout??
+			return OK;
+		}
+	} else {
+		return GEN4_uLCD_READ_OBJ_TIMEOUT;
+	}
 }
 
 //==============================================================================
