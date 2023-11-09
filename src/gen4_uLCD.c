@@ -1,10 +1,86 @@
+/**
+ * @file gen4_uLCD.c
+ * @author Jim Herd 
+ * @brief 
+ * @date 2023-11-08
+ * 
+ * 
+ */
+#include   <stdio.h>
+#include   <stdint.h>
+#include   "pico/stdlib.h"
 
-#include  "visi_genie.h"
+#include  "externs.h"
+#include  "gen4_uLCD.h"
 
-// // Public Functions
+#include  "system.h"
+
+//==============================================================================
+// Global variables
+//==============================================================================
+
+gen4_uLCD_cmd_packet_ts    uLCD_cmd;
+bool 	displayDetected = false;
+
+//==============================================================================
+// Display functions
+//==============================================================================
+
+void uart1_sys_init(void)
+{
+    // ring_buffer_in.in_pt   = 0;
+    // ring_buffer_in.out_pt  = 0;
+    // ring_buffer_in.count   = 0;
+    // ring_buffer_out.in_pt  = 0;
+    // ring_buffer_out.out_pt = 0;
+    // ring_buffer_out.count  = 0;
+
+    gpio_set_function(UART1_TX_PIN, GPIO_FUNC_UART);
+    gpio_set_function(UART1_RX_PIN, GPIO_FUNC_UART);
+
+    uart_init(uart1, UART1_BAUD_RATE);
+    uart_set_hw_flow(uart1, false, false);
+    uart_set_format(uart1, 8, 1, UART_PARITY_NONE);
+    uart_set_fifo_enabled(uart1, true);
+
+    // irq_set_exclusive_handler(UART_IRQ, uart_interrupt_handler);
+    // irq_set_enabled(UART0_IRQ, true);
+
+    // hw_set_bits(&UART->imsc, UART_UARTIMSC_RXIM_BITS | UART_UARTIMSC_RTIM_BITS);
+
+    gpio_init(DISPLAY_RESET_PIN);
+    gpio_set_dir(DISPLAY_RESET_PIN, GPIO_IN);
+    gpio_put(DISPLAY_RESET_PIN, 0);
+    gpio_disable_pulls(DISPLAY_RESET_PIN);
+}
+
+
+/**
+ * @brief generate a reset pulse for the display
+ * 
+ * @return * void 
+ * 
+ * @note
+ *      Display reset line should be driven by an open-drain output,
+ *      but this is not available on the rp2040.  However, it can be
+ *      approximated by switching the reset line from input to output
+ *      and finally back to input.
+ */
+void reset_4D_display(void)
+{
+    gpio_put(DISPLAY_RESET_PIN, 0);
+    gpio_set_dir(DISPLAY_RESET_PIN, GPIO_OUT);
+    busy_wait_us(DISPLAY_WAIT_US);
+    gpio_set_dir(DISPLAY_RESET_PIN, GPIO_IN);
+}
+
+
+error_codes_te  gen4_uLCD_init(void) 
+{
+	gen4_uLCD_WriteContrast(5);
+}
 
 // bool genieBegin() {
-
 // 	pendingACK = 0;
 // 	pingRequest = 0;
 // 	recover_pulse = 50;
@@ -37,52 +113,116 @@
 // 	return 0; // timeout occurred, status offline.
 // }
 
+//==============================================================================
+/**
+ * @brief 
+ * 
+ * @param object 
+ * @param index 
+ * @return uint8_t 
+ */
+error_codes_te gen_uLCD_ReadObject(uint16_t object, uint16_t index) {
 
-// uint8_t genieReadObject(uint16_t object, uint16_t index) {
-// 	if ( !displayDetected )
-// 		return -1;
-// 	uint8_t checksum;
-// 	geniePutByte((uint8_t)GEN4_uLCD_READ_OBJ);
-// 	checksum = GEN4_uLCD_READ_OBJ;
-// 	geniePutByte(object);
-// 	checksum ^= object;
-// 	geniePutByte(index);
-// 	checksum ^= index;
-// 	geniePutByte(checksum);
-// 	return 0;
-// }
+	if ( !displayDetected )
+		return -1;
+	// uint8_t checksum;
+	// geniePutByte((uint8_t)GEN4_uLCD_READ_OBJ);
+	// checksum = GEN4_uLCD_READ_OBJ;
+	// geniePutByte(object);
+	// checksum ^= object;
+	// geniePutByte(index);
+	// checksum ^= index;
+	// geniePutByte(checksum);GEN4_uLCD_NOT_DETECTED
+	return 0;
+}
 
-// uint16_t genieWriteObject(uint16_t object, uint16_t index, uint16_t data) {
-//     if (!displayDetected)
-//         return -1;
-//     uint8_t checksum;
-//     pendingACK = 1;
-//     geniePutByte(GEN4_uLCD_WRITE_OBJ);
-//     checksum = GEN4_uLCD_WRITE_OBJ;
-//     geniePutByte(object);
-//     checksum ^= object;
-//     geniePutByte(index);
-//     checksum ^= index;
-//     geniePutByte(highByte(data));
-//     checksum ^= highByte(data);
-//     geniePutByte(lowByte(data));
-//     checksum ^= lowByte(data);
-//     geniePutByte(checksum);
-//     uint32_t timeout_write = millis();
-//     while (millis() - timeout_write <= GEN4_uLCD_CMD_TIMEOUT) {
-//         uint8_t command_return = genieDoEvents();
-//         if (command_return == GEN4_uLCD_ACK) {
-//             return 1;
-//         }
-//         if (command_return == GEN4_uLCD_NAK) {
-//             return 0;
-//         }
-//     }
-//     if (UserDebuggerHandler != 0) UserDebuggerHandler("Write Object didn't receive any reply\r\n");
-//     displayDetectTimer = millis() + DISPLAY_TIMEOUT + 10000; //manual disconnect
-//     return -1; // timeout
+//==============================================================================
+/**
+ * @brief Execute WriteObject command
+ * 
+ * @param object 
+ * @param index 
+ * @param data 
+ * @return error_codes_te 
+ */
+error_codes_te  gen4_uLCD_WriteObject(uint16_t object, uint16_t index, uint16_t data) 
+{
+uint8_t  checksum, reply_byte;
 
-// }
+    //  if (displayDetected == false) {
+	// 	return GEN4_uLCD_NOT_DETECTED;
+	//  }
+	 
+	 uLCD_cmd.cmd_length = display_cmd_info[GEN4_uLCD_WRITE_OBJ].length;
+
+	 uLCD_cmd.data[0] = GEN4_uLCD_WRITE_OBJ;
+	 uLCD_cmd.data[1] = object;
+	 uLCD_cmd.data[2] = index;
+	 uLCD_cmd.data[3] = highByte16(data);
+	 uLCD_cmd.data[4] = lowByte16(data);
+
+	for (int i=0, checksum = 0 ; i < uLCD_cmd.cmd_length ; i++) {
+		checksum ^= uLCD_cmd.data[i];
+	}
+	uLCD_cmd.data[5] = checksum;
+//
+// Send packet to uart. The command packets are small, therefore, the FIFO in the uart
+// should cause the transfer to be much faster than the baud rate timing would
+// suggest.
+//
+	uart_write_blocking(uart1, &uLCD_cmd.data[0], uLCD_cmd.cmd_length);
+//
+// Reply from the display is either an ACK or NACK character
+//
+	if (uart_is_readable_within_us(uart1, 100000) == true) {
+		reply_byte = uart_getc(uart1);
+		if (reply_byte == GEN4_uLCD_ACK) {
+			return OK;
+		} else {
+			return GEN4_uLCD_WRITE_OBJ_FAIL;
+		}
+	} else {
+		return GEN4_uLCD_WRITE_OBJ_TIMEOUT;
+	}
+}
+
+//==============================================================================
+
+error_codes_te  gen4_uLCD_WriteContrast(uint8_t value)
+{
+uint8_t   checksum, reply_byte;
+
+	// if (displayDetected == false) {
+	// 	return GEN4_uLCD_NOT_DETECTED;
+	//  }
+	uLCD_cmd.cmd_length = display_cmd_info[GEN4_uLCD_WRITE_CONTRAST].length;
+	uLCD_cmd.data[0] = GEN4_uLCD_WRITE_CONTRAST;
+	uLCD_cmd.data[1] = value;
+	checksum = 0;
+	for (int i=0 ; i < (uLCD_cmd.cmd_length - 1) ; i++) {
+		checksum ^= uLCD_cmd.data[i];
+	}
+	uLCD_cmd.data[2] = checksum;
+	uart_write_blocking(uart1, &uLCD_cmd.data[0], uLCD_cmd.cmd_length);
+//
+// Reply from the display is either an ACK or NACK character
+//
+	if (uart_is_readable_within_us(uart1, 100000) == true) {
+		reply_byte = uart_getc(uart1);
+		if (reply_byte == GEN4_uLCD_ACK) {
+			return OK;
+		} else {
+			return GEN4_uLCD_WRITE_CONTRAST_FAIL;
+		}
+	} else {
+		return GEN4_uLCD_WRITE_CONTRAST_TIMEOUT;
+	}
+}
+
+
+
+
+
 
 // uint16_t genieWriteShortToIntLedDigits (uint16_t index, int16_t data) {
 //     return genieWriteObject(GEN4_uLCD_OBJ_ILED_DIGITS_L, index, data);

@@ -1,4 +1,11 @@
-
+/**
+ * @file string_IO.h
+ * @author Jim Herd 
+ * @brief 
+ * @date 2023-11-08
+ * 
+ * 
+ */
 #ifndef __STRING_IO_H__
 #define __STRING_IO_H__
 

@@ -1,10 +1,11 @@
-/*
- * ROM data
- */
+/**
+ * 
+*/
 
 #include "pico/stdlib.h"
 
 #include "system.h"
+#include "gen4_uLCD.h"
 #include "tokenizer.h"
 
 //***************************************************************************
@@ -110,5 +111,21 @@ struct servo_data_s     servo_data[NOS_SERVOS] = {
     {DORMANT, false, SERVO, 0, 0, 0, 45, false, -30, +30, 50, 10},
     {DORMANT, false, MOTOR, 0, 0, 0, 45, false, -45, +45, 60, 10},
 };
+
+//==============================================================================
+// Data relevant to the 8 commands used to communicate with the
+// 4D Systems Gen4 Diablo16 based display
+
+struct display_cmd_reply_data_s    display_cmd_info[NOS_GEN4_uLCD_CMDS] = {
+	{ HOST_TO_DISPLAY,  4, NAK_REPORT},	    // 0 = READ_OBJ
+	{ HOST_TO_DISPLAY,  6, ACK_NAK},	    // 1 = WRITE_OBJ
+	{ HOST_TO_DISPLAY, -1, ACK_NAK},	    // 2 = WRITE_STR
+	{ HOST_TO_DISPLAY, -1, ACK_NAK},	    // 3 = WRITE_STRU
+	{ HOST_TO_DISPLAY,  3, ACK_NAK},	    // 4 = WRITE_CONTRAST
+	{ DISPLAY_TO_HOST,  6, NAK_REPLY},	    // 5 = REPORT_OBJ
+	{ HOST_TO_DISPLAY,  0, ILLEGAL},	    // 6 = illegal op
+	{ DISPLAY_TO_HOST,  6, NAK_REPLY},	    // 7 = REPORT_EVENT
+};
+
 
 

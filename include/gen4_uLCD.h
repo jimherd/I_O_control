@@ -1,64 +1,31 @@
+
+
 /////////////////////////// gen4_uLCDC 07/08/2020 //////////////////////////////
 //
-//      Library to utilize the 4D Systems gen4_uLCD interface to displays
-//      that have been created using the Visi-gen4_uLCD creator platform.
-//      This is intended to be used a generic library for platforms
-//      supporting the C programming language.
-//
-//		Note that this library will require additional setup for user's 
-//      choice of microcontroller
-//
-//      Improvements/Updates by (based on geneArduino library)
-//		  4D Systems Engineering, August 2020, www.4dsystems.com.au
-//		  4D Systems Engineering, July 2020, www.4dsystems.com.au
-//        4D Systems Engineering, January 2016, www.4dsystems.com.au
-//        4D Systems Engineering, October 2015, www.4dsystems.com.au
-//        4D Systems Engineering, September 2015, www.4dsystems.com.au
-//        4D Systems Engineering, August 2015, www.4dsystems.com.au
-//        4D Systems Engineering, May 2015, www.4dsystems.com.au
-//        Matt Jenkins, March 2015, www.majenko.com
-//        Clinton Keith, January 2015, www.clintonkeith.com
-//        4D Systems Engineering, July 2014, www.4dsystems.com.au
-//        Clinton Keith, March 2014, www.clintonkeith.com
-//        Clinton Keith, January 2014, www.clintonkeith.com
-//        4D Systems Engineering, January 2014, www.4dsystems.com.au
-//        4D Systems Engineering, September 2013, www.4dsystems.com.au
-//      Written by
-//        Rob Gray (GRAYnomad), June 2013, www.robgray.com
-//      Based on code by
-//        Gordon Henderson, February 2013, <projects@drogon.net>
-//
-//      Copyright (c) 2012-2020 4D Systems Pty Ltd, Sydney, Australia
-/*********************************************************************
- * This file is part of gen4_uLCDC:
- *    gen4_uLCDC is free software: you can redistribute it and/or modify
- *    it under the terms of the GNU Lesser General Public License as
- *    published by the Free Software Foundation, either version 3 of the
- *    License, or (at your option) any later version.
- *
- *    gen4_uLCDC is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Lesser General Public License for more details.
- *
- *    You should have received a copy of the GNU Lesser General Public
- *    License along with gen4_uLCDC.
- *    If not, see <http://www.gnu.org/licenses/>.
- *********************************************************************/
+//      Code based the 4D Systems gen4_uLCD open source code
 
-#ifndef GEN4_uLCD_H_
-#define GEN4_uLCD_H_
+//  This file is part of gen4_uLCDC:
+//      gen4_uLCDC is free software: you can redistribute it and/or modify
+//      it under the terms of the GNU Lesser General Public License as
+//      published by the Free Software Foundation, either version 3 of the
+//      License, or (at your option) any later version.
+//  
+//      gen4_uLCDC is distributed in the hope that it will be useful,
+//      but WITHOUT ANY WARRANTY; without even the implied warranty of
+//      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//      GNU Lesser General Public License for more details.
+//  
+//      You should have received a copy of the GNU Lesser General Public
+//      License along with gen4_uLCDC.
+//      If not, see <http://www.gnu.org/licenses/>.
+//==============================================================================
 
-#include "stdint.h"
-#include "string.h"
+#ifndef __GEN4_uLCD_H__
+#define __GEN4_uLCD_H__
 
-// #ifndef lowByte
-// #define lowByte(x) ((int8_t)((x) & 0xFF))
-// #endif
-
-// #ifndef highByte
-// #define highByte(x) ((int8_t)(((x) >> 8) & 0xFF))
-// #endif
+#include    "system.h"
+#include    "stdint.h"
+#include    "pico/stdlib.h"
 
 // // Do not modify current values. Recommended settings.
 // #define DISPLAY_TIMEOUT         2000
@@ -77,6 +44,7 @@
 
 #define MAX_COMMAND_DATA_BYTES	64
 
+#define		NOS_GEN4_uLCD_CMDS  8
 
 typedef enum {
 	GEN4_uLCD_READ_OBJ,
@@ -86,7 +54,7 @@ typedef enum {
 	GEN4_uLCD_WRITE_CONTRAST,
 	GEN4_uLCD_REPORT_OBJ,
 	GEN4_uLCD_REPORT_EVENT = 7,
-} gen4_uLCDCommand;
+} gen4_uLCD_Command_te;
 
 typedef enum {
 	GEN4_uLCD_OBJ_DIPSW,
@@ -158,58 +126,48 @@ typedef enum {
 	GEN4_uLCD_OBJ_ISLIDERD,
 	GEN4_uLCD_OBJ_ISLIDERC,
 	GEN4_uLCD_OBJ_ILINEAR_INPUT
-} gen4_uLCD_Object;
+} gen4_uLCD_Object_te;
 
 //==============================================================================
 // Structure to hold a command to be sent to the display
 //
 // Although each command is of a fixed length; the seven commands have
 // different lengths.  The last byte of the command is a checksum.
+// The string to be sent to the display starts at "cmd".
 //
-typedef struct {
+typedef struct gen4_uLCD_cmd_packet_ts {
 	uint8_t		cmd_length;
-    uint8_t		cmd;
-    uint8_t		object;
-    uint8_t		index;
     uint8_t		data[MAX_COMMAND_DATA_BYTES];
-} gen4_uLCD_cmd_packet;
+} gen4_uLCD_cmd_packet_ts;
 
 //==============================================================================
 // Structure to hold a reply from a sent command
 
-typedef struct {
-    uint8_t        cmd;
-    uint8_t        object;
-    uint8_t        index;
-    uint8_t        data_msb;
-    uint8_t        data_lsb;
-} ReportObj;
+// typedef struct ReportObj_ts {
+//     uint8_t        cmd;
+//     uint8_t        object;
+//     uint8_t        index;
+//     uint8_t        data_msb;
+//     uint8_t        data_lsb;
+// };
 
-typedef enum  { ACK_NAK, NAK_REPORT , NAK_CMD , NAK_REPLY, ILLEGAL } display_reply_type_et;
-typedef enum  { HOST_TO_DISPLAY, DISPLAY_TO_HOST } display_cmd_direction_et;
+//==============================================================================
+// Function prototypes
+//
+void              uart1_sys_init(void);
+error_codes_te    gen4_uLCD_init(void); 
+void              reset_4D_display(void);
+error_codes_te    gen_uLCD_ReadObject(uint16_t object, uint16_t index);
+error_codes_te    gen4_uLCD_WriteObject(uint16_t object, uint16_t index, uint16_t data);
+error_codes_te    gen4_uLCD_WriteContrast(uint8_t value);
 
-#define		NOS_GEN4_uLCD_CMDS  8
+#endif  /* __GEN4_uLCD_H__ */
 
-#define		ACK		0x06
-#define     NACK	0x15
-
-
-typedef struct {
-	display_cmd_direction_et  direction;
-	int8_t					  length;
-	display_reply_type_et	  reply_type;
-} display_cmd_reply_data;
-
-display_cmd_reply_data display_cmd_info[NOS_GEN4_uLCD_CMDS] = {
-	{ HOST_TO_DISPLAY,  4, NAK_REPORT},	    // 0 = READ_OBJ
-	{ HOST_TO_DISPLAY,  6, ACK_NAK},	    // 1 = WRITE_OBJ
-	{ HOST_TO_DISPLAY, -1, ACK_NAK},	    // 2 = WRITE_STR
-	{ HOST_TO_DISPLAY, -1, ACK_NAK},	    // 3 = WRITE_STRU
-	{ HOST_TO_DISPLAY,  3, ACK_NAK},	    // 4 = WRITE_CONTRAST
-	{ DISPLAY_TO_HOST,  6, NAK_REPLY},	    // 5 = REPORT_OBJ
-	{ HOST_TO_DISPLAY,  0, ILLEGAL},	    // 6 = illegal op
-	{ DISPLAY_TO_HOST,  6, NAK_REPLY},	    // 7 = REPORT_EVENT
-};
+// typedef struct {
+// 	display_cmd_direction_te  direction;
+// 	int8_t					  length;
+// 	display_reply_type_et	  reply_type;
+// } display_cmd_reply_data;
 
 // typedef struct {
 //     uint8_t         cmd;
@@ -280,15 +238,13 @@ display_cmd_reply_data display_cmd_info[NOS_GEN4_uLCD_CMDS] = {
 // volatile bool     genieStart;
 
 
-// // Public Functions
+// Public Functions
 // bool 		genieBegin();
 
-// uint8_t     genieReadObject(uint16_t object, uint16_t index);
-// uint16_t    genieWriteObject(uint16_t object, uint16_t index, uint16_t data);
 // uint16_t    genieWriteShortToIntLedDigits(uint16_t index, int16_t data);
 // uint16_t    genieWriteFloatToIntLedDigits(uint16_t index, float data);
 // uint16_t    genieWriteLongToIntLedDigits(uint16_t index, int32_t data);
-// uint8_t     genieWriteContrast(uint16_t value);
+
 // uint16_t    genieWriteStr(uint16_t index, char *string);
 // uint16_t    genieWriteStrU(uint16_t index, uint16_t *string);
 // uint16_t	genieWriteInhLabelDefault(uint16_t index);
@@ -331,4 +287,4 @@ display_cmd_reply_data display_cmd_info[NOS_GEN4_uLCD_CMDS] = {
 // extern uint8_t geniePeekByte(void);
 // extern void geniePutByte(uint8_t);
 
-#endif /* VISI_GEN4_uLCD_H_ */
+//#endif /* __GEN4_uLCD_H__ */

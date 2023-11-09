@@ -96,7 +96,7 @@ int main()
                 "uart_task",
                 configMINIMAL_STACK_SIZE,
                 NULL,
-                TASK_PRIORITYIDLE,
+                TASK_PRIORITYBELOWNORMAL,
                 &taskhndl_Task_uart
     );
 
@@ -128,7 +128,7 @@ int main()
                 "4D_System_displaycontrol_task",
                 512,     // configMINIMAL_STACK_SIZE,
                 NULL,
-                TASK_PRIORITYNORMAL,
+                TASK_PRIORITYLOW,
                 &taskhndl_Task_display_control
     );
 

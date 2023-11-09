@@ -10,6 +10,7 @@
 #include    "pico/stdlib.h"
 
 #include    "system.h"
+#include    "gen4_uLCD.h"
 
 //==============================================================================
 // FreeRTOS components
@@ -37,5 +38,6 @@ extern struct task_data_s           task_data[NOS_TASKS];
 extern const uint8_t                char_type[256];
 extern struct servo_data_s          servo_data[NOS_SERVOS];
 extern struct token_list_s          commands[NOS_COMMANDS];
+extern struct display_cmd_reply_data_s    display_cmd_info[NOS_GEN4_uLCD_CMDS];
 
 #endif  // __EXTERNS_H__

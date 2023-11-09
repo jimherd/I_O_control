@@ -7,7 +7,7 @@
 #ifndef __SYSTEM_H__
 #define __SYSTEM_H__
 
-#include    "system.h"
+//#include    "gen4_uLCD.h"
 
 #include    "pico/stdlib.h"
 #include    "Pico_IO.h"
@@ -83,6 +83,11 @@ typedef enum  {
     UNKNOWN_STEPPER_MOTOR_STATE = -116,
     STEPPER_BUSY                = -117,
     SERVO_BUSY                  = -118,
+    GEN4_uLCD_NOT_DETECTED      = -119,
+    GEN4_uLCD_WRITE_OBJ_FAIL    = -120,
+    GEN4_uLCD_WRITE_OBJ_TIMEOUT = -121,
+    GEN4_uLCD_WRITE_CONTRAST_FAIL    = -122,
+    GEN4_uLCD_WRITE_CONTRAST_TIMEOUT = -123,
 } error_codes_te;
 
 //==============================================================================
@@ -129,6 +134,9 @@ enum {UPPER_CASE, LOWER_CASE};
 
 #define DISPLAY_RESET_PIN  GP3
 #define DISPLAY_WAIT_US    25
+
+// typedef enum  { ACK_NAK, NAK_REPORT , NAK_CMD , NAK_REPLY, ILLEGAL } display_reply_type_et;
+// typedef enum  { HOST_TO_DISPLAY, DISPLAY_TO_HOST } display_cmd_direction_et;
 
 //==============================================================================
 //I2C port
@@ -357,6 +365,15 @@ struct min_max_s {
 struct command_limits_s {
     struct min_max_s  p_limits[MAX_ARGC];
 };
+
+typedef enum  { ACK_NAK, NAK_REPORT , NAK_CMD , NAK_REPLY, ILLEGAL } display_reply_type_te;
+typedef enum  { HOST_TO_DISPLAY, DISPLAY_TO_HOST } display_cmd_direction_te;
+
+struct display_cmd_reply_data_s {
+	display_cmd_direction_te  direction;
+	int8_t					  length;
+	display_reply_type_te	  reply_type;
+} ;
 
 enum {
     TOKENIZER_SERVO,

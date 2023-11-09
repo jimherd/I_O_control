@@ -24,63 +24,24 @@
 #include    "system.h"
 #include    "externs.h"
 #include    "sys_routines.h"
-#include    "display.h"
 #include    "string_IO.h"
 #include    "min_printf.h"
+#include    "gen4_uLCD.h"
 
-void uart1_sys_init(void)
+
+void Task_display_control(void *p) 
 {
-    // ring_buffer_in.in_pt   = 0;
-    // ring_buffer_in.out_pt  = 0;
-    // ring_buffer_in.count   = 0;
-    // ring_buffer_out.in_pt  = 0;
-    // ring_buffer_out.out_pt = 0;
-    // ring_buffer_out.count  = 0;
-
-    gpio_set_function(UART1_TX_PIN, GPIO_FUNC_UART);
-    gpio_set_function(UART1_RX_PIN, GPIO_FUNC_UART);
-
-    uart_init(uart0, UART1_BAUD_RATE);
-    uart_set_hw_flow(uart1, false, false);
-    uart_set_format(uart1, 8, 1, UART_PARITY_NONE);
-    uart_set_fifo_enabled(uart1, true);
-
-    // irq_set_exclusive_handler(UART_IRQ, uart_interrupt_handler);
-    // irq_set_enabled(UART0_IRQ, true);
-
-    // hw_set_bits(&UART->imsc, UART_UARTIMSC_RXIM_BITS | UART_UARTIMSC_RTIM_BITS);
-
-    gpio_init(DISPLAY_RESET_PIN);
-    gpio_set_dir(DISPLAY_RESET_PIN, GPIO_IN);
-    gpio_put(DISPLAY_RESET_PIN, 0);
-    gpio_disable_pulls(DISPLAY_RESET_PIN);
-}
-
-void Task_display_control(void *p) {
+error_codes_te   status;
 
     uart1_sys_init();
+    gen4_uLCD_init();
     reset_4D_display();
-
+    
     FOREVER {
-        vTaskDelay(1000);
+        gen4_uLCD_WriteContrast(5);
+        vTaskDelay(5000);
+        gen4_uLCD_WriteContrast(12);
+        vTaskDelay(5000);
     }
 }
 
-/**
- * @brief generate a reset pulse for the display
- * 
- * @return * void 
- * 
- * @note
- *      Display reset line should be driven by an open-drain output,
- *      but this is not available on the rp2040.  However, it can be
- *      approximated by switching the reset line from input to output
- *      and finally back to input.
- */
-void reset_4D_display(void)
-{
-    gpio_put(DISPLAY_RESET_PIN, 0);
-    gpio_set_dir(DISPLAY_RESET_PIN, GPIO_OUT);
-    busy_wait_us(DISPLAY_WAIT_US);
-    gpio_set_dir(DISPLAY_RESET_PIN, GPIO_IN);
-}
