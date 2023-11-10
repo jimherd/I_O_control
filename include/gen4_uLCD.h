@@ -44,7 +44,9 @@
 
 #define MAX_COMMAND_DATA_BYTES	64
 
-#define		NOS_GEN4_uLCD_CMDS  8
+#define		NOS_GEN4_uLCD_CMDS  	8
+
+#define		GEN4_uLCD_NOS_PINGS		8 // to set display
 
 typedef enum {
 	GEN4_uLCD_READ_OBJ,
@@ -223,7 +225,7 @@ error_codes_te    gen4_uLCD_WriteContrast(uint8_t value);
 // volatile bool     autoPing; // used internally by the library, do not touch.
 // volatile uint16_t GEN4_uLCD_CMD_TIMEOUT; // force disconnection trigger if ACK times out
 // volatile uint32_t autoPingTimer; // timer for autoPinger() function
-// volatile bool     displayDetected; // display is online/offline state
+// volatile bool     gen4_uLCD_detected; // display is online/offline state
 // volatile uint32_t displayDetectTimer; // timer for lcd to be aware if connected
 // volatile uint8_t  currentForm; // current form thats loaded
 // volatile uint8_t  nakInj; // nak injection counter

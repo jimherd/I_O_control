@@ -35,6 +35,7 @@ error_codes_te   status;
 
     uart1_sys_init();
     reset_4D_display();
+    vTaskDelay(100);
     gen4_uLCD_init();
     
     FOREVER {

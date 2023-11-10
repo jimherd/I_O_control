@@ -21,7 +21,8 @@
 
 gen4_uLCD_cmd_packet_ts    uLCD_cmd;
 gen4_uLCD_data_packet_ts   uLCD_reply_data;
-bool 	displayDetected = false;
+bool 		gen4_uLCD_detected, gen4_uLCD_test_apply;
+int32_t		gen4_uLCD_current_form;
 
 //==============================================================================
 // Display functions
@@ -75,10 +76,35 @@ void reset_4D_display(void)
     gpio_set_dir(DISPLAY_RESET_PIN, GPIO_IN);
 }
 
+//==============================================================================
 
 error_codes_te  gen4_uLCD_init(void) 
 {
-	gen4_uLCD_WriteContrast(5);
+error_codes_te status;
+
+	gen4_uLCD_current_form = -1;
+	gen4_uLCD_detected = false;
+//
+// Use some WriteContrast command as ping. 
+// Disable display check this one time.
+//
+	gen4_uLCD_test_apply = false;
+	for(int i=0 ; i < GEN4_uLCD_NOS_PINGS ; i++) {
+		status = gen4_uLCD_WriteContrast(5);
+		if (status != OK){
+			gen4_uLCD_detected = false;
+			return status;   // exit if error
+		}
+		
+	}
+	gen4_uLCD_detected = true;
+	gen4_uLCD_test_apply = true;
+
+	status = gen4_uLCD_WriteContrast(5);
+	if (status == OK) {
+		gen4_uLCD_detected = true;
+	}
+	return status;
 }
 
 // bool genieBegin() {
@@ -88,30 +114,17 @@ error_codes_te  gen4_uLCD_init(void)
 // 	autoPing = 0;
 // 	GEN4_uLCD_CMD_TIMEOUT = 1250;
 // 	autoPingTimer = 0;
-// 	displayDetected = 0;
 // 	displayDetectTimer = 0;
-// 	currentForm = -1;
 // 	nakInj = 0;
 // 	badByteCounter = 0;
 // 	delayedCycles = 0;
 // 	display_uptime = 0;
 // 	ping_spacer;
 // 	genieStart = 1;
-
 // 	UserHandler = NULL;
 // 	UserMagicByteHandler = NULL;
 // 	UserMagicDByteHandler = NULL;
 // 	UserDebuggerHandler = NULL;
-
-// 	display_uptime = millis(); // start uptime timer (ms)
-// 	genieStart = 1; // start form request on startup
-// 	genieReadObject(GEN4_uLCD_OBJ_FORM, (uint8_t)0x00); // send form request
-// 	uint32_t timeout_start = millis(); // timeout timer
-// 	while ( millis() - timeout_start <= 250 ) { // blocking loop, releases after 150ms to timeout, or sooner if display's detected.
-// 		if ( genieDoEvents() == GEN4_uLCD_REPORT_OBJ && !genieStart ) return true; // form is updated.
-// 	}
-// 	displayDetected = false;
-// 	return 0; // timeout occurred, status offline.
 // }
 
 //==============================================================================
@@ -126,9 +139,11 @@ error_codes_te gen_uLCD_ReadObject(uint16_t object, uint16_t index)
 {
 uint8_t  checksum, reply_byte;
 
-    //  if (displayDetected == false) {
-	// 	return GEN4_uLCD_NOT_DETECTED;
-	//  }
+	if (gen4_uLCD_test_apply == true) {
+		if (gen4_uLCD_detected == false) {
+			return GEN4_uLCD_NOT_DETECTED;
+		}
+	}
 	 uLCD_cmd.cmd_length = display_cmd_info[GEN4_uLCD_READ_OBJ].length;
 
 	 uLCD_cmd.data[0] = GEN4_uLCD_READ_OBJ;
@@ -170,10 +185,11 @@ error_codes_te  gen4_uLCD_WriteObject(uint16_t object, uint16_t index, uint16_t 
 {
 uint8_t  checksum, reply_byte;
 
-    //  if (displayDetected == false) {
-	// 	return GEN4_uLCD_NOT_DETECTED;
-	//  }
-	 
+     if (gen4_uLCD_test_apply == true) {
+		if (gen4_uLCD_detected == false) {
+			return GEN4_uLCD_NOT_DETECTED;
+		}
+	}
 	 uLCD_cmd.cmd_length = display_cmd_info[GEN4_uLCD_WRITE_OBJ].length;
 
 	 uLCD_cmd.data[0] = GEN4_uLCD_WRITE_OBJ;
@@ -213,9 +229,11 @@ error_codes_te  gen4_uLCD_WriteContrast(uint8_t value)
 {
 uint8_t   checksum, reply_byte;
 
-	// if (displayDetected == false) {
-	// 	return GEN4_uLCD_NOT_DETECTED;
-	//  }
+	if (gen4_uLCD_test_apply == true) {
+		if (gen4_uLCD_detected == false) {
+			return GEN4_uLCD_NOT_DETECTED;
+		}
+	}
 	uLCD_cmd.cmd_length = display_cmd_info[GEN4_uLCD_WRITE_CONTRAST].length;
 	uLCD_cmd.data[0] = GEN4_uLCD_WRITE_CONTRAST;
 	uLCD_cmd.data[1] = value;
@@ -268,7 +286,7 @@ uint8_t   checksum, reply_byte;
 // }
 
 // uint8_t genieWriteContrast(uint16_t value) {
-//     if (!displayDetected)
+//     if (!gen4_uLCD_detected)
 //         return -1;
 //     uint8_t checksum;
 //     pendingACK = 1;
@@ -293,7 +311,7 @@ uint8_t   checksum, reply_byte;
 // }
 
 // uint16_t genieWriteStr(uint16_t index, char *string) {
-//     if (!displayDetected)
+//     if (!gen4_uLCD_detected)
 //         return -1;
 //     char* p;
 //     uint8_t checksum;
@@ -328,7 +346,7 @@ uint8_t   checksum, reply_byte;
 // }
 
 // uint16_t genieWriteStrU(uint16_t index, uint16_t *string) {
-//     if (!displayDetected)
+//     if (!gen4_uLCD_detected)
 //         return -1;
 //     uint16_t * p = string;
 //     int len = 0;
@@ -370,7 +388,7 @@ uint8_t   checksum, reply_byte;
 // }
 
 // uint16_t genieWriteInhLabel(uint16_t index, char * string) {
-//     if (!displayDetected)
+//     if (!gen4_uLCD_detected)
 //         return -1;
 //     char* p;
 //     uint8_t checksum;
@@ -441,7 +459,7 @@ uint8_t   checksum, reply_byte;
 // //        if (UserDebuggerHandler != 0) UserDebuggerHandler(" Current Time : %lu ms\r\nPrevious Time : %lu ms\r\n", millis(), displayDetectTimer);
 //         if (millis() - displayDetectTimer > DISPLAY_TIMEOUT) { // code online, but lcd is not?
 //             displayDetectTimer = millis();
-//             displayDetected = 0;
+//             gen4_uLCD_detected = 0;
 //             pingRequest = 0;
 //             rx_data[0] = GEN4_uLCD_PING;
 //             rx_data[1] = GEN4_uLCD_DISCONNECTED;
@@ -456,7 +474,7 @@ uint8_t   checksum, reply_byte;
 //         }
 //     }
 
-//     if (!displayDetected) { // not online?
+//     if (!gen4_uLCD_detected) { // not online?
 //         pendingACK = 0; // reset pending ACK check
 //         currentForm = -1; // reset form holder
 //         display_uptime = 0; // keeps timer reset
@@ -468,7 +486,7 @@ uint8_t   checksum, reply_byte;
 
 //     if (genieGetByteCount() > 0) {
 //         uint8_t b = geniePeekByte(); // Look at the next byte but don't pull it yet.
-//         if (!displayDetected && (b == GEN4_uLCDM_REPORT_BYTES || b == GEN4_uLCDM_REPORT_DBYTES))
+//         if (!gen4_uLCD_detected && (b == GEN4_uLCDM_REPORT_BYTES || b == GEN4_uLCDM_REPORT_DBYTES))
 //             b = 0xFF; // force bad bytes instead of false triggering genie magic switches.
 //         switch (b) { // We're going to parse what we see into the proper switch.
 
@@ -580,7 +598,7 @@ uint8_t   checksum, reply_byte;
 //             if ((autoPing || pingRequest) && rx_data[1] == GEN4_uLCD_OBJ_FORM) {
 //                 if (autoPing) {
 //                     autoPing = 0; //switch off after queueing event
-//                     if (!displayDetected) { // if previously disconnected and now is connected...
+//                     if (!gen4_uLCD_detected) { // if previously disconnected and now is connected...
 //                         display_uptime = millis(); // start uptime timer (ms)
 //                         rx_data[0] = GEN4_uLCD_PING;
 //                         rx_data[1] = GEN4_uLCD_READY;
@@ -591,7 +609,7 @@ uint8_t   checksum, reply_byte;
 //                         genieEnqueueEvent(rx_data); // send ready state to user handler.
 //                         while (genieGetByteCount() > 0)
 //                             genieGetByte(); // clear on new connect
-//                         displayDetected = 1; // turn on functions
+//                         gen4_uLCD_detected = 1; // turn on functions
 //                     }
 //                     if (genieStart) {
 //                         genieStart = 0;
@@ -641,7 +659,7 @@ uint8_t   checksum, reply_byte;
 //     UserHandler = handler;
 //     uint8_t rx_data[6];
 //     // display status already collected from Begin function, user just enabled handler, so give a status.
-//     if (displayDetected) {
+//     if (gen4_uLCD_detected) {
 //         rx_data[0] = GEN4_uLCD_PING;
 //         rx_data[1] = GEN4_uLCD_READY;
 //         rx_data[2] = 0;
@@ -671,11 +689,11 @@ uint8_t   checksum, reply_byte;
 
 
 // bool genieOnline() {
-//     return displayDetected;
+//     return gen4_uLCD_detected;
 // }
 
 // uint32_t genieUptime() {
-//     if (displayDetected)
+//     if (gen4_uLCD_detected)
 //         return millis() - display_uptime;
 //     else
 //         return 0;
@@ -702,9 +720,9 @@ uint8_t   checksum, reply_byte;
 
 // uint8_t geniePing() {
 //     uint16_t geniePingTimerChanger;
-//     if (displayDetected)
+//     if (gen4_uLCD_detected)
 //         geniePingTimerChanger = AUTO_PING_CYCLE; // preset online pinger
-//     if (!displayDetected)
+//     if (!gen4_uLCD_detected)
 //         geniePingTimerChanger = recover_pulse; // 50ms offline pinger
 //     if (millis() - autoPingTimer > geniePingTimerChanger) {
 //         autoPingTimer = millis();
@@ -723,7 +741,7 @@ uint8_t   checksum, reply_byte;
 // }
 
 // uint16_t genieEnableAutoPing(uint16_t interval) {
-//     if (displayDetected) {
+//     if (gen4_uLCD_detected) {
 //         if (millis() - ping_spacer < interval)
 //             return 0;
 //         ping_spacer = millis();
@@ -738,7 +756,7 @@ uint8_t   checksum, reply_byte;
 //         geniePutByte(checksum);
 //         return 1;
 //     }
-//     if (!displayDetected) {
+//     if (!gen4_uLCD_detected) {
 //         if (millis() - ping_spacer > interval) {
 //             ping_spacer = millis();
 //             uint8_t rx_data[6];
@@ -758,7 +776,7 @@ uint8_t   checksum, reply_byte;
 // // gen4_uLCD Magic functions (ViSi-gen4_uLCD Pro Only)
 
 // uint16_t _genieWriteMagicBytes(uint16_t index, uint8_t *bytes, uint16_t len, uint8_t report) {
-//     if (!displayDetected)
+//     if (!gen4_uLCD_detected)
 //         return -1;
 //     uint8_t checksum;
 //     geniePutByte(GEN4_uLCDM_WRITE_BYTES);
@@ -794,7 +812,7 @@ uint8_t   checksum, reply_byte;
 // }
 
 // uint16_t _genieWriteMagicDBytes(uint16_t index, uint16_t *shorts, uint16_t len, uint8_t report) {
-//     if (!displayDetected)
+//     if (!gen4_uLCD_detected)
 //         return -1;
 //     uint8_t checksum;
 //     geniePutByte(GEN4_uLCDM_WRITE_DBYTES);
@@ -832,7 +850,7 @@ uint8_t   checksum, reply_byte;
 // }
 
 // uint8_t genieGetNextByte(void) {
-//     if (!displayDetected)
+//     if (!gen4_uLCD_detected)
 //         return -1; // user code may keep requesting, block till ready.
 //     uint8_t rx_data[6];
 //     uint32_t timeout = millis();
@@ -841,7 +859,7 @@ uint8_t   checksum, reply_byte;
 //         displayDetectTimer = millis();
 //         if (millis() - timeout >= 2000) { // we issue an immediate manual disconnect.
 //             displayDetectTimer = millis();
-//             displayDetected = 0;
+//             gen4_uLCD_detected = 0;
 //             while (genieGetByteCount() > 0)
 //                 genieGetByte();
 //             rx_data[0] = GEN4_uLCD_PING;
@@ -862,7 +880,7 @@ uint8_t   checksum, reply_byte;
 // }
 
 // uint16_t genieGetNextDoubleByte(void) {
-//     if (!displayDetected)
+//     if (!gen4_uLCD_detected)
 //         return -1; // user code may keep requesting, block till ready.
 //     uint8_t rx_data[6];
 //     uint16_t out;
@@ -872,7 +890,7 @@ uint8_t   checksum, reply_byte;
 //         displayDetectTimer = millis();
 //         if (millis() - timeout >= 2000) { // we issue an immediate manual disconnect.
 //             displayDetectTimer = millis();
-//             displayDetected = 0;
+//             gen4_uLCD_detected = 0;
 //             while (genieGetByteCount() > 0)
 //                 genieGetByte();
 //             rx_data[0] = GEN4_uLCD_PING;
