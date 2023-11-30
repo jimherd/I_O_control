@@ -32,7 +32,7 @@
 // #define AUTO_PING_CYCLE         1250
 
 // Structure to store replys returned from a display
-#define GEN4_uLCD_FRAME_SIZE        6
+#define GEN4_uLCD_REPLY_SIZE        6
 
 #define MAX_GEN4_uLCD_EVENTS    	16    // MUST be a power of 2
 
@@ -46,7 +46,7 @@
 
 #define		NOS_GEN4_uLCD_CMDS  	8
 
-#define		GEN4_uLCD_NOS_PINGS		8 // to set display
+#define		GEN4_uLCD_NOS_PINGS		1 // to set display
 
 typedef enum {
 	GEN4_uLCD_READ_OBJ,
@@ -135,7 +135,7 @@ typedef enum {
 //
 // Although each command is of a fixed length; the seven commands have
 // different lengths.  The last byte of the command is a checksum.
-// The string to be sent to the display starts at "cmd".
+// The string to be sent to the display starts at "data[0]".
 //
 typedef struct gen4_uLCD_cmd_packet_ts {
 	uint8_t		cmd_length;
@@ -145,13 +145,14 @@ typedef struct gen4_uLCD_cmd_packet_ts {
 //==============================================================================
 // Structure to hold a reply from a READ_OBJ command
 
-typedef struct  {
-    uint8_t        cmd;
-    uint8_t        object;
-    uint8_t        index;
-    uint8_t        data_msb;
-    uint8_t        data_lsb;
-} gen4_uLCD_data_packet_ts;
+typedef struct gen4_uLCD_reply_packet_ts {
+    uint8_t		cmd;
+    uint8_t		object;
+    uint8_t		index;
+    uint8_t		data_msb;
+    uint8_t     data_lsb;
+	uint8_t		checksum;
+} gen4_uLCD_reply_packet_ts;
 
 //==============================================================================
 // Function prototypes
@@ -159,9 +160,10 @@ typedef struct  {
 void              uart1_sys_init(void);
 error_codes_te    gen4_uLCD_init(void); 
 void              reset_4D_display(void);
-error_codes_te    gen_uLCD_ReadObject(uint16_t object, uint16_t index);
+error_codes_te    gen4_uLCD_ReadObject(uint16_t object, uint16_t index);
 error_codes_te    gen4_uLCD_WriteObject(uint16_t object, uint16_t index, uint16_t data);
 error_codes_te    gen4_uLCD_WriteContrast(uint8_t value);
+void flush_RX_fifo(uart_inst_t *uart);
 
 #endif  /* __GEN4_uLCD_H__ */
 

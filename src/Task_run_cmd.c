@@ -235,6 +235,9 @@ int32_t                 rel_nos_steps, abs_nos_steps, move_count, move_angle;
                 reply_done = true;
                 break;
 
+            case TOKENIZER_DISPLAY:
+                break;
+
             case TOKENIZER_TDELAY:
                 vTaskDelay(int_parameters[2]);
                 break;

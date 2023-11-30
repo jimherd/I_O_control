@@ -132,7 +132,7 @@ enum {UPPER_CASE, LOWER_CASE};
 #define UART1_RX_PIN     GP5
 
 #define UART1_ID uart1
-#define UART1_BAUD_RATE 9600
+#define UART1_BAUD_RATE   115200
 
 #define DISPLAY_RESET_PIN  GP3
 #define DISPLAY_WAIT_US    25
@@ -336,9 +336,9 @@ typedef enum {
  * @brief Task data
  */
 struct task_data_s {
-    TaskHandle_t            task_handle;
-    uint8_t                 priority;
-    StackType_t             *pxStackBase;
+    TaskHandle_t    task_handle;
+    uint8_t         priority;
+    StackType_t     *pxStackBase;
     configSTACK_DEPTH_TYPE  StackHighWaterMark;
     struct {
         uint32_t    last_exec_time;
@@ -385,6 +385,7 @@ enum {
     TOKENIZER_GET,
     TOKENIZER_PING,
     TOKENIZER_TDELAY,
+    TOKENIZER_DISPLAY,
     TOKENIZER_ERROR,
 };
 

@@ -28,15 +28,23 @@
 #include    "min_printf.h"
 #include    "gen4_uLCD.h"
 
+//==============================================================================
+// Task code
+//==============================================================================
 
 void Task_display_control(void *p) 
 {
 error_codes_te   status;
 
-    uart1_sys_init();
     reset_4D_display();
-    vTaskDelay(100);
-    gen4_uLCD_init();
+    vTaskDelay(5000);
+    uart1_sys_init();
+    status = gen4_uLCD_init();
+    if (status != OK) {
+        for(;;) {
+            ;
+        }
+    }
     
     FOREVER {
         gen4_uLCD_WriteContrast(5);

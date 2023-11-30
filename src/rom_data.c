@@ -51,6 +51,7 @@ struct token_list_s commands[] = {
     {"set",     TOKENIZER_SET},
     {"get",     TOKENIZER_GET},
     {"ping",    TOKENIZER_PING},
+    {"display", TOKENIZER_DISPLAY},
     {"delay",   TOKENIZER_TDELAY},
 };
 
