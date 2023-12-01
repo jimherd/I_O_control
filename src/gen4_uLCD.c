@@ -111,12 +111,7 @@ error_codes_te status;
 	status = gen4_uLCD_WriteContrast(5);
 	if (status != OK) {
 		gen4_uLCD_detected = false;
-		return status;
 	}
-//
-// Send form request and get reply
-//
-	status = gen4_uLCD_ReadObject(GEN4_uLCD_OBJ_FORM, 0);
 	return status;
 }
 
@@ -145,7 +140,7 @@ uint8_t  checksum, reply_byte;
 
 	checksum = 0;
 	for (int i=0 ; i < (uLCD_cmd.cmd_length - 1) ; i++) {
-		checksum ^= uLCD_cmd.data[index];
+		checksum ^= uLCD_cmd.data[i];
 	}
 	uLCD_cmd.data[3] = checksum;
 	uart_write_blocking(uart1, &uLCD_cmd.data[0], uLCD_cmd.cmd_length);
@@ -160,10 +155,9 @@ uint8_t  checksum, reply_byte;
 			uLCD_reply_data.cmd = reply_byte;
 			uart_read_blocking(uart1, &uLCD_reply_data.object, (sizeof(gen4_uLCD_reply_packet_ts) - 1));
 			return OK;
-		}
-		} else {
-			return GEN4_uLCD_READ_OBJ_TIMEOUT;
-		}
+		} 
+		return GEN4_uLCD_READ_OBJ_TIMEOUT;
+	}
 }
 
 //==============================================================================
@@ -245,15 +239,8 @@ uint8_t   checksum, reply_byte;
 	uart_write_blocking(uart1, &uLCD_cmd.data[0], uLCD_cmd.cmd_length);
 //
 // Reply from the display is either an ACK or NACK character
+// uses simple time-out
 //
-	//vTaskDelay(5);
-	// for(;;) {
-	// 	if (uart_is_readable(uart1) == true) {
-	// 		reply_byte = uart_getc(uart1);
-	// 	} else {
-	// 		break;
-	// 	}
-	// }
 	if (uart_is_readable_within_us(uart1, 100000) == true) {
 		reply_byte = uart_getc(uart1);
 		if (reply_byte == GEN4_uLCD_ACK) {
