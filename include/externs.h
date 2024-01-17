@@ -21,6 +21,7 @@ extern void Task_run_cmd(void *p);
 extern void Task_servo_control(void *p);
 extern void Task_stepper_control(void *p);
 extern void Task_display_control(void *p);
+void Task_scan_touch_buttons(void *p);
 
 extern QueueHandle_t       queue_print_string_buffers;
 extern QueueHandle_t       queue_free_buffers;
@@ -39,5 +40,6 @@ extern const uint8_t                char_type[256];
 extern struct servo_data_s          servo_data[NOS_SERVOS];
 extern struct token_list_s          commands[NOS_COMMANDS];
 extern struct display_cmd_reply_data_s    display_cmd_info[NOS_GEN4_uLCD_CMDS];
+extern struct form_data_s           form_data[MAX_NOS_FORMS];
 
 #endif  // __EXTERNS_H__

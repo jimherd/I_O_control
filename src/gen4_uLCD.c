@@ -271,6 +271,16 @@ uint8_t RX_byte;
 	}
 }
 
+/**
+ * @brief Get the active form object
+ * 
+ * @return uint32_t -1 = no form active
+ */
+int32_t  get_active_form(void) {
+	
+	return gen4_uLCD_current_form;
+}
+
 
 
 

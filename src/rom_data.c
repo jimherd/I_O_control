@@ -51,8 +51,8 @@ struct token_list_s commands[] = {
     {"set",     TOKENIZER_SET},
     {"get",     TOKENIZER_GET},
     {"ping",    TOKENIZER_PING},
-    {"display", TOKENIZER_DISPLAY},
     {"delay",   TOKENIZER_TDELAY},
+    {"display", TOKENIZER_DISPLAY},
 };
 
 struct error_list_s errors[] = {
@@ -96,6 +96,7 @@ struct command_limits_s    cmd_limits[NOS_COMMANDS] = {
     [4].p_limits = {{3, 3}, {0, 63}, {0,5}},                                    // info
     [5].p_limits = {{3, 3}, {0, 63}, {-255, +255}},                             // ping,
     [6].p_limits = {{3, 3}, {0, 63}, {0, 50000}},                               // delay
+    [7].p_limits = {{4, 5}, {0, 63}, {0, 4}},                                   // display
 };
 
 //==============================================================================
@@ -126,6 +127,14 @@ struct display_cmd_reply_data_s    display_cmd_info[NOS_GEN4_uLCD_CMDS] = {
 	{ DISPLAY_TO_HOST,  6, NAK_REPLY},	    // 5 = REPORT_OBJ
 	{ HOST_TO_DISPLAY,  0, ILLEGAL},	    // 6 = illegal op
 	{ DISPLAY_TO_HOST,  6, NAK_REPLY},	    // 7 = REPORT_EVENT
+};
+
+//==============================================================================
+// Data about the forms and touch button used on the 4D Systems display.
+
+struct form_data_s   form_data[MAX_NOS_FORMS] = {
+    {false, 1, {{1,0,0}}},
+    {false, 2, {{2,0,0}, {3,0,0}}}
 };
 
 

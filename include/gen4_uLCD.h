@@ -154,6 +154,7 @@ typedef struct gen4_uLCD_reply_packet_ts {
 	uint8_t		checksum;
 } gen4_uLCD_reply_packet_ts;
 
+
 //==============================================================================
 // Function prototypes
 //
@@ -163,7 +164,8 @@ void              reset_4D_display(void);
 error_codes_te    gen4_uLCD_ReadObject(uint16_t object, uint16_t index);
 error_codes_te    gen4_uLCD_WriteObject(uint16_t object, uint16_t index, uint16_t data);
 error_codes_te    gen4_uLCD_WriteContrast(uint8_t value);
-void flush_RX_fifo(uart_inst_t *uart);
+void     flush_RX_fifo(uart_inst_t *uart);
+int32_t  get_active_form(void);
 
 #endif  /* __GEN4_uLCD_H__ */
 

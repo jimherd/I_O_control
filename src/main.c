@@ -42,6 +42,7 @@ TaskHandle_t        taskhndl_Task_run_cmd;
 TaskHandle_t        taskhndl_Task_servo_control;
 TaskHandle_t        taskhndl_Task_stepper_control;
 TaskHandle_t        taskhndl_Task_display_control;
+TaskHandle_t        taskhndl_Task_scan_touch_buttons;
 
 QueueHandle_t       queue_print_string_buffers;
 QueueHandle_t       queue_free_buffers;
@@ -125,11 +126,19 @@ int main()
     );
 
     xTaskCreate(Task_display_control,
-                "4D_System_displaycontrol_task",
+                "4D_System_displaycontrol_task ",
                 512,     // configMINIMAL_STACK_SIZE,
                 NULL,
                 TASK_PRIORITYLOW,
                 &taskhndl_Task_display_control
+    );
+
+    xTaskCreate(Task_scan_touch_buttons,
+                "4D_System_displaycontrol_task",
+                512,     // configMINIMAL_STACK_SIZE,
+                NULL,
+                TASK_PRIORITYLOW,
+                &taskhndl_Task_scan_touch_buttons
     );
 
     queue_print_string_buffers = xQueueCreate(NOS_PRINT_STRING_BUFFERS+1, sizeof(uint32_t));

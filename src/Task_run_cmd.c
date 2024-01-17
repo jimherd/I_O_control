@@ -236,14 +236,28 @@ int32_t                 rel_nos_steps, abs_nos_steps, move_count, move_angle;
                 break;
 
             case TOKENIZER_DISPLAY:
-                break;
+                switch (int_parameters[DISPLAY_CMD_INDEX]) {
+                    case SET_FORM: 
+                        if (int_parameters[DISPLAY_FORM_INDEX] > NOS_FORMS) {
+                            status = BAD_FORM_INDEX;
+                            break;
+                        }
+                        status = gen4_uLCD_WriteObject(GEN4_uLCD_OBJ_FORM, int_parameters[DISPLAY_FORM_INDEX], 0);
+                        break;
+                    case GET_FORM:
+                        break;
+                    case SET_CONTRAST:
+                        gen4_uLCD_WriteContrast(int_parameters[DISPLAY_CONTRAST_INDEX]);
+                        break;
+                    default:
+                        break;
+                }
+//                break;
 
             case TOKENIZER_TDELAY:
                 vTaskDelay(int_parameters[2]);
                 break;
                 
-            default: 
-                break;
         }  // end of outer switch
         if (reply_done == false) {
             print_error(int_parameters[1], status);

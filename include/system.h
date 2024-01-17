@@ -7,8 +7,6 @@
 #ifndef __SYSTEM_H__
 #define __SYSTEM_H__
 
-//#include    "gen4_uLCD.h"
-
 #include    "pico/stdlib.h"
 #include    "Pico_IO.h"
 
@@ -90,6 +88,7 @@ typedef enum  {
     GEN4_uLCD_WRITE_CONTRAST_TIMEOUT = -123,
     GEN4_uLCD_READ_OBJ_FAIL     = -124,
     GEN4_uLCD_READ_OBJ_TIMEOUT  = -125,
+    BAD_FORM_INDEX              = -126,
 } error_codes_te;
 
 //==============================================================================
@@ -137,8 +136,9 @@ enum {UPPER_CASE, LOWER_CASE};
 #define DISPLAY_RESET_PIN  GP3
 #define DISPLAY_WAIT_US    25
 
-// typedef enum  { ACK_NAK, NAK_REPORT , NAK_CMD , NAK_REPLY, ILLEGAL } display_reply_type_et;
-// typedef enum  { HOST_TO_DISPLAY, DISPLAY_TO_HOST } display_cmd_direction_et;
+typedef enum {SET_FORM, GET_FORM, SET_CONTRAST} display_commands_te;
+
+#define     NOS_FORMS   3
 
 //==============================================================================
 //I2C port
@@ -280,6 +280,9 @@ struct sm_profile_s {      // single stepper motor seqence
 #define     TASK_SERVO_CONTROL_FREQUENCY                 10  // Hz
 #define     TASK_SERVO_CONTROL_FREQUENCY_TICK_COUNT      ((1000/TASK_SERVO_CONTROL_FREQUENCY) * portTICK_PERIOD_MS)
 
+
+#define     TASK_SCAN_TOUCH_BUTTONS_FREQUENCY            10  // Hz
+#define     TASK_SCAN_TOUCH_BUTTONS_FREQUENCY_TICK_COUNT      ((1000/TASK_SCAN_TOUCH_BUTTONS_FREQUENCY) * portTICK_PERIOD_MS)
 //==============================================================================
 // Set of 8 priority levels (set 8 in FreeRTOSconfig.h)
 //==============================================================================
@@ -322,11 +325,18 @@ struct sm_profile_s {      // single stepper motor seqence
 #define     SERVO_ANGLE_INDEX   4
 #define     SERVO_SPEED_INDEX   5
 
+// display command
+
+#define     DISPLAY_CMD_INDEX       2
+#define     DISPLAY_FORM_INDEX      3   // for SET_FORM command
+#define     DISPLAY_CONTRAST_INDEX  3   // for SET_CONTRAST command
+
 //==============================================================================
 // 
 
 typedef enum {
-    TASK_UART, TASK_RUN_CMD, TASK_SERVO_CONTROL, TASK_STEPPER_CONTROL, TASK_BLINK
+    TASK_UART, TASK_RUN_CMD, TASK_SERVO_CONTROL, TASK_STEPPER_CONTROL, TASK_BLINK,
+    TASK_DISPLAY, TASK_SCAN_TOUCH_BUTTONS
 } task_et;
 
 #define     NOS_TASKS   (TASK_BLINK + 1)
@@ -390,5 +400,24 @@ enum {
 };
 
 #define NOS_COMMANDS   (TOKENIZER_ERROR + 1)
+
+//==============================================================================
+// Structure to hold button/form data
+
+#define     MAX_NOS_FORMS           8
+#define     MAX_NOS_FORM_BUTTONS    8
+
+struct touch_button_data_s {
+	uint32_t	button_index;
+	uint32_t	button_data;
+    int32_t     time_high;
+} ;
+
+struct form_data_s {
+	bool        form_focus;
+    uint32_t    nos_buttons;
+	struct touch_button_data_s	    button[MAX_NOS_FORM_BUTTONS];
+}  ;
+
 
 #endif /* __SYSTEM_H__ */
