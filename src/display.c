@@ -44,9 +44,7 @@ error_codes_te   status;
             ;
         }
     }
-    
-//	status = gen4_uLCD_ReadObject(GEN4_uLCD_OBJ_FORM, 0);
-    status = gen4_uLCD_WriteObject(GEN4_uLCD_OBJ_FORM, 1, 0);
+    status = gen4_uLCD_WriteObject(GEN4_uLCD_OBJ_FORM, 1, 0);  // switch to "form 1"
     if (status != OK) {
         for(;;) {
             ;
@@ -54,9 +52,9 @@ error_codes_te   status;
     }
 
     FOREVER {
-        gen4_uLCD_WriteContrast(5);
-        vTaskDelay(2000);
-        gen4_uLCD_WriteContrast(12);
+        // gen4_uLCD_WriteContrast(5);
+        // vTaskDelay(2000);
+        // gen4_uLCD_WriteContrast(12);
         vTaskDelay(2000);
     }
 }

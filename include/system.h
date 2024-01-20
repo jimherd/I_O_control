@@ -61,34 +61,37 @@
 // error codes
 
 typedef enum  {
-    OK                          = 0,
-    LETTER_ERROR                = -100,
-    DOT_ERROR                   = -101,
-    PLUSMINUS_ERROR             = -102,
-    BAD_COMMAND                 = -103,
-    BAD_PORT_NUMBER             = -104,
-    BAD_NOS_PARAMETERS          = -105,
-    BAD_BASE_PARAMETER          = -106,
-    PARAMETER_OUTWITH_LIMITS    = -107,
-    BAD_SERVO_COMMAND           = -108,
-    STEPPER_CALIBRATE_FAIL      = -109,
-    BAD_STEPPER_COMMAND         = -110,
-    BAD_STEP_VALUE              = -111,
-    MOVE_ON_UNCALIBRATED_MOTOR  = -112,
-    EXISTING_FAULT_WITH_MOTOR   = -113,
-    SM_MOVE_TOO_SMALL           = -114,
-    LIMIT_SWITCH_ERROR          = -115,
-    UNKNOWN_STEPPER_MOTOR_STATE = -116,
-    STEPPER_BUSY                = -117,
-    SERVO_BUSY                  = -118,
-    GEN4_uLCD_NOT_DETECTED      = -119,
-    GEN4_uLCD_WRITE_OBJ_FAIL    = -120,
-    GEN4_uLCD_WRITE_OBJ_TIMEOUT = -121,
+    OK                               = 0,
+    LETTER_ERROR                     = -100,
+    DOT_ERROR                        = -101,
+    PLUSMINUS_ERROR                  = -102,
+    BAD_COMMAND                      = -103,
+    BAD_PORT_NUMBER                  = -104,
+    BAD_NOS_PARAMETERS               = -105,
+    BAD_BASE_PARAMETER               = -106,
+    PARAMETER_OUTWITH_LIMITS         = -107,
+    BAD_SERVO_COMMAND                = -108,
+    STEPPER_CALIBRATE_FAIL           = -109,
+    BAD_STEPPER_COMMAND              = -110,
+    BAD_STEP_VALUE                   = -111,
+    MOVE_ON_UNCALIBRATED_MOTOR       = -112,
+    EXISTING_FAULT_WITH_MOTOR        = -113,
+    SM_MOVE_TOO_SMALL                = -114,
+    LIMIT_SWITCH_ERROR               = -115,
+    UNKNOWN_STEPPER_MOTOR_STATE      = -116,
+    STEPPER_BUSY                     = -117,
+    SERVO_BUSY                       = -118,
+    GEN4_uLCD_NOT_DETECTED           = -119,
+    GEN4_uLCD_WRITE_OBJ_FAIL         = -120,
+    GEN4_uLCD_WRITE_OBJ_TIMEOUT      = -121,
     GEN4_uLCD_WRITE_CONTRAST_FAIL    = -122,
-    GEN4_uLCD_WRITE_CONTRAST_TIMEOUT = -123,
-    GEN4_uLCD_READ_OBJ_FAIL     = -124,
-    GEN4_uLCD_READ_OBJ_TIMEOUT  = -125,
-    BAD_FORM_INDEX              = -126,
+    GEN4_uLCD_WRITE_CONTRAST_TIMEOUT = -123,   
+    GEN4_uLCD_READ_OBJ_FAIL          = -124,
+    GEN4_uLCD_READ_OBJ_TIMEOUT       = -125,
+    GEN4_uLCD_CMD_BAD_FORM_INDEX     = -126,
+    GEN4_uLCD_WRITE_STR_TOO_BIG      = -127,
+    GEN4_uLCD_WRITE_STRING_FAIL      = -128,
+    GEN4_uLCD_WRITE_STRING_TIMEOUT   = -129,
 } error_codes_te;
 
 //==============================================================================
@@ -112,6 +115,7 @@ typedef enum  {
 #define     PERCENT     '%'
 
 #define     MAX_STRING_LENGTH       80
+#define     MAX_GEN4_uLCD_WRITE_STR_SIZE    70
 
 #define     MAX_COMMAND_LENGTH      100
 

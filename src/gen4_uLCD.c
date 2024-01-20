@@ -8,6 +8,7 @@
  */
 #include	<stdio.h>
 #include	<stdint.h>
+#include    <string.h>
 #include	"pico/stdlib.h"
 
 #include    "hardware/uart.h"
@@ -253,6 +254,59 @@ uint8_t   checksum, reply_byte;
 	 }
 }
 
+//==============================================================================
+/**
+ * @brief Write ASCII string to a string object
+ * 
+ * @param object 
+ * @param index 			String object index
+ * @param text 		   		ASCII null terminated string
+ * @return error_codes_te 
+ */
+
+error_codes_te    gen4_uLCD_WriteString(uint16_t object, uint16_t index, uint8_t* text)
+{
+uint8_t   checksum, reply_byte, text_length;
+
+	if (gen4_uLCD_test_apply == true) {
+		if (gen4_uLCD_detected == false) {
+			return GEN4_uLCD_NOT_DETECTED;
+		}
+	}
+	uLCD_cmd.data[0] = GEN4_uLCD_WRITE_STR;
+	uLCD_cmd.data[1] = index;
+	text_length = strlen(text);
+	if (text_length > MAX_GEN4_uLCD_WRITE_STR_SIZE) {
+		return GEN4_uLCD_WRITE_STR_TOO_BIG;
+	}
+	uLCD_cmd.cmd_length = strlen(text) + 1 + display_cmd_info[GEN4_uLCD_WRITE_STR].length;
+	uLCD_cmd.data[2] = index;
+	strcat(&uLCD_cmd.data[3], text);
+	checksum = 0;
+	for (int i=0 ; i < (uLCD_cmd.cmd_length - 1) ; i++) {
+		checksum ^= uLCD_cmd.data[i];
+	}
+	uLCD_cmd.data[2] = checksum;
+	uart_write_blocking(uart1, &uLCD_cmd.data[0], uLCD_cmd.cmd_length);
+//
+// Reply from the display is either an ACK or NACK character
+// uses simple time-out
+//
+	if (uart_is_readable_within_us(uart1, 100000) == true) {
+		reply_byte = uart_getc(uart1);
+		if (reply_byte == GEN4_uLCD_ACK) {
+			return OK;
+		} else {
+			return GEN4_uLCD_WRITE_STRING_FAIL;
+		}
+	 } else {
+	 	return GEN4_uLCD_WRITE_STRING_TIMEOUT;
+	 }
+	
+
+}
+
+//==============================================================================
 /**
  * @brief Clear RX fifo 
  * 

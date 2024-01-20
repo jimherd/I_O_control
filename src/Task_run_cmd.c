@@ -239,7 +239,7 @@ int32_t                 rel_nos_steps, abs_nos_steps, move_count, move_angle;
                 switch (int_parameters[DISPLAY_CMD_INDEX]) {
                     case SET_FORM: 
                         if (int_parameters[DISPLAY_FORM_INDEX] > NOS_FORMS) {
-                            status = BAD_FORM_INDEX;
+                            status = GEN4_uLCD_CMD_BAD_FORM_INDEX;
                             break;
                         }
                         status = gen4_uLCD_WriteObject(GEN4_uLCD_OBJ_FORM, int_parameters[DISPLAY_FORM_INDEX], 0);

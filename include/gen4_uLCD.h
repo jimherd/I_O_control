@@ -42,7 +42,7 @@
 #define GEN4_uLCD_READY             0x81
 #define GEN4_uLCD_DISCONNECTED      0x82
 
-#define MAX_COMMAND_DATA_BYTES	64
+#define MAX_COMMAND_DATA_BYTES	80
 
 #define		NOS_GEN4_uLCD_CMDS  	8
 
@@ -164,6 +164,7 @@ void              reset_4D_display(void);
 error_codes_te    gen4_uLCD_ReadObject(uint16_t object, uint16_t index);
 error_codes_te    gen4_uLCD_WriteObject(uint16_t object, uint16_t index, uint16_t data);
 error_codes_te    gen4_uLCD_WriteContrast(uint8_t value);
+error_codes_te    gen4_uLCD_WriteString(uint16_t object, uint16_t index, uint8_t *text);
 void     flush_RX_fifo(uart_inst_t *uart);
 int32_t  get_active_form(void);
 
