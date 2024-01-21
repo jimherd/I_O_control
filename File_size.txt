@@ -2446,3 +2446,60 @@
 20/01/2024 
       text       data        bss      total filename
      42492       5360      80932     128784 Pi_the_Robot.elf
+20/01/2024 
+      text       data        bss      total filename
+     42828       5368      80932     129128 Pi_the_Robot.elf
+20/01/2024 
+      text       data        bss      total filename
+     42828       5368      80932     129128 Pi_the_Robot.elf
+20/01/2024 
+      text       data        bss      total filename
+     42844       5368      80932     129144 Pi_the_Robot.elf
+20/01/2024 
+      text       data        bss      total filename
+     42508       5360      80932     128800 Pi_the_Robot.elf
+20/01/2024 
+      text       data        bss      total filename
+     42844       5368      80932     129144 Pi_the_Robot.elf
+20/01/2024 
+      text       data        bss      total filename
+     42844       5368      80932     129144 Pi_the_Robot.elf
+20/01/2024 
+      text       data        bss      total filename
+     42844       5368      80932     129144 Pi_the_Robot.elf
+20/01/2024 
+      text       data        bss      total filename
+     42844       5368      80932     129144 Pi_the_Robot.elf
+20/01/2024 
+      text       data        bss      total filename
+     42508       5360      80932     128800 Pi_the_Robot.elf
+20/01/2024 
+      text       data        bss      total filename
+     42508       5360      80932     128800 Pi_the_Robot.elf
+20/01/2024 
+      text       data        bss      total filename
+     42508       5360      80932     128800 Pi_the_Robot.elf
+20/01/2024 
+      text       data        bss      total filename
+     42476       5360      80932     128768 Pi_the_Robot.elf
+20/01/2024 
+      text       data        bss      total filename
+     42476       5360      80932     128768 Pi_the_Robot.elf
+20/01/2024 
+      text       data        bss      total filename
+     42812       5368      80932     129112 Pi_the_Robot.elf
+20/01/2024 
+      text       data        bss      total filename
+     42828       5368      80932     129128 Pi_the_Robot.elf
+20/01/2024 
+      text       data        bss      total filename
+     42492       5360      80932     128784 Pi_the_Robot.elf
+20/01/2024 
+      text       data        bss      total filename
+     42492       5360      80932     128784 Pi_the_Robot.elf
+21/01/2024 
+      text       data        bss      total filename
+     42492       5360      80932     128784 Pi_the_Robot.elf
+21/01/2024 
+      text       data        bss      total filename
+     42828       5368      80932     129128 Pi_the_Robot.elf

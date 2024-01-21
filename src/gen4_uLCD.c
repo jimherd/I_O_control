@@ -55,13 +55,14 @@ void uart1_sys_init(void)
 
     // hw_set_bits(&UART->imsc, UART_UARTIMSC_RXIM_BITS | UART_UARTIMSC_RTIM_BITS);
 
-    gpio_init(DISPLAY_RESET_PIN);
-    gpio_set_dir(DISPLAY_RESET_PIN, GPIO_IN);
-    gpio_put(DISPLAY_RESET_PIN, 0);
-    gpio_disable_pulls(DISPLAY_RESET_PIN);
+    // gpio_init(DISPLAY_RESET_PIN);
+    // gpio_set_dir(DISPLAY_RESET_PIN, GPIO_IN);
+    // gpio_put(DISPLAY_RESET_PIN, 0);
+    // gpio_disable_pulls(DISPLAY_RESET_PIN);
 
-	vTaskDelay(5);
+	reset_4D_display();
 	flush_RX_fifo(uart1);
+	vTaskDelay(3000);
 }
 //==============================================================================
 /**
@@ -88,6 +89,8 @@ void reset_4D_display(void)
 error_codes_te  gen4_uLCD_init(void) 
 {
 error_codes_te status;
+
+//	reset_4D_display();
 
 	gen4_uLCD_current_form = -1;
 	gen4_uLCD_detected = false;
@@ -264,7 +267,7 @@ uint8_t   checksum, reply_byte;
  * @return error_codes_te 
  */
 
-error_codes_te    gen4_uLCD_WriteString(uint16_t object, uint16_t index, uint8_t* text)
+error_codes_te    gen4_uLCD_WriteString(uint16_t index, uint8_t *text)
 {
 uint8_t   checksum, reply_byte, text_length;
 
@@ -275,19 +278,19 @@ uint8_t   checksum, reply_byte, text_length;
 	}
 	uLCD_cmd.data[0] = GEN4_uLCD_WRITE_STR;
 	uLCD_cmd.data[1] = index;
-	text_length = strlen(text);
+	text_length = strlen(text);   // does not include terminating '\0' character
 	if (text_length > MAX_GEN4_uLCD_WRITE_STR_SIZE) {
 		return GEN4_uLCD_WRITE_STR_TOO_BIG;
 	}
-	uLCD_cmd.cmd_length = strlen(text) + 1 + display_cmd_info[GEN4_uLCD_WRITE_STR].length;
-	uLCD_cmd.data[2] = index;
+	uLCD_cmd.cmd_length = text_length + 1 + display_cmd_info[GEN4_uLCD_WRITE_STR].length;
+	uLCD_cmd.data[2] = text_length + 1;
 	strcat(&uLCD_cmd.data[3], text);
 	checksum = 0;
 	for (int i=0 ; i < (uLCD_cmd.cmd_length - 1) ; i++) {
 		checksum ^= uLCD_cmd.data[i];
 	}
-	uLCD_cmd.data[2] = checksum;
-	uart_write_blocking(uart1, &uLCD_cmd.data[0], uLCD_cmd.cmd_length);
+    uLCD_cmd.data[uLCD_cmd.cmd_length - 1] = checksum;
+    uart_write_blocking(uart1, &uLCD_cmd.data[0], uLCD_cmd.cmd_length);
 //
 // Reply from the display is either an ACK or NACK character
 // uses simple time-out
@@ -302,8 +305,6 @@ uint8_t   checksum, reply_byte, text_length;
 	 } else {
 	 	return GEN4_uLCD_WRITE_STRING_TIMEOUT;
 	 }
-	
-
 }
 
 //==============================================================================

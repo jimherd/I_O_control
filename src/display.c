@@ -36,7 +36,6 @@ void Task_display_control(void *p)
 {
 error_codes_te   status;
 
-    reset_4D_display();
     uart1_sys_init();
     status = gen4_uLCD_init();
     if (status != OK) {
@@ -50,11 +49,12 @@ error_codes_te   status;
             ;
         }
     }
+    status = gen4_uLCD_WriteString(0, "New string");
 
     FOREVER {
-        // gen4_uLCD_WriteContrast(5);
-        // vTaskDelay(2000);
-        // gen4_uLCD_WriteContrast(12);
+        gen4_uLCD_WriteContrast(5);
+        vTaskDelay(2000);
+        gen4_uLCD_WriteContrast(12);
         vTaskDelay(2000);
     }
 }

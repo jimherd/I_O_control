@@ -164,7 +164,7 @@ void              reset_4D_display(void);
 error_codes_te    gen4_uLCD_ReadObject(uint16_t object, uint16_t index);
 error_codes_te    gen4_uLCD_WriteObject(uint16_t object, uint16_t index, uint16_t data);
 error_codes_te    gen4_uLCD_WriteContrast(uint8_t value);
-error_codes_te    gen4_uLCD_WriteString(uint16_t object, uint16_t index, uint8_t *text);
+error_codes_te    gen4_uLCD_WriteString(uint16_t index, uint8_t *text);
 void     flush_RX_fifo(uart_inst_t *uart);
 int32_t  get_active_form(void);
 
