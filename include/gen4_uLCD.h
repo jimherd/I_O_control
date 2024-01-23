@@ -137,7 +137,7 @@ typedef enum {
 // different lengths.  The last byte of the command is a checksum.
 // The string to be sent to the display starts at "data[0]".
 //
-typedef struct gen4_uLCD_cmd_packet_ts {
+typedef struct {
 	uint8_t		cmd_length;
     uint8_t		data[MAX_COMMAND_DATA_BYTES];
 } gen4_uLCD_cmd_packet_ts;
@@ -145,7 +145,7 @@ typedef struct gen4_uLCD_cmd_packet_ts {
 //==============================================================================
 // Structure to hold a reply from a READ_OBJ command
 
-typedef struct gen4_uLCD_reply_packet_ts {
+typedef struct  {
     uint8_t		cmd;
     uint8_t		object;
     uint8_t		index;
@@ -154,6 +154,10 @@ typedef struct gen4_uLCD_reply_packet_ts {
 	uint8_t		checksum;
 } gen4_uLCD_reply_packet_ts;
 
+typedef union  {
+	gen4_uLCD_reply_packet_ts		reply;
+	uint8_t							packet[6];
+} gen4_uLCD_reply_packet_tu;
 
 //==============================================================================
 // Function prototypes
@@ -161,7 +165,7 @@ typedef struct gen4_uLCD_reply_packet_ts {
 void              uart1_sys_init(void);
 error_codes_te    gen4_uLCD_init(void); 
 void              reset_4D_display(void);
-error_codes_te    gen4_uLCD_ReadObject(uint16_t object, uint16_t index);
+error_codes_te    gen4_uLCD_ReadObject(uint16_t object, uint16_t index, uint32_t *result);
 error_codes_te    gen4_uLCD_WriteObject(uint16_t object, uint16_t index, uint16_t data);
 error_codes_te    gen4_uLCD_WriteContrast(uint8_t value);
 error_codes_te    gen4_uLCD_WriteString(uint16_t index, uint8_t *text);

@@ -408,20 +408,14 @@ enum {
 //==============================================================================
 // Structure to hold button/form data
 
-#define     MAX_NOS_FORMS           8
-#define     MAX_NOS_FORM_BUTTONS    8
+#define     GEN4_uLCD_MAX_NOS_FORMS     8
+#define     GEN4_uLCD_MAX_NOS_BUTTONS   64
 
-struct touch_button_data_s {
-	uint32_t	button_index;
-	uint32_t	button_data;
-    int32_t     time_high;
-} ;
-
-struct form_data_s {
-	bool        form_focus;
-    uint32_t    nos_buttons;
-	struct touch_button_data_s	    button[MAX_NOS_FORM_BUTTONS];
-}  ;
-
+typedef struct  {
+    bool        enable;
+    int8_t      form;           // related "screen form"
+	uint8_t	    button_data;
+    int32_t     time_high;      // High time in time sample units
+} touch_button_data_ts;
 
 #endif /* __SYSTEM_H__ */

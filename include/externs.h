@@ -40,6 +40,6 @@ extern const uint8_t                char_type[256];
 extern struct servo_data_s          servo_data[NOS_SERVOS];
 extern struct token_list_s          commands[NOS_COMMANDS];
 extern struct display_cmd_reply_data_s    display_cmd_info[NOS_GEN4_uLCD_CMDS];
-extern struct form_data_s           form_data[MAX_NOS_FORMS];
+extern touch_button_data_ts   button_data[GEN4_uLCD_MAX_NOS_BUTTONS];
 
 #endif  // __EXTERNS_H__

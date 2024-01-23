@@ -27,20 +27,6 @@
 #include    "min_printf.h"
 #include    "gen4_uLCD.h"
 
-#define     NOS_GEN4_uLCD_FORMS     2
-#define     MAX_BUTTONS_PER_FORM    4
-
-// typedef struct  {
-//     int32_t     index;
-//     int32_t     value;
-//     int32_t     time_high;
-// } touch_button_ts;
-
-// struct form_buttons {
-//     touch_button_ts  button_data[MAX_BUTTONS_PER_FORM];
-// } form_button_info[NOS_GEN4_uLCD_FORMS];
-
-
 //==============================================================================
 // Task code
 //==============================================================================
@@ -50,7 +36,7 @@ void Task_scan_touch_buttons(void *p)
 error_codes_te   status;
 TickType_t  xLastWakeTime;
 BaseType_t  xWasDelayed;
-int32_t     form_index;
+int32_t     current_form, result;
 uint32_t    start_time, end_time;
 
 
@@ -58,10 +44,24 @@ uint32_t    start_time, end_time;
     FOREVER {
         xWasDelayed = xTaskDelayUntil( &xLastWakeTime, TASK_SERVO_CONTROL_FREQUENCY_TICK_COUNT );
         start_time = time_us_32();
-        form_index = get_active_form();
-        if (form_index >= 0) {
-            for (int i = 0; i < form_data[form_index].nos_buttons; i++) {
-                
+        current_form = get_active_form();
+        if (current_form >= 0) {
+            for (int i = 0; i < GEN4_uLCD_MAX_NOS_BUTTONS; i++) {
+                if (button_data[i].enable == false) {
+                    continue;
+                }
+                if (button_data[i].form != current_form) {
+                    continue;
+                }
+                status = gen4_uLCD_ReadObject(GEN4_uLCD_OBJ_IBUTTONE, i, &result);
+                if (status == OK) {
+                    button_data[i].button_data = result;
+                    if( result == 1) {
+                        button_data[i].time_high++;
+                    } else {
+                        button_data[i].time_high = 0;
+                    }
+                }
             }
         } else {
             // error
