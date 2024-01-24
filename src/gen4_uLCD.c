@@ -181,12 +181,14 @@ uint8_t  checksum, reply_byte, i;
 error_codes_te  gen4_uLCD_WriteObject(uint16_t object, uint16_t index, uint16_t data) 
 {
 uint8_t  checksum, reply_byte;
+error_codes_te   status;
 
      if (gen4_uLCD_test_apply == true) {
 		if (gen4_uLCD_detected == false) {
 			return GEN4_uLCD_NOT_DETECTED;
 		}
 	}
+	xSemaphoreTake(gen4_uLCD_MUTEX_access, portMAX_DELAY);
 	 uLCD_cmd.cmd_length = display_cmd_info[GEN4_uLCD_WRITE_OBJ].length;
 
 	 uLCD_cmd.data[0] = GEN4_uLCD_WRITE_OBJ;
@@ -212,13 +214,15 @@ uint8_t  checksum, reply_byte;
 	if (uart_is_readable_within_us(uart1, 100000) == true) {
 		reply_byte = uart_getc(uart1);
 		if (reply_byte == GEN4_uLCD_ACK) {
-			return OK;
+			status = OK;
 		} else {
-			return GEN4_uLCD_WRITE_OBJ_FAIL;
+			status =  GEN4_uLCD_WRITE_OBJ_FAIL;
 		}
 	} else {
-		return GEN4_uLCD_WRITE_OBJ_TIMEOUT;
+		status =  GEN4_uLCD_WRITE_OBJ_TIMEOUT;
 	}
+	xSemaphoreGive(gen4_uLCD_MUTEX_access);
+	return status;
 }
 
 //==============================================================================
@@ -231,12 +235,14 @@ uint8_t  checksum, reply_byte;
 error_codes_te  gen4_uLCD_WriteContrast(uint8_t value)
 {
 uint8_t   checksum, reply_byte;
+error_codes_te   status;
 
 	if (gen4_uLCD_test_apply == true) {
 		if (gen4_uLCD_detected == false) {
 			return GEN4_uLCD_NOT_DETECTED;
 		}
 	}
+	xSemaphoreTake(gen4_uLCD_MUTEX_access, portMAX_DELAY);
 	uLCD_cmd.cmd_length = display_cmd_info[GEN4_uLCD_WRITE_CONTRAST].length;
 	uLCD_cmd.data[0] = GEN4_uLCD_WRITE_CONTRAST;
 	uLCD_cmd.data[1] = value;
@@ -253,13 +259,15 @@ uint8_t   checksum, reply_byte;
 	if (uart_is_readable_within_us(uart1, 100000) == true) {
 		reply_byte = uart_getc(uart1);
 		if (reply_byte == GEN4_uLCD_ACK) {
-			return OK;
+			status = OK;
 		} else {
-			return GEN4_uLCD_WRITE_CONTRAST_FAIL;
+			status = GEN4_uLCD_WRITE_CONTRAST_FAIL;
 		}
 	 } else {
-	 	return GEN4_uLCD_WRITE_CONTRAST_TIMEOUT;
+	 	status = GEN4_uLCD_WRITE_CONTRAST_TIMEOUT;
 	 }
+	 xSemaphoreGive(gen4_uLCD_MUTEX_access);
+	 return status;
 }
 
 //==============================================================================
@@ -275,16 +283,19 @@ uint8_t   checksum, reply_byte;
 error_codes_te    gen4_uLCD_WriteString(uint16_t index, uint8_t *text)
 {
 uint8_t   checksum, reply_byte, text_length;
+error_codes_te   status;
 
 	if (gen4_uLCD_test_apply == true) {
 		if (gen4_uLCD_detected == false) {
 			return GEN4_uLCD_NOT_DETECTED;
 		}
 	}
+	xSemaphoreTake(gen4_uLCD_MUTEX_access, portMAX_DELAY);
 	uLCD_cmd.data[0] = GEN4_uLCD_WRITE_STR;
 	uLCD_cmd.data[1] = index;
 	text_length = strlen(text);   // does not include terminating '\0' character
 	if (text_length > MAX_GEN4_uLCD_WRITE_STR_SIZE) {
+		xSemaphoreGive(gen4_uLCD_MUTEX_access);
 		return GEN4_uLCD_WRITE_STR_TOO_BIG;
 	}
 	uLCD_cmd.cmd_length = text_length + 1 + display_cmd_info[GEN4_uLCD_WRITE_STR].length;
@@ -303,13 +314,15 @@ uint8_t   checksum, reply_byte, text_length;
 	if (uart_is_readable_within_us(uart1, 100000) == true) {
 		reply_byte = uart_getc(uart1);
 		if (reply_byte == GEN4_uLCD_ACK) {
-			return OK;
+			status = OK;
 		} else {
-			return GEN4_uLCD_WRITE_STRING_FAIL;
+			status = GEN4_uLCD_WRITE_STRING_FAIL;
 		}
 	 } else {
-	 	return GEN4_uLCD_WRITE_STRING_TIMEOUT;
+	 	status = GEN4_uLCD_WRITE_STRING_TIMEOUT;
 	 }
+	 xSemaphoreGive(gen4_uLCD_MUTEX_access);
+	 return status;
 }
 
 //==============================================================================

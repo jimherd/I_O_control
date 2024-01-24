@@ -28,6 +28,8 @@ extern QueueHandle_t       queue_free_buffers;
 
 extern EventGroupHandle_t eventgroup_uart_IO;
 
+extern SemaphoreHandle_t   gen4_uLCD_MUTEX_access;
+
 //==============================================================================
 // data structures
 

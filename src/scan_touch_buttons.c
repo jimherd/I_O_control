@@ -1,7 +1,15 @@
 /**
  * @file scan_touch_buttons.c
  * @author Jim Herd
- * @brief Control 4D Systems touch screen display
+ * @brief Scan display touch buttons
+ * 
+ * @details
+ * Task runs at TASK_SCAN_TOUCH_BUTTONS_FREQUENCY (typ 10Hz) to scan touch
+ * buttons on a Gen4_uLCD display.  The code will only scan the buttons
+ * of the currently active form which keeps overheads to a minumum.
+ * System also measures the duration of a press of a button.  This allows
+ * the detection of a long press, which can be used to enable "hidden" modes,
+ * eg test modes.
  */
 
 #include    <stdio.h>
@@ -13,18 +21,18 @@
 
 #include    "hardware/gpio.h"
 #include    "hardware/uart.h"
-#include    "hardware/irq.h"
+// #include    "hardware/irq.h"
 
 #include    "FreeRTOS.h"
-#include    "event_groups.h"
+// #include    "event_groups.h"
 #include    "timers.h"
-#include    "queue.h"
+// #include    "queue.h"
 
 #include    "system.h"
 #include    "externs.h"
 #include    "sys_routines.h"
 #include    "string_IO.h"
-#include    "min_printf.h"
+// #include    "min_printf.h"
 #include    "gen4_uLCD.h"
 
 //==============================================================================
@@ -45,7 +53,7 @@ uint32_t    start_time, end_time;
         xWasDelayed = xTaskDelayUntil( &xLastWakeTime, TASK_SERVO_CONTROL_FREQUENCY_TICK_COUNT );
         start_time = time_us_32();
         current_form = get_active_form();
-        if (current_form >= 0) {
+        if ((current_form >= 0) && (current_form <= NOS_FORMS)) {
             for (int i = 0; i < GEN4_uLCD_MAX_NOS_BUTTONS; i++) {
                 if (button_data[i].enable == false) {
                     continue;

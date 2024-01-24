@@ -49,6 +49,8 @@ QueueHandle_t       queue_free_buffers;
 
 EventGroupHandle_t  eventgroup_uart_IO;
 
+SemaphoreHandle_t   gen4_uLCD_MUTEX_access;
+
 //==============================================================================
 // System initiation
 //==============================================================================
@@ -147,6 +149,8 @@ int main()
     prime_free_buffer_queue();
 
     eventgroup_uart_IO = xEventGroupCreate (); 
+
+    gen4_uLCD_MUTEX_access = xSemaphoreCreateMutex();
 
     vTaskStartScheduler();
 
