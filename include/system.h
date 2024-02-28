@@ -140,9 +140,12 @@ enum {UPPER_CASE, LOWER_CASE};
 #define DISPLAY_RESET_PIN  GP3
 #define DISPLAY_WAIT_US    25
 
-typedef enum {SET_FORM, GET_FORM, SET_CONTRAST} display_commands_te;
+#define UART_READ_TIME_OUT_uS  3000000  // 3 seconds
 
-#define     NOS_FORMS   3
+typedef enum {SET_FORM, GET_FORM, SET_CONTRAST, READ_BUTTON} display_commands_te;
+
+#define     NOS_FORMS       3
+#define     NOS_BUTTONS     3
 
 //==============================================================================
 //I2C port
@@ -414,6 +417,8 @@ enum {
 typedef struct  {
     bool        enable;
     int8_t      form;           // related "screen form"
+    uint8_t     button_type;
+    uint8_t     button_id;
 	uint8_t	    button_data;
     int32_t     time_high;      // High time in time sample units
 } touch_button_data_ts;

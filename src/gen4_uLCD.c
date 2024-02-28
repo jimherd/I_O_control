@@ -130,12 +130,14 @@ error_codes_te status;
 error_codes_te gen4_uLCD_ReadObject(uint16_t object, uint16_t index, uint32_t *result) 
 {
 uint8_t  checksum, reply_byte, i;
+error_codes_te status;
 
 	if (gen4_uLCD_test_apply == true) {
 		if (gen4_uLCD_detected == false) {
 			return GEN4_uLCD_NOT_DETECTED;
 		}
 	}
+	xSemaphoreTake(gen4_uLCD_MUTEX_access, portMAX_DELAY);
 	 uLCD_cmd.cmd_length = display_cmd_info[GEN4_uLCD_READ_OBJ].length;
 
 	 uLCD_cmd.data[0] = GEN4_uLCD_READ_OBJ;
@@ -151,10 +153,10 @@ uint8_t  checksum, reply_byte, i;
 //
 // Reply from the display is either an NACK or a 6 byte data packet
 
-	if (uart_is_readable_within_us(uart1, 100000) == true) {
+	if (uart_is_readable_within_us(uart1, UART_READ_TIME_OUT_uS) == true) {
 		reply_byte = uart_getc(uart1);		// read first byte to check for NACK
 		if (reply_byte == GEN4_uLCD_NAK) {
-			return GEN4_uLCD_READ_OBJ_FAIL;
+			status =  GEN4_uLCD_READ_OBJ_FAIL;
 		} else {
 			uLCD_reply_data.reply.cmd = reply_byte;
 			uart_read_blocking(uart1, &uLCD_reply_data.reply.object, (sizeof(gen4_uLCD_reply_packet_ts) - 1));
@@ -163,10 +165,13 @@ uint8_t  checksum, reply_byte, i;
 				checksum = checksum ^ uLCD_reply_data.packet[i];
 			}
 			*result = (((uint32_t)(uLCD_reply_data.packet[3]) << 8 ) & 0xFF00) + (uint32_t)(uLCD_reply_data.packet[4]);
-			return OK;
+			status = OK;
 		} 
-		return GEN4_uLCD_READ_OBJ_TIMEOUT;
+	} else {
+		status =  GEN4_uLCD_READ_OBJ_TIMEOUT;
 	}
+	xSemaphoreGive(gen4_uLCD_MUTEX_access);
+	return status;
 }
 
 //==============================================================================
@@ -211,7 +216,7 @@ error_codes_te   status;
 //
 // Reply from the display is either an ACK or NACK character
 //
-	if (uart_is_readable_within_us(uart1, 100000) == true) {
+	if (uart_is_readable_within_us(uart1, UART_READ_TIME_OUT_uS) == true) {
 		reply_byte = uart_getc(uart1);
 		if (reply_byte == GEN4_uLCD_ACK) {
 			status = OK;
@@ -256,7 +261,7 @@ error_codes_te   status;
 // Reply from the display is either an ACK or NACK character
 // uses simple time-out
 //
-	if (uart_is_readable_within_us(uart1, 100000) == true) {
+	if (uart_is_readable_within_us(uart1, UART_READ_TIME_OUT_uS) == true) {
 		reply_byte = uart_getc(uart1);
 		if (reply_byte == GEN4_uLCD_ACK) {
 			status = OK;
@@ -311,7 +316,7 @@ error_codes_te   status;
 // Reply from the display is either an ACK or NACK character
 // uses simple time-out
 //
-	if (uart_is_readable_within_us(uart1, 100000) == true) {
+	if (uart_is_readable_within_us(uart1, UART_READ_TIME_OUT_uS) == true) {
 		reply_byte = uart_getc(uart1);
 		if (reply_byte == GEN4_uLCD_ACK) {
 			status = OK;
@@ -341,6 +346,20 @@ uint8_t RX_byte;
 		} else {
 			break;
 		}
+	}
+}
+
+error_codes_te change_form(int32_t new_form) 
+{
+error_codes_te status;
+
+	if ((new_form > 0) && (new_form < NOS_FORMS)) {
+		status = gen4_uLCD_WriteObject(GEN4_uLCD_OBJ_FORM, new_form, 0);
+        if (status == OK) {
+            gen4_uLCD_current_form = new_form;
+        }
+    } else {
+		status = GEN4_uLCD_CMD_BAD_FORM_INDEX;
 	}
 }
 

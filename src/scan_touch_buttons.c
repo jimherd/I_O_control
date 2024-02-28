@@ -47,21 +47,21 @@ BaseType_t  xWasDelayed;
 int32_t     current_form, result;
 uint32_t    start_time, end_time;
 
-
+    vTaskDelay(4000);
     xLastWakeTime = xTaskGetTickCount ();
     FOREVER {
         xWasDelayed = xTaskDelayUntil( &xLastWakeTime, TASK_SERVO_CONTROL_FREQUENCY_TICK_COUNT );
         start_time = time_us_32();
         current_form = get_active_form();
         if ((current_form >= 0) && (current_form <= NOS_FORMS)) {
-            for (int i = 0; i < GEN4_uLCD_MAX_NOS_BUTTONS; i++) {
+            for (int i = 0; i < NOS_BUTTONS; i++) {
                 if (button_data[i].enable == false) {
                     continue;
                 }
                 if (button_data[i].form != current_form) {
                     continue;
                 }
-                status = gen4_uLCD_ReadObject(GEN4_uLCD_OBJ_IBUTTONE, i, &result);
+                status = gen4_uLCD_ReadObject(button_data[i].button_type, button_data[i].button_id, &result);
                 if (status == OK) {
                     button_data[i].button_data = result;
                     if( result == 1) {

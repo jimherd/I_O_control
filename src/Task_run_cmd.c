@@ -247,7 +247,9 @@ int32_t                 rel_nos_steps, abs_nos_steps, move_count, move_angle;
                     case GET_FORM:
                         break;
                     case SET_CONTRAST:
-                        gen4_uLCD_WriteContrast(int_parameters[DISPLAY_CONTRAST_INDEX]);
+                        status = gen4_uLCD_WriteContrast(int_parameters[DISPLAY_CONTRAST_INDEX]);
+                        break;
+                    case READ_BUTTON:
                         break;
                     default:
                         break;

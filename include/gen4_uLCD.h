@@ -130,6 +130,10 @@ typedef enum {
 	GEN4_uLCD_OBJ_ILINEAR_INPUT
 } gen4_uLCD_Object_te;
 
+enum {WINBUTTON0, WINBUTTON1, WINBUTTON2, WINBUTTON3, WINBUTTON4, WINBUTTON5,  };
+enum {FORM0, FORM1, FORM2, FORM3, FORM4, FORM5, FORM6 };
+
+
 //==============================================================================
 // Structure to hold a command to be sent to the display
 //
@@ -171,6 +175,7 @@ error_codes_te    gen4_uLCD_WriteContrast(uint8_t value);
 error_codes_te    gen4_uLCD_WriteString(uint16_t index, uint8_t *text);
 void     flush_RX_fifo(uart_inst_t *uart);
 int32_t  get_active_form(void);
+error_codes_te    change_form(int32_t new_form);
 
 #endif  /* __GEN4_uLCD_H__ */
 

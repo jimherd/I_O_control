@@ -132,9 +132,11 @@ struct display_cmd_reply_data_s    display_cmd_info[NOS_GEN4_uLCD_CMDS] = {
 //==============================================================================
 // Data about the forms and touch button used on the 4D Systems display.
 
+
 touch_button_data_ts   button_data[GEN4_uLCD_MAX_NOS_BUTTONS] = {
-    {false, 0, 0},
-    {false, 1, 0},
+    {true, FORM0, GEN4_uLCD_OBJ_WINBUTTON, WINBUTTON0},
+    {true, FORM1, GEN4_uLCD_OBJ_WINBUTTON, WINBUTTON1},
+    {true, FORM2, GEN4_uLCD_OBJ_WINBUTTON, WINBUTTON2},
 };
 
 

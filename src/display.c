@@ -43,7 +43,7 @@ error_codes_te   status;
             ;
         }
     }
-    status = gen4_uLCD_WriteObject(GEN4_uLCD_OBJ_FORM, 1, 0);  // switch to "form 1"
+    status = change_form(FORM1);  // change to form 1
     if (status != OK) {
         for(;;) {
             ;
