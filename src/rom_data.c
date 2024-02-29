@@ -51,8 +51,8 @@ struct token_list_s commands[] = {
     {"set",     TOKENIZER_SET},
     {"get",     TOKENIZER_GET},
     {"ping",    TOKENIZER_PING},
-    {"delay",   TOKENIZER_TDELAY},
     {"display", TOKENIZER_DISPLAY},
+    {"delay",   TOKENIZER_TDELAY},      // always last in list
 };
 
 struct error_list_s errors[] = {
@@ -96,7 +96,7 @@ struct command_limits_s    cmd_limits[NOS_COMMANDS] = {
     [4].p_limits = {{3, 3}, {0, 63}, {0,5}},                                    // info
     [5].p_limits = {{3, 3}, {0, 63}, {-255, +255}},                             // ping,
     [6].p_limits = {{3, 3}, {0, 63}, {0, 50000}},                               // delay
-    [7].p_limits = {{4, 5}, {0, 63}, {0, 4}},                                   // display
+    [7].p_limits = {{4, 5}, {0, 63}, {0, 9}},                                   // display
 };
 
 //==============================================================================

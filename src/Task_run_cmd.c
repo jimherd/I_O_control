@@ -254,7 +254,7 @@ int32_t                 rel_nos_steps, abs_nos_steps, move_count, move_angle;
                     default:
                         break;
                 }
-//                break;
+                break;
 
             case TOKENIZER_TDELAY:
                 vTaskDelay(int_parameters[2]);
