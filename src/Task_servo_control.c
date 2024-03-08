@@ -50,7 +50,7 @@ servo_states_te      RC_state;
                     PCA9685_set_zero(i);    
                     break;
                 case DORMANT :
-                    break;        // do nothing but less
+                    break;        // do nothing
                 case DELAY :
                     servo_data[i].counter--;   // count down for delay
                     if (servo_data[i].counter == 0) {

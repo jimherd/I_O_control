@@ -96,7 +96,7 @@ struct command_limits_s    cmd_limits[NOS_COMMANDS] = {
     [4].p_limits = {{3, 3}, {0, 63}, {0,5}},                                    // info
     [5].p_limits = {{3, 3}, {0, 63}, {-255, +255}},                             // ping,
     [6].p_limits = {{3, 3}, {0, 63}, {0, 50000}},                               // delay
-    [7].p_limits = {{4, 5}, {0, 63}, {0, 9}},                                   // display
+    [7].p_limits = {{4, 5}, {0, 63}, {0, 9}, {0, 0}, {0, 0}},                   // display
 };
 
 //==============================================================================
@@ -131,7 +131,6 @@ struct display_cmd_reply_data_s    display_cmd_info[NOS_GEN4_uLCD_CMDS] = {
 
 //==============================================================================
 // Data about the forms and touch button used on the 4D Systems display.
-
 
 touch_button_data_ts   button_data[GEN4_uLCD_MAX_NOS_BUTTONS] = {
     {true, FORM0, GEN4_uLCD_OBJ_WINBUTTON, WINBUTTON0},

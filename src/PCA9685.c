@@ -161,6 +161,8 @@ void PCA9685_set_servo_freq(void){
  * +angle  =>  add to 1.5mS pulse
  * -angle  =>  subtract from 1.5mS pulse
  * Therefore need only calculate for abs(angle)
+ * 
+ * If the servo is of type MOTOR and the requested angle is 0 then set to DISABLED
  */
 error_codes_te  PCA9685_set_servo(uint32_t servo_no, int32_t angle)
 {
@@ -169,7 +171,13 @@ int32_t    PWM_ON_time, PWM_OFF_time, pulse_change;
 struct servo_data_s  *servo_data_pt;
 uint8_t     PCA9685_chan_address;
 
+
     servo_data_pt = &servo_data[servo_no];
+    if ((servo_data_pt->type == MOTOR) && (angle == 0)) {
+        servo_data_pt->state = DISABLED;
+        PCA9685_set_zero(servo_no);
+        return OK;
+    }
     if (servo_data_pt->state != DISABLED) {
 
         servo_data_pt->angle = angle;               // log requested angle
@@ -222,6 +230,9 @@ uint8_t  PCA9685_i2c_packet[5];
  * @param servo_state 
  * @param servo_angle 
  * @param servo_sync 
+ * 
+ * @note
+ *      If servo type is MOTOR then ignore BUSY state
  */
 error_codes_te  set_servo_move (
     uint8_t             servo_no,
@@ -236,7 +247,7 @@ error_codes_te volatile status;
     servo_data_pt = &servo_data[servo_no];
 
     status = OK;
-    if ((servo_data_pt->state == DORMANT) || (servo_data_pt->state == DISABLED)) {
+    if ((servo_data_pt->state == DORMANT) || (servo_data_pt->state == DISABLED) || (servo_data_pt->type == MOTOR)) {
         servo_data_pt->state = servo_state;
         servo_data_pt->angle = servo_angle;
         servo_data_pt->sync  = servo_sync;

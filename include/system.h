@@ -92,6 +92,7 @@ typedef enum  {
     GEN4_uLCD_WRITE_STR_TOO_BIG      = -127,
     GEN4_uLCD_WRITE_STRING_FAIL      = -128,
     GEN4_uLCD_WRITE_STRING_TIMEOUT   = -129,
+    GEN4_uLCD_BUTTON_FORM_INACTIVE   = -130,
 } error_codes_te;
 
 //==============================================================================
@@ -419,7 +420,7 @@ typedef struct  {
     int8_t      form;           // related "screen form"
     uint8_t     button_type;
     uint8_t     button_id;
-	uint8_t	    button_data;
+	int8_t	    button_value;
     int32_t     time_high;      // High time in time sample units
 } touch_button_data_ts;
 

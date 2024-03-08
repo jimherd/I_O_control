@@ -47,6 +47,7 @@ static int32_t          token;
 bool                    reply_done;
 int32_t                 sm_number;
 int32_t                 rel_nos_steps, abs_nos_steps, move_count, move_angle;
+uint32_t                current_form;
 
     status = OK;
     FOREVER {
@@ -250,6 +251,14 @@ int32_t                 rel_nos_steps, abs_nos_steps, move_count, move_angle;
                         status = gen4_uLCD_WriteContrast(int_parameters[DISPLAY_CONTRAST_INDEX]);
                         break;
                     case READ_BUTTON:
+                        current_form = get_active_form();
+                        if (button_data[int_parameters[3]].form == current_form) {
+                            status = OK;
+                        } else {
+                            status = GEN4_uLCD_BUTTON_FORM_INACTIVE;
+                        }
+                        print_string("%d %d %d\n", int_parameters[1], status, button_data[int_parameters[3]].button_value );
+                        reply_done = true;
                         break;
                     default:
                         break;
@@ -379,7 +388,7 @@ int32_t convert_tokens(void)
 error_codes_te check_command(int32_t cmd_token)
 {
 error_codes_te status;
-uint32_t i;
+uint32_t i, span;
 
     status = OK;
 
@@ -392,6 +401,10 @@ uint32_t i;
     } else {
         for (i = 2 ; i<argc ; i++) {
             if (arg_type[i] == MODE_I) {
+                span = cmd_limits[cmd_token].p_limits[i].parameter_min + cmd_limits[cmd_token].p_limits[i].parameter_max;
+                if (span == 0) {
+                    continue;       // ignore check for this parameter
+                }
                 if ((int_parameters[i] < cmd_limits[cmd_token].p_limits[i].parameter_min) || 
                               (int_parameters[i] > cmd_limits[cmd_token].p_limits[i].parameter_max)) {
                     status = PARAMETER_OUTWITH_LIMITS;

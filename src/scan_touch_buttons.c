@@ -63,7 +63,7 @@ uint32_t    start_time, end_time;
                 }
                 status = gen4_uLCD_ReadObject(button_data[i].button_type, button_data[i].button_id, &result);
                 if (status == OK) {
-                    button_data[i].button_data = result;
+                    button_data[i].button_value = result;
                     if( result == 1) {
                         button_data[i].time_high++;
                     } else {
@@ -75,7 +75,7 @@ uint32_t    start_time, end_time;
             // error
         }
         end_time = time_us_32();
-        update_task_execution_time(TASK_SERVO_CONTROL, start_time, end_time);   
+        update_task_execution_time(TASK_SCAN_TOUCH_BUTTONS, start_time, end_time);   
     }
 }
 
