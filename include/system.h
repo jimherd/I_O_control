@@ -93,6 +93,7 @@ typedef enum  {
     GEN4_uLCD_WRITE_STRING_FAIL      = -128,
     GEN4_uLCD_WRITE_STRING_TIMEOUT   = -129,
     GEN4_uLCD_BUTTON_FORM_INACTIVE   = -130,
+    QUOTE_ERROR                      = -131,
 } error_codes_te;
 
 //==============================================================================
@@ -124,7 +125,7 @@ typedef enum  {
 
 enum modes_e {MODE_U, MODE_I, MODE_R, MODE_S} ;  // defines modes as scan progresses
 
-enum {LETTER, NUMBER, DOT, PLUSMINUS, NULTERM, END, SEPARATOR, OTHER};
+enum {LETTER, NUMBER, DOT, PLUSMINUS, NULTERM, END, QUOTE, SEPARATOR, OTHER};
 
 enum {BASE_10 = 10, BASE_16 = 16};
 enum {UPPER_CASE, LOWER_CASE};

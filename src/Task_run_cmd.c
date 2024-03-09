@@ -310,6 +310,18 @@ uint8_t     character_type;
                     } 
                 }
                 break;
+            case QUOTE :
+                if (mode == MODE_U) {  // start of a quoted string
+                    mode = MODE_S;
+                    arg_pt[argc] = count + 1;   // skip '"' character
+                } else if (mode == MODE_S) {   // end of quoted string
+                        arg_type[argc++] = MODE_S;
+                        mode = MODE_U;
+                }
+                else {
+                    status = QUOTE_ERROR;
+                }
+                break;
             case NUMBER :
                 if (mode == MODE_U) {
                     mode = MODE_I;
