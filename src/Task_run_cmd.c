@@ -317,17 +317,6 @@ uint8_t     character_type;
                 }
                 break;
 
-                // if ((mode == MODE_I) || (mode == MODE_R)) {  // LETTER
-                //     status = LETTER_ERROR;
-                // } else {
-                //     if (mode == MODE_U) {
-                //         mode = MODE_S;
-                //         arg_pt[argc] = count;
-                //         // argc++; //
-                //     } 
-                // }  // do nothing for MODE_S
-                // break;
-
             case QUOTE :
                 switch(mode) {
                     case MODE_U :
@@ -336,26 +325,15 @@ uint8_t     character_type;
                         break;
                     case MODE_I :
                     case MODE_R :
+                        status = QUOTE_ERROR;
                         break;
-                    case MODE_S :
+                    case MODE_S :   // end of string
                         arg_type[argc++] = MODE_S;
                         command[count] = STRING_NULL;  // put terminator on string
                         mode = MODE_U;
                         break;
                 }
                 break;
-
-                // if (mode == MODE_U) {  // start of a quoted string // QUOTE
-                //     mode = MODE_S;
-                //     arg_pt[argc] = count + 1;   // skip '"' character
-                // } else if (mode == MODE_S) {   // end of quoted string
-                //     arg_type[argc++] = MODE_S;
-                //     command[count] = STRING_NULL;
-                //     mode = MODE_U;
-                // } else {
-                //     status = QUOTE_ERROR;
-                // }
-                // break;
 
             case NUMBER :
                 switch(mode) {
@@ -365,22 +343,15 @@ uint8_t     character_type;
                         break;
                     case MODE_I :
                     case MODE_R :
-                        break;
                     case MODE_S :
                         break;
                 }
                 break;
 
-                // if (mode == MODE_U) {  // NUMBER
-                //     mode = MODE_I;
-                //     arg_pt[argc] = count;
-                //     // argc++;  //
-                // } 
-                // break;
-
             case SEPARATOR :
                 switch(mode) {
                     case MODE_U :
+                    case MODE_S :
                         break;
                     case MODE_I :
                     case MODE_R :
@@ -388,19 +359,8 @@ uint8_t     character_type;
                         command[count] = STRING_NULL;
                         mode = MODE_U;
                         break;
-                    case MODE_S :
-                        break;
                 }
                 break;
-
-                // if (mode == MODE_S) {  // SEPARATOR
-                //     ;
-                // } else if (mode != MODE_U) {
-                //     arg_type[argc++] = mode;
-                //     command[count] = STRING_NULL;
-                //     mode = MODE_U;
-                // }
-                // break;
 
             case DOT :
                 switch(mode) {
@@ -413,15 +373,6 @@ uint8_t     character_type;
                         break;
                 }
                 break;
-
-                // if (mode == MODE_I) {   // DOT
-                //     mode = MODE_R;
-                // } else {
-                //     if ((mode == MODE_R) || (mode == MODE_U)) {
-                //         status = DOT_ERROR;  // extra point in real value
-                //     } 
-                // }
-                // break;
 
             case PLUSMINUS :
                 switch(mode) {
@@ -438,39 +389,10 @@ uint8_t     character_type;
                 }
                 break;
 
-                // if (mode == MODE_U) {
-                //     mode = MODE_I;
-                //     arg_pt[argc] = count;
-                //     // argc++;   //
-                // } else {
-                //     if ((mode == MODE_I) || (mode == MODE_R)) {
-                //         status = PLUSMINUS_ERROR;
-                //     }
-                // }
-                // break;
-
-            case NULTERM :
-                switch(mode) {
-                    case MODE_U :
-                        break;
-                    case MODE_I :
-                    case MODE_R :
-                    case MODE_S :
-                        arg_type[argc++] = mode;
-                        mode = MODE_U;
-                        break;
-                }
-                break;
-
-                // if (mode != MODE_U) {    //NULLTERM
-                //     arg_type[argc++] = mode;
-                //     mode = MODE_U;
-                // }
-                // break;
-
             case END :
                 switch(mode) {
                     case MODE_U :
+                        break;
                     case MODE_I :
                     case MODE_R :
                     case MODE_S :
@@ -479,14 +401,6 @@ uint8_t     character_type;
                         break;
                 }
                 break;
-
-
-                // if (mode != MODE_U) {
-                //     arg_type[argc++] = mode;
-                //     //mode = MODE_U;
-                //     return status;
-                // }
-                // break;
         }   // end of SWITCH
     }  // end of FOR
     return status;

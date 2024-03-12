@@ -125,7 +125,7 @@ typedef enum  {
 
 enum modes_e {MODE_U, MODE_I, MODE_R, MODE_S} ;  // defines modes as scan progresses
 
-enum {LETTER, NUMBER, DOT, PLUSMINUS, NULTERM, END, QUOTE, SEPARATOR, OTHER};
+enum {LETTER, NUMBER, DOT, PLUSMINUS, END, QUOTE, SEPARATOR, OTHER};
 
 enum {BASE_10 = 10, BASE_16 = 16};
 enum {UPPER_CASE, LOWER_CASE};
