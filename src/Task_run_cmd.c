@@ -305,13 +305,14 @@ uint8_t     character_type;
             case LETTER :
                 switch(mode) {
                     case MODE_U :
-                        mode = MODE_S;
+                        mode = MODE_W;
                         arg_pt[argc] = count;
                         break;
                     case MODE_I :
                     case MODE_R :
                         status = LETTER_ERROR;
                         break;
+                    case MODE_W :   
                     case MODE_S :
                         break;
                 }
@@ -325,6 +326,7 @@ uint8_t     character_type;
                         break;
                     case MODE_I :
                     case MODE_R :
+                    case MODE_W :
                         status = QUOTE_ERROR;
                         break;
                     case MODE_S :   // end of string
@@ -343,6 +345,7 @@ uint8_t     character_type;
                         break;
                     case MODE_I :
                     case MODE_R :
+                    case MODE_W :
                     case MODE_S :
                         break;
                 }
@@ -353,6 +356,7 @@ uint8_t     character_type;
                     case MODE_U :
                     case MODE_S :
                         break;
+                    case MODE_W :
                     case MODE_I :
                     case MODE_R :
                         arg_type[argc++] = mode;
@@ -369,6 +373,7 @@ uint8_t     character_type;
                     case MODE_R :
                     case MODE_U :
                         status = DOT_ERROR;  // extra point in real value
+                    case MODE_W :
                     case MODE_S :
                         break;
                 }
@@ -384,6 +389,7 @@ uint8_t     character_type;
                     case MODE_R :
                         status = PLUSMINUS_ERROR;
                         break;
+                    case MODE_W :
                     case MODE_S :
                         break;
                 }
@@ -395,6 +401,7 @@ uint8_t     character_type;
                         break;
                     case MODE_I :
                     case MODE_R :
+                    case MODE_W :
                     case MODE_S :
                         arg_type[argc++] = mode;
                         return status;
@@ -411,7 +418,7 @@ uint8_t     character_type;
 //
 int32_t convert_tokens(void) 
 {
-    if ((arg_type[0] != MODE_S) || (char_type[command[0]] != LETTER)) {
+    if ((arg_type[0] != MODE_W) || (char_type[command[0]] != LETTER)) {
         return BAD_COMMAND;
     }
     for (uint32_t i=0 ; i <= argc ; i++) {

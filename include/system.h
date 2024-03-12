@@ -123,7 +123,7 @@ typedef enum  {
 
 #define     MAX_ARGC  8
 
-enum modes_e {MODE_U, MODE_I, MODE_R, MODE_S} ;  // defines modes as scan progresses
+enum modes_e {MODE_U, MODE_I, MODE_R, MODE_W, MODE_S} ;  // defines modes as scan progresses
 
 enum {LETTER, NUMBER, DOT, PLUSMINUS, END, QUOTE, SEPARATOR, OTHER};
 
