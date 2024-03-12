@@ -144,7 +144,7 @@ enum {UPPER_CASE, LOWER_CASE};
 
 #define UART_READ_TIME_OUT_uS  3000000  // 3 seconds
 
-typedef enum {SET_FORM, GET_FORM, SET_CONTRAST, READ_BUTTON} display_commands_te;
+typedef enum {SET_FORM, GET_FORM, SET_CONTRAST, READ_BUTTON, WRITE_STRING} display_commands_te;
 
 #define     NOS_FORMS       3
 #define     NOS_BUTTONS     3
