@@ -121,7 +121,10 @@ uint32_t char_pt = 0;  // Initialize index of first digit
         sign = -1;
         char_pt++; // Also update index of first digit
     }
-     for (; str[char_pt] != '\0'; ++char_pt) {
+    if (str[0] == '+') {
+        char_pt++;
+    }
+    for (; str[char_pt] != '\0'; ++char_pt) {
         result = (result * 10) + (str[char_pt] - '0');
     }
     return sign * result;
