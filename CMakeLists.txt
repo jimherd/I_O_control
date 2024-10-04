@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 
 include(CMakePrintHelpers)
 
-set (THE_PROJECT_NAME "Pi_the_Robot")  # set project name
+set (PROJECT_NAME "Pi_the_Robot")  # set project name
 
 # cmake_path( SET FREERTOS_SOURCE_DIR "${CMAKE_SOURCE_DIR}/lib/FreeRTOS-Kernel")
 cmake_path (SET FREERTOS_SOURCE_DIR "$ENV{PICO_SDK_PATH}/lib/FreeRTOS-Kernel")
@@ -19,7 +19,7 @@ include(pico_sdk_import.cmake)
 include($ENV{PICO_SDK_PATH}/tools/CMakeLists.txt)
 
 # project(Pico_FreeRTOS_template C CXX ASM)
-project(${THE_PROJECT_NAME} C CXX ASM)
+project(${PROJECT_NAME} C CXX ASM)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
@@ -83,8 +83,8 @@ pico_enable_stdio_uart(${PROJECT_NAME} 0)
 add_custom_command(TARGET ${PROJECT_NAME}
     POST_BUILD
     COMMAND date.exe /t >> ${CMAKE_SOURCE_DIR}/File_size.txt
-    COMMAND arm-none-eabi-size.exe -G ${THE_PROJECT_NAME}.elf
-    COMMAND arm-none-eabi-size.exe -G ${THE_PROJECT_NAME}.elf  >> ${CMAKE_SOURCE_DIR}/File_size.txt
+    COMMAND arm-none-eabi-size.exe -G ${PROJECT_NAME}.elf
+    COMMAND arm-none-eabi-size.exe -G ${PROJECT_NAME}.elf  >> ${CMAKE_SOURCE_DIR}/File_size.txt
     VERBATIM
 )
 
