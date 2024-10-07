@@ -16,14 +16,16 @@ Add RP2040 Pico board to manage head hardware
 ### Tools
 
 * Windows 10 laptop
-* Rasperry Pi windows installer
     * Visual Studio Code
-    * Arm GNU toolchain
-    * Ninja
-    * Cmake
+        * Raspberry Pi Pico extension (Oct 24)
+        * SDK 2.0.0 (Oct 24)
+        * Arm GNU toolchain: 13_2_Rel1 (Oct 24)
+        * FreeRTOS V11.1.0 (Oct 24)
+    * Ninja V1.12.1
+    * Cmake V3.28.6
     * OpenOCD
     * Git for windows
-    * Python 3.9
+    * Python 3.11
     * Picotools
 * Hardware PicoProbe debug probe : CMSIS version
 

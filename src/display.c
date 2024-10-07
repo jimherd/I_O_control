@@ -8,7 +8,6 @@
 #include    <string.h>
 #include    <stdarg.h>
 
-
 #include    "pico/stdlib.h"
 #include    "pico/binary_info.h"
 
