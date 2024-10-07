@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /**
  * @file display.c
  * @author Jim Herd
@@ -58,3 +59,65 @@ error_codes_te   status;
     }
 }
 
+=======
+/**
+ * @file display.c
+ * @author Jim Herd
+ * @brief Control 4D Systems touch screen display
+ */
+
+#include    <stdio.h>
+#include    <string.h>
+#include    <stdarg.h>
+
+#include    "pico/stdlib.h"
+#include    "pico/binary_info.h"
+
+#include    "hardware/gpio.h"
+#include    "hardware/uart.h"
+#include    "hardware/irq.h"
+
+#include    "FreeRTOS.h"
+#include    "event_groups.h"
+#include    "timers.h"
+#include    "queue.h"
+
+#include    "system.h"
+#include    "externs.h"
+#include    "sys_routines.h"
+#include    "string_IO.h"
+#include    "min_printf.h"
+#include    "gen4_uLCD.h"
+
+//==============================================================================
+// Task code
+//==============================================================================
+
+void Task_display_control(void *p) 
+{
+error_codes_te   status;
+
+    uart1_sys_init();
+    status = gen4_uLCD_init();
+    if (status != OK) {
+        for(;;) {
+            ;
+        }
+    }
+    status = change_form(FORM1);  // change to form 1
+    if (status != OK) {
+        for(;;) {
+            ;
+        }
+    }
+    status = gen4_uLCD_WriteString(0, "New string");
+
+    FOREVER {
+        gen4_uLCD_WriteContrast(5);
+        vTaskDelay(2000);
+        gen4_uLCD_WriteContrast(12);
+        vTaskDelay(2000);
+    }
+}
+
+>>>>>>> 8c66029fb43c52ad1e392ea3580787dda24bd318
