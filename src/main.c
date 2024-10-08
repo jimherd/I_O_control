@@ -2,7 +2,7 @@
  * @file    main.c
  * @author  Jim Herd
  * @brief   Folder template for RP2040/FreeRTOS projects
- *          RP2040/FreeRTOS/TinyUSB/1306 LCD/DRV8833 H-bridge
+ *          RP2040/FreeRTOS
  */
 
 #include "system.h"

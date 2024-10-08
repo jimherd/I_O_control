@@ -21,9 +21,9 @@ void Task_blink(void *p) {
 
     FOREVER {
         gpio_put(BLINK_PIN, 1);
-        vTaskDelay(200);
+        vTaskDelay(5000);
         gpio_put(BLINK_PIN, 0);
-        vTaskDelay(300);
+        vTaskDelay(1500);
     }
 }
 
