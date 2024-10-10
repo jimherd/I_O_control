@@ -52,6 +52,10 @@ set(PICO_BOARD pico CACHE STRING "Board type")
         ${Pico_source_files}
     )
 
+# generate the header file into the source tree as it is included in the RP2040 datasheet
+pico_generate_pio_header(${PROJECT_NAME} 
+   ${CMAKE_CURRENT_LIST_DIR}/src/ws2812.pio OUTPUT_DIR ${CMAKE_CURRENT_LIST_DIR}/generated)
+
 # Get Freertos source files
 FILE(GLOB FreeRTOS_src ${FREERTOS_KERNEL_DIR}/*.c)
 
@@ -81,6 +85,7 @@ target_link_libraries( ${PROJECT_NAME}
     hardware_adc
     hardware_pio
     hardware_dma
+    hardware_clocks
     FreeRTOS-Kernel
     FreeRTOS-Kernel-Heap4
     )

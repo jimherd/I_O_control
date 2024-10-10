@@ -9,6 +9,7 @@
 #include "externs.h"
 #include "sys_routines.h"
 #include "uart_IO.h"
+#include "neopixel.h"
 
 #include "pico/stdlib.h"
 #include "pico/multicore.h"
@@ -43,6 +44,7 @@ TaskHandle_t        taskhndl_Task_servo_control;
 TaskHandle_t        taskhndl_Task_stepper_control;
 TaskHandle_t        taskhndl_Task_display_control;
 TaskHandle_t        taskhndl_Task_scan_touch_buttons;
+TaskHandle_t        taskhndl_Task_write_neopixels;
 
 QueueHandle_t       queue_print_string_buffers;
 QueueHandle_t       queue_free_buffers;
@@ -50,6 +52,7 @@ QueueHandle_t       queue_free_buffers;
 EventGroupHandle_t  eventgroup_uart_IO;
 
 SemaphoreHandle_t   gen4_uLCD_MUTEX_access;
+SemaphoreHandle_t   semaphore_neopixel_data;
 
 //==============================================================================
 // System initiation
@@ -141,6 +144,14 @@ int main()
                 NULL,
                 TASK_PRIORITYLOW,
                 &taskhndl_Task_scan_touch_buttons
+    );
+
+    xTaskCreate(Task_write_neopixels,
+                "Neopixel_task",
+                configMINIMAL_STACK_SIZE,
+                NULL,
+                TASK_PRIORITYIDLE,
+                &taskhndl_Task_write_neopixels
     );
 
     queue_print_string_buffers = xQueueCreate(NOS_PRINT_STRING_BUFFERS+1, sizeof(uint32_t));

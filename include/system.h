@@ -286,6 +286,59 @@ struct sm_profile_s {      // single stepper motor seqence
 };
 
 //==============================================================================
+// Neopixel subsystem
+
+#define     NOS_NEOPIXEL_LEDS 4
+
+#define     NEOPIXEL_DOUT_PIN       GP16
+
+#define     NEOPIXEL_DATA_RATE      800000      // 800KHz
+#define     NEOPIXEL_BITS_PER_UNIT  24
+
+#define     NOS_NEOPIXELS           4
+
+typedef enum {N_LED_A, N_LED_B, N_LED_C, N_LED_D} NEOPIXEL_te;
+
+#define     NEOPIXEL_PIO_UNIT       pio0
+#define     NEOPIXEL_STATE_MACHINE  0
+
+#define     NEOPIXEL_MAX_INTENSITY       25      // percent
+
+typedef enum  {LED_NO_CHANGE, LED_OFF, LED_FLASH, LED_ON} LED_state_te;
+typedef enum  { UP, DOWN, NONE} change_mode_et;
+typedef enum  {N_RED, N_ORANGE, N_YELLOW, N_GREEN, N_BLUE, N_INDIGO, N_VIOLET, N_LED_WHITE, N_BLACK} colours_et;
+typedef enum  {N_ENABLE, N_DISABLE} NEOPIXEL_STATE_et;
+
+struct LED_data_s {
+    uint8_t         pin_number;
+    uint32_t        colour;   // 3 8-bit RGB values
+    LED_state_te    state;
+    bool            flash;
+    uint8_t         flash_time;    // units of 20mS
+    uint8_t         flash_counter;
+    bool            flash_value;
+} ;
+
+struct neopixel_data_s {
+    struct {
+        NEOPIXEL_STATE_et   neopixel_state;         // ENABLED/DISABLED
+        NEOPIXEL_STATE_et   colour_rotation_state;  // ON/OFF
+        NEOPIXEL_STATE_et   flash_state;            // ON/OFF
+        NEOPIXEL_STATE_et   dim_state;
+        bool                monochrome;             // TRUE/FALSE
+    } flags;
+
+    uint8_t         current_intensity;
+    colours_et      current_colour;
+
+    uint8_t         flash_rate;
+    uint8_t         flash_counter;
+
+    int8_t          dim_percent_change;     // +/- % rate
+    uint8_t         dim_rate;               // units og 200mS
+} ;
+
+//==============================================================================
 // Freertos
 
 #define     TASK_SERVO_CONTROL_FREQUENCY                 10  // Hz
@@ -294,6 +347,11 @@ struct sm_profile_s {      // single stepper motor seqence
 
 #define     TASK_SCAN_TOUCH_BUTTONS_FREQUENCY            10  // Hz
 #define     TASK_SCAN_TOUCH_BUTTONS_FREQUENCY_TICK_COUNT      ((1000/TASK_SCAN_TOUCH_BUTTONS_FREQUENCY) * portTICK_PERIOD_MS)
+
+#define     TASK_NEOPIXELS_FREQUENCY                    5  // Hz
+#define     TASK_NEOPIXELS_TIME_UNIT                    (1000 / TASK_NEOPIXELS_FREQUENCY)
+#define     TASK_NEOPIXELS_FREQUENCY_TICK_COUNT         ((1000/TASK_NEOPIXELS_FREQUENCY) * portTICK_PERIOD_MS)
+
 //==============================================================================
 // Set of 8 priority levels (set 8 in FreeRTOSconfig.h)
 //==============================================================================
@@ -346,8 +404,8 @@ struct sm_profile_s {      // single stepper motor seqence
 // 
 
 typedef enum {
-    TASK_UART, TASK_RUN_CMD, TASK_SERVO_CONTROL, TASK_STEPPER_CONTROL, TASK_BLINK,
-    TASK_DISPLAY, TASK_SCAN_TOUCH_BUTTONS
+    TASK_UART, TASK_RUN_CMD, TASK_SERVO_CONTROL, TASK_STEPPER_CONTROL,
+    TASK_DISPLAY, TASK_SCAN_TOUCH_BUTTONS, TASK_WRITE_NEOPIXELS, TASK_BLINK,
 } task_et;
 
 #define     NOS_TASKS   (TASK_BLINK + 1)
