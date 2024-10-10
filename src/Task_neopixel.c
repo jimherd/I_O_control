@@ -24,7 +24,7 @@
 #include "semphr.h"
 #include "event_groups.h"
 
-#include "ws2812.pio.h"
+#include "neopixel.pio.h"
 
 const struct colour {
     uint8_t   red;
@@ -80,8 +80,8 @@ BaseType_t  xWasDelayed;
 uint8_t     index;
 uint32_t    start_time, end_time;
 
-    uint offset = pio_add_program(NEOPIXEL_PIO_UNIT, &ws2812_program);
-    ws2812_program_init(NEOPIXEL_PIO_UNIT, 
+    uint offset = pio_add_program(NEOPIXEL_PIO_UNIT, &neopixel_program);
+    neopixel_program_init(NEOPIXEL_PIO_UNIT, 
                         NEOPIXEL_STATE_MACHINE, 
                         offset, 
                         NEOPIXEL_DOUT_PIN, 
