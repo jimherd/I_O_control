@@ -23,6 +23,9 @@
 ;
 .side_set 1
 
+.define DATA_HIGH 1
+.define DATA_LOW  0
+
 .define public T1 2
 .define public T2 5
 .define public T3 3
@@ -39,9 +42,9 @@ bitloop:
     out x, 1       side 0 [T3 - 1]   ; shift bit 0 of OSR -> x-reg. Set output low.
     jmp !x do_zero side 1 [T1 - 1]   ; Branch on value of x-reg (0 or 1). Set output high.
 do_one:                            ; --> here if bit was a 1
-    jmp bitloop    side 1 [T2 - 1]   ; Continue with output high for long pulse Then branch to start.
+    jmp bitloop    side DATA_HIGH [T2 - 1]   ; Continue with output high for long pulse Then branch to start.
 do_zero:                           ; --> here if bit was a 0
-    nop            side 0 [T2 - 1]   ; Set output low for a short pulse.
+    nop            side DATA_LOW  [T2 - 1]   ; Set output low for a short pulse.
                                      ; nop is really a synonym for instruction "mov y, y" 
 .wrap        ; ensures next instruction is after .wrap_target directive (no need for a jmp)
 
