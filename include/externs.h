@@ -21,7 +21,7 @@ extern void Task_run_cmd(void *p);
 extern void Task_servo_control(void *p);
 extern void Task_stepper_control(void *p);
 extern void Task_display_control(void *p);
-void Task_scan_touch_buttons(void *p);
+extern void Task_scan_touch_buttons(void *p);
 extern void Task_write_neopixels(void *p);
 
 extern QueueHandle_t       queue_print_string_buffers;

@@ -1,4 +1,26 @@
+;
+; Neopixel PIO routine
+;
+; Dataflow   Input FIFO --> OSR --> reg-X  
+; Code       1-bit in reg-X is then tested for 0 or 1
+;            if 0 output a short pulse
+;            if 1 output a long pulse
+;            repeat ad infinitum
+;
+; Relevant Neopixel waveform delays are 
+;
+; T1 = 0.35uS
+; T2 = 0.55uS
+; T3 = 0.35uS
+; ZERO bit   = "1" for (T1),      '0' for (T2 + T3)
+; ONE  bit   = "1" for (T1 + T2), '0' for (T3)
+;
+
 .program neopixel
+
+; Use "1" bit of 5-bit delay to drive an output pin 
+; side-step bits NEED to be set at each instruction (e.g. side 0, side 1)
+;
 .side_set 1
 
 .define public T1 2
@@ -9,18 +31,31 @@
 .lang_opt python out_init     = pico.PIO.OUT_HIGH
 .lang_opt python out_shiftdir = 1
 
+; *********************
+; ** code  : 4 instructions
 .wrap_target
 
 bitloop:
-    out x, 1            side 0 [T3 - 1]
-    jmp !x send_zero    side 1 [T1 - 1]
-send_one:
+    out x, 1       side 0 [T3 - 1]   ; shift bit 0 of OSR -> x-reg. Set output low.
+    jmp !x do_zero side 1 [T1 - 1]   ; Branch on value of x-reg (0 or 1). Set output high.
+do_one:                            ; --> here if bit was a 1
+    jmp bitloop    side 1 [T2 - 1]   ; Continue with output high for long pulse Then branch to start.
+do_zero:                           ; --> here if bit was a 0
+    nop            side 0 [T2 - 1]   ; Set output low for a short pulse.
+                                     ; nop is really a synonym for instruction "mov y, y" 
+.wrap        ; ensures next instruction is after .wrap_target directive (no need for a jmp)
+
+;
+; bitloop:
+;     out x, 1            side 0 [T3 - 1]
+;     jmp !x send_zero    side 1 [T1 - 1]
+; send_one:
     jmp bitloop         side 1 [T2 - 1]
-send_zero:
-    nop                 side 0 [T2 - 1]
-
-.wrap
-
+; send_zero:
+;     nop                 side 0 [T2 - 1]
+;
+;.wrap
+;
 % c-sdk {
 #include "hardware/clocks.h"
 
