@@ -10,6 +10,7 @@
 #include "system.h"
 #include "Pico_IO.h"
 #include "sys_routines.h"
+#include "externs.h"
 //#include "common.h"
 #include "neopixel.h"
 
@@ -42,12 +43,10 @@ const struct colour {
         {0, 0 , 0},       // Black
 };
 
-
-
-typedef struct seq_buffer {
+typedef struct seq_buffer_s {
     colours_et   colour;
     uint8_t     intensity;   // 0->100%
-} seq_buffer;
+} seq_buffer_s;
 
 //==============================================================================
 // function prototypes for local routines
@@ -57,7 +56,7 @@ typedef struct seq_buffer {
 // Local globals
 //==============================================================================
 
-seq_buffer seq_buffer_1[NOS_NEOPIXELS];
+seq_buffer_s seq_buffer_1[NOS_NEOPIXELS];
 
 
 //==============================================================================
@@ -88,10 +87,17 @@ uint32_t    start_time, end_time;
                         NEOPIXEL_DATA_RATE,
                         NEOPIXEL_BITS_PER_UNIT 
                         );
+//
+// Some test data
+//
+        put_pixel(urgb_u32(0x1f, 0, 0));       // Red
+        put_pixel(urgb_u32(0, 0x1f, 0));       // Green
+        put_pixel(urgb_u32(0, 0, 0x1f));       // Blue
+        put_pixel(urgb_u32(0x10, 0x10, 0x10)); // 
 
-//
+//==============================================================================
 // Task code
-//
+//==============================================================================
     xLastWakeTime = xTaskGetTickCount ();
     FOREVER {
         xWasDelayed = xTaskDelayUntil( &xLastWakeTime, TASK_NEOPIXELS_FREQUENCY_TICK_COUNT );
@@ -105,7 +111,33 @@ uint32_t    start_time, end_time;
         put_pixel(urgb_u32(0x10, 0x10, 0x10));
 
         for (index = 0 ; index < NOS_NEOPIXEL_LEDS ; index++) {
-            //if ()
+            switch (neopixel_data[index].command) {
+                case N_CMD_ON:
+                    neopixel_data[index].current_colour = neopixel_data[index].on_colour;
+                    break;
+                case N_CMD_OFF:
+                    neopixel_data[index].current_colour = neopixel_data[index].off_colour;
+                    break;
+                case N_CMD_FLASH:
+                    if (neopixel_data[index].state == N_FLASH_OFF) {
+                        neopixel_data[index].flash_off_counter--;
+                        if (neopixel_data[index].flash_off_counter <= 0) {
+                            neopixel_data[index].state = N_FLASH_ON;
+                            neopixel_data[index].current_colour = neopixel_data[index].on_colour;
+                            neopixel_data[index].flash_on_counter = neopixel_data[index].flash_on_time;
+                        }   
+                    }else {  // must bw N_FLASH_ON state
+                        neopixel_data[index].flash_on_counter--;
+                        if (neopixel_data[index].flash_on_counter <= 0) {
+                            neopixel_data[index].state = N_FLASH_OFF;
+                            neopixel_data[index].current_colour = neopixel_data[index].off_colour;
+                            neopixel_data[index].flash_off_counter = neopixel_data[index].flash_off_time;
+                        }   
+                    }
+                    break;
+                default :
+                    break;
+            }
         }
         end_time = time_us_32();
         update_task_execution_time(TASK_WRITE_NEOPIXELS, start_time, end_time);

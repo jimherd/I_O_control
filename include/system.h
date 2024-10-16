@@ -290,7 +290,7 @@ struct sm_profile_s {      // single stepper motor seqence
 
 #define     NOS_NEOPIXEL_LEDS 4
 
-#define     NEOPIXEL_DOUT_PIN       GP16
+#define     NEOPIXEL_DOUT_PIN       GP26
 
 #define     NEOPIXEL_DATA_RATE      800000      // 800KHz
 #define     NEOPIXEL_BITS_PER_UNIT  24
@@ -304,39 +304,48 @@ typedef enum {N_LED_A, N_LED_B, N_LED_C, N_LED_D} NEOPIXEL_te;
 
 #define     NEOPIXEL_MAX_INTENSITY       25      // percent
 
-typedef enum  {LED_NO_CHANGE, LED_OFF, LED_FLASH, LED_ON} LED_state_te;
+typedef enum  {LED_NO_CHANGE, LED_OFF, LED_FLASH, LED_ON} neopixel_state_te;
 typedef enum  { UP, DOWN, NONE} change_mode_et;
 typedef enum  {N_RED, N_ORANGE, N_YELLOW, N_GREEN, N_BLUE, N_INDIGO, N_VIOLET, N_LED_WHITE, N_BLACK} colours_et;
-typedef enum  {N_ENABLE, N_DISABLE} NEOPIXEL_STATE_et;
-
-struct LED_data_s {
-    uint8_t         pin_number;
-    uint32_t        colour;   // 3 8-bit RGB values
-    LED_state_te    state;
-    bool            flash;
-    uint8_t         flash_time;    // units of 20mS
-    uint8_t         flash_counter;
-    bool            flash_value;
-} ;
+typedef enum  {N_OFF, N_ON, N_FLASH_OFF, N_FLASH_ON} NEOPIXEL_STATE_et;
+typedef enum  {N_CMD_ON, N_CMD_OFF, N_CMD_FLASH} NEOPIXEL_CMD_et;
 
 struct neopixel_data_s {
-    struct {
-        NEOPIXEL_STATE_et   neopixel_state;         // ENABLED/DISABLED
-        NEOPIXEL_STATE_et   colour_rotation_state;  // ON/OFF
-        NEOPIXEL_STATE_et   flash_state;            // ON/OFF
-        NEOPIXEL_STATE_et   dim_state;
-        bool                monochrome;             // TRUE/FALSE
-    } flags;
-
-    uint8_t         current_intensity;
-    colours_et      current_colour;
-
-    uint8_t         flash_rate;
-    uint8_t         flash_counter;
-
-    int8_t          dim_percent_change;     // +/- % rate
-    uint8_t         dim_rate;               // units og 200mS
+    NEOPIXEL_CMD_et      command;
+    neopixel_state_te    state;
+    uint32_t             current_colour;
+    uint32_t             current_intensity;     
+    uint32_t             on_colour;         // 3 8-bit RGB values
+    uint32_t             on_intensity;      // percentage
+    uint32_t             off_colour;        // 3 8-bit RGB values
+    uint32_t             off_intensity;     // percentage
+    uint8_t              flash_on_time;     // units of 100mS
+    int32_t              flash_on_counter;
+    uint8_t              flash_off_time;    // units of 100mS
+    int32_t              flash_off_counter;
+    uint32_t             flash_counter;
+    int8_t               dim_percent_change;     // +/- % rate
+    uint8_t              dim_rate;               // units og 200mS
 } ;
+
+// struct neopixel_data_s {
+//     struct {
+//         NEOPIXEL_STATE_et   neopixel_state;         // ENABLED/DISABLED
+//         NEOPIXEL_STATE_et   colour_rotation_state;  // ON/OFF
+//         NEOPIXEL_STATE_et   flash_state;            // ON/OFF
+//         NEOPIXEL_STATE_et   dim_state;
+//         bool                monochrome;             // TRUE/FALSE
+//     } flags;
+
+//     uint8_t         current_intensity;
+//     colours_et      current_colour;
+
+//     uint8_t         flash_rate;
+//     uint8_t         flash_counter;
+
+//     int8_t          dim_percent_change;     // +/- % rate
+//     uint8_t         dim_rate;               // units og 200mS
+// } ;
 
 //==============================================================================
 // Freertos
