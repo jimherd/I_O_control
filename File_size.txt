@@ -92,3 +92,102 @@
 16/10/2024 
       text       data        bss      total filename
      35264       1476     260816     297556 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+16/10/2024 
+      text       data        bss      total filename
+     35264       1476     260816     297556 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+17/10/2024 
+      text       data        bss      total filename
+     35200       1476     260816     297492 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+17/10/2024 
+      text       data        bss      total filename
+     35200       1476     260816     297492 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+17/10/2024 
+      text       data        bss      total filename
+     35200       1472     260816     297488 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+17/10/2024 
+      text       data        bss      total filename
+     35200       1472     260816     297488 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+17/10/2024 
+      text       data        bss      total filename
+     35200       1472     260816     297488 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+21/10/2024 
+      text       data        bss      total filename
+     35568       1472     260816     297856 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+21/10/2024 
+      text       data        bss      total filename
+     35712       1472     260752     297936 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+21/10/2024 
+      text       data        bss      total filename
+     35712       1472     260752     297936 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+21/10/2024 
+      text       data        bss      total filename
+     35712       1472     260752     297936 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+21/10/2024 
+      text       data        bss      total filename
+     35712       1472     260752     297936 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+21/10/2024 
+      text       data        bss      total filename
+     35712       1472     260752     297936 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+21/10/2024 
+      text       data        bss      total filename
+     35712       1472     260752     297936 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+22/10/2024 
+      text       data        bss      total filename
+     35712       1472     260752     297936 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+22/10/2024 
+      text       data        bss      total filename
+     34912       1456     260752     297120 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+22/10/2024 
+      text       data        bss      total filename
+     34912       1456     260752     297120 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+22/10/2024 
+      text       data        bss      total filename
+     34912       1456     260752     297120 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+23/10/2024 
+      text       data        bss      total filename
+     34912       1456     260752     297120 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+23/10/2024 
+      text       data        bss      total filename
+     34912       1456     260752     297120 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+23/10/2024 
+      text       data        bss      total filename
+     34912       1456     260752     297120 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+23/10/2024 
+      text       data        bss      total filename
+     34912       1456     260752     297120 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+23/10/2024 
+      text       data        bss      total filename
+     34496       1456     260816     296768 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+23/10/2024 
+      text       data        bss      total filename
+     34480       1456     260816     296752 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+23/10/2024 
+      text       data        bss      total filename
+     35264       1472     260816     297552 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+23/10/2024 
+      text       data        bss      total filename
+     35264       1472     260816     297552 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+23/10/2024 
+      text       data        bss      total filename
+     35264       1472     260816     297552 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+23/10/2024 
+      text       data        bss      total filename
+     35264       1472     260816     297552 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+23/10/2024 
+      text       data        bss      total filename
+     35264       1472     260816     297552 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+23/10/2024 
+      text       data        bss      total filename
+     35280       1472     260816     297568 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+23/10/2024 
+      text       data        bss      total filename
+     35296       1472     260816     297584 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+23/10/2024 
+      text       data        bss      total filename
+     35296       1472     260816     297584 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+23/10/2024 
+      text       data        bss      total filename
+     35328       1472     260816     297616 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+23/10/2024 
+      text       data        bss      total filename
+     35328       1472     260816     297616 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf

@@ -1,5 +1,5 @@
 /**
- * @file    Task_RW_sensors.c
+ * @file    Task_neopixel.c
  * @author  Jim Herd
  * @brief   read Robokid sensors and set neopixel LEDs
  */
@@ -11,7 +11,6 @@
 #include "Pico_IO.h"
 #include "sys_routines.h"
 #include "externs.h"
-//#include "common.h"
 #include "neopixel.h"
 
 #include "pico/stdlib.h"
@@ -26,6 +25,11 @@
 #include "event_groups.h"
 
 #include "neopixel.pio.h"
+
+//==============================================================================
+// Constant definitions
+//==============================================================================
+
 
 const struct colour {
     uint8_t   red;
@@ -49,15 +53,10 @@ typedef struct seq_buffer_s {
 } seq_buffer_s;
 
 //==============================================================================
-// function prototypes for local routines
-//==============================================================================
-
-//==============================================================================
 // Local globals
 //==============================================================================
 
 seq_buffer_s seq_buffer_1[NOS_NEOPIXELS];
-
 
 //==============================================================================
 // temp locals
@@ -67,10 +66,6 @@ seq_buffer_s seq_buffer_1[NOS_NEOPIXELS];
 // Main task routine
 //==============================================================================
 //
-// 1. read push buttons and debounce
-// 2. read line sensors
-// 3. read analogue sensors
-// 3. update central data store
 
 void Task_write_neopixels(void *p) 
 {
@@ -79,21 +74,24 @@ BaseType_t  xWasDelayed;
 uint8_t     index;
 uint32_t    start_time, end_time;
 
-    uint offset = pio_add_program(NEOPIXEL_PIO_UNIT, &neopixel_program);
-    neopixel_program_init(NEOPIXEL_PIO_UNIT, 
-                        NEOPIXEL_STATE_MACHINE, 
-                        offset, 
-                        NEOPIXEL_DOUT_PIN, 
-                        NEOPIXEL_DATA_RATE,
-                        NEOPIXEL_BITS_PER_UNIT 
-                        );
+// 
+// Initialise PIO State Machine
+//
+    init_neopixel_sm();
+// 
+// Initialise PIO DMA subsystem
+//
+    neopixel_DMA_init(NEOPIXEL_PIO_UNIT, NEOPIXEL_STATE_MACHINE);
+
+    init_neopixel_buffer();
+
 //
 // Some test data
 //
-        put_pixel(urgb_u32(0x1f, 0, 0));       // Red
-        put_pixel(urgb_u32(0, 0x1f, 0));       // Green
-        put_pixel(urgb_u32(0, 0, 0x1f));       // Blue
-        put_pixel(urgb_u32(0x10, 0x10, 0x10)); // 
+        load_pixel(0, urgb_u32(0x1f, 0, 0));       // Red
+        load_pixel(1, urgb_u32(0, 0x1f, 0));       // Green
+        load_pixel(2, urgb_u32(0, 0, 0x1f));       // Blue
+        load_pixel(3, urgb_u32(0x10, 0x10, 0x10)); // 
 
 //==============================================================================
 // Task code
@@ -102,13 +100,13 @@ uint32_t    start_time, end_time;
     FOREVER {
         xWasDelayed = xTaskDelayUntil( &xLastWakeTime, TASK_NEOPIXELS_FREQUENCY_TICK_COUNT );
         start_time = time_us_32();
+//
+// DMA is re-triggered on each call tothe neopixel task.
+// Allows timed effects for lights
+//
+        trigger_neopixel_dma();
 
 // Process LED data
-
-        put_pixel(urgb_u32(0x1f, 0, 0));  // Red
-        put_pixel(urgb_u32(0, 0x1f, 0));
-        put_pixel(urgb_u32(0, 0, 0x1f));
-        put_pixel(urgb_u32(0x10, 0x10, 0x10));
 
         for (index = 0 ; index < NOS_NEOPIXEL_LEDS ; index++) {
             switch (neopixel_data[index].command) {
