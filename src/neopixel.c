@@ -118,7 +118,7 @@ void init_neopixel_DMA(PIO pio, uint32_t state_mach) {
  */
 void load_pixel(uint32_t pixel_no, uint32_t pixel_grb) {
 
-    neopixel_sys_buffer.cmd.data.neopixel_buffer[pixel_no] = pixel_grb;
+    neopixel_sys_buffer.cmd.data.neopixel_buffer[pixel_no] = (pixel_grb << 8);
 }
 
 // void put_pixel(uint32_t pixel_grb) {

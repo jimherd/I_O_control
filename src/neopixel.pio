@@ -16,6 +16,8 @@
 ; ONE  bit   = "1" for (T1 + T2), '0' for (T3)
 ;
 
+; Invert the following if invert circuit between pin out and 1st Neopixel
+
 .define DATA_HIGH 1
 .define DATA_LOW  0
 
@@ -42,7 +44,7 @@
 
 //    set y, 31        ; Level converter inverts so start with a reset, i.e.
 init_reset:          ; drive high (inverted to low) for a long time
-    set pins, 1 [30] 
+    set pins, DATA_LOW [30] 
     jmp y-- init_reset
 
 .wrap_target
@@ -52,18 +54,18 @@ bitloop:             ; bitloop outputs 24 bits for one LED (PIXEL)
     out x, 1
     jmp !x do_zero
 do_one:              ; Output a "1" to LED (inverted for level converter)
-    set pins, 0 [4]
+    set pins, DATA_HIGH [4]
     jmp cont
 do_zero:             ; Output a "0" to LED (inverted for level converter)
-    set pins, 0 [2] 
-    set pins, 1 [2]
+    set pins, DATA_HIGH [2] 
+    set pins, DATA_LOW  [2]
 cont:
-    set pins, 1
+    set pins, DATA_LOW
     jmp y-- bitloop
 
     set y, 20        ; NUM_PIXELS*24 bits complete; do a "reset" of just over (y+1)*4 uSec
 do_reset:
-    set pins, 1 [30] ; "0" but inverted for level converter
+    set pins, DATA_LOW [30] ; "0" but inverted for level converter
     jmp y-- do_reset
 .wrap
 
