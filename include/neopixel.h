@@ -26,7 +26,7 @@ void clear_all_neopixels(void);
 
 void init_neopixel_buffer(void);
 void init_neopixel_sm(void);
-void neopixel_DMA_init(PIO pio, uint32_t state_mach);
+void init_neopixel_DMA(PIO pio, uint32_t state_mach);
 void trigger_neopixel_dma(void);
 
 #endif

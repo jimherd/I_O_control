@@ -16,13 +16,6 @@
 ; ONE  bit   = "1" for (T1 + T2), '0' for (T3)
 ;
 
-.program neopixel
-
-; Use "1" bit of 5-bit delay to drive an output pin 
-; side-step bits NEED to be set at each instruction (e.g. side 0, side 1)
-;
-.side_set 1
-
 .define DATA_HIGH 1
 .define DATA_LOW  0
 
@@ -30,56 +23,11 @@
 .define public T2 5
 .define public T3 3
 
-.lang_opt python sideset_init = pico.PIO.OUT_HIGH
-.lang_opt python out_init     = pico.PIO.OUT_HIGH
-.lang_opt python out_shiftdir = 1
+;.lang_opt python sideset_init = pico.PIO.OUT_HIGH
+;.lang_opt python out_init     = pico.PIO.OUT_HIGH
+;.lang_opt python out_shiftdir = 1
 
 ; *********************
-; ** code  : 4 instructions
-.wrap_target
-
-bitloop:
-    out x, 1       side 0 [T3 - 1]   ; shift bit 0 of OSR -> x-reg. Set output low.
-    jmp !x do_zero side 1 [T1 - 1]   ; Branch on value of x-reg (0 or 1). Set output high.
-do_one:                            ; --> here if bit was a 1
-    jmp bitloop    side DATA_HIGH [T2 - 1]   ; Continue with output high for long pulse Then branch to start.
-do_zero:                           ; --> here if bit was a 0
-    nop            side DATA_LOW  [T2 - 1]   ; Set output low for a short pulse.
-                                     ; nop is really a synonym for instruction "mov y, y" 
-.wrap        ; ensures next instruction is after .wrap_target directive (no need for a jmp)
-
-;
-; bitloop:
-;     out x, 1            side 0 [T3 - 1]
-;     jmp !x send_zero    side 1 [T1 - 1]
-; send_one:
-;     jmp bitloop         side 1 [T2 - 1]
-; send_zero:
-;     nop                 side 0 [T2 - 1]
-;
-;.wrap
-;
-% c-sdk {
-#include "hardware/clocks.h"
-
-static inline void neopixel_program_init(PIO pio, uint sm, uint offset, uint pin, float freq, uint bits) {
-
-    pio_gpio_init(pio, pin);
-    pio_sm_set_consecutive_pindirs(pio, sm, pin, 1, true);
-
-    pio_sm_config c = neopixel_program_get_default_config(offset);
-    sm_config_set_sideset_pins(&c, pin);
-    sm_config_set_out_shift(&c, false, true, bits);
-    sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
-
-    int cycles_per_bit = neopixel_T1 + neopixel_T2 + neopixel_T3;
-    float div = clock_get_hz(clk_sys) / (freq * cycles_per_bit);
-    sm_config_set_clkdiv(&c, div);
-
-    pio_sm_init(pio, sm, offset, &c);
-    pio_sm_set_enabled(pio, sm, true);
-}
-%}
 
 ;===============================================================
 ; Version of code (Thanks to GrugHuhler)
@@ -90,7 +38,7 @@ static inline void neopixel_program_init(PIO pio, uint sm, uint offset, uint pin
 
 ; SPDX-License-Identifier: BSD-3-Clause
 
-.program grug_ws2812b
+.program neopixel
 
 //    set y, 31        ; Level converter inverts so start with a reset, i.e.
 init_reset:          ; drive high (inverted to low) for a long time
@@ -120,9 +68,12 @@ do_reset:
 .wrap
 
 % c-sdk {
-static inline void grug_ws2812b_program_init(PIO pio, uint sm, uint offset, uint pin)
+
+#include "hardware/clocks.h"
+
+static inline void neopixel_program_init(PIO pio, uint sm, uint offset, uint pin, float freq, uint bits)
 {
-    pio_sm_config c = grug_ws2812b_program_get_default_config(offset);
+    pio_sm_config c = neopixel_program_get_default_config(offset);
 
     // Set pin to be part of set output group, i.e. set by set instruction
     sm_config_set_set_pins(&c, pin, 1);

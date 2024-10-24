@@ -288,14 +288,12 @@ struct sm_profile_s {      // single stepper motor seqence
 //==============================================================================
 // Neopixel subsystem
 
-#define     NOS_NEOPIXEL_LEDS 4
+#define     NOS_NEOPIXELS           4
 
 #define     NEOPIXEL_DOUT_PIN       GP26
 
 #define     NEOPIXEL_DATA_RATE      800000      // 800KHz
 #define     NEOPIXEL_BITS_PER_UNIT  24
-
-#define     NOS_NEOPIXELS           4
 
 typedef enum {N_LED_A, N_LED_B, N_LED_C, N_LED_D} NEOPIXEL_te;
 
@@ -357,7 +355,7 @@ struct neopixel_data_s {
 #define     TASK_SCAN_TOUCH_BUTTONS_FREQUENCY            10  // Hz
 #define     TASK_SCAN_TOUCH_BUTTONS_FREQUENCY_TICK_COUNT      ((1000/TASK_SCAN_TOUCH_BUTTONS_FREQUENCY) * portTICK_PERIOD_MS)
 
-#define     TASK_NEOPIXELS_FREQUENCY                    5  // Hz
+#define     TASK_NEOPIXELS_FREQUENCY                    10  // Hz
 #define     TASK_NEOPIXELS_TIME_UNIT                    (1000 / TASK_NEOPIXELS_FREQUENCY)
 #define     TASK_NEOPIXELS_FREQUENCY_TICK_COUNT         ((1000/TASK_NEOPIXELS_FREQUENCY) * portTICK_PERIOD_MS)
 

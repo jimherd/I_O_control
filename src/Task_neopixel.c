@@ -30,7 +30,6 @@
 // Constant definitions
 //==============================================================================
 
-
 const struct colour {
     uint8_t   red;
     uint8_t   green;
@@ -47,21 +46,6 @@ const struct colour {
         {0, 0 , 0},       // Black
 };
 
-typedef struct seq_buffer_s {
-    colours_et   colour;
-    uint8_t     intensity;   // 0->100%
-} seq_buffer_s;
-
-//==============================================================================
-// Local globals
-//==============================================================================
-
-seq_buffer_s seq_buffer_1[NOS_NEOPIXELS];
-
-//==============================================================================
-// temp locals
-//==============================================================================
-
 //==============================================================================
 // Main task routine
 //==============================================================================
@@ -75,22 +59,17 @@ uint8_t     index;
 uint32_t    start_time, end_time;
 
 // 
-// Initialise PIO State Machine
+// Initialise buffer info, state machine (sm), and DMA channel
 //
-    init_neopixel_sm();
-// 
-// Initialise PIO DMA subsystem
-//
-    neopixel_DMA_init(NEOPIXEL_PIO_UNIT, NEOPIXEL_STATE_MACHINE);
-
     init_neopixel_buffer();
-
+    init_neopixel_sm();
+    init_neopixel_DMA(NEOPIXEL_PIO_UNIT, NEOPIXEL_STATE_MACHINE);
 //
 // Some test data
 //
-        load_pixel(0, urgb_u32(0x1f, 0, 0));       // Red
-        load_pixel(1, urgb_u32(0, 0x1f, 0));       // Green
-        load_pixel(2, urgb_u32(0, 0, 0x1f));       // Blue
+        load_pixel(1, urgb_u32(0x1f, 0, 0));       // Red
+        load_pixel(2, urgb_u32(0, 0x1f, 0));       // Green
+        load_pixel(0, urgb_u32(0, 0, 0x1f));       // Blue
         load_pixel(3, urgb_u32(0x10, 0x10, 0x10)); // 
 
 //==============================================================================
@@ -101,14 +80,15 @@ uint32_t    start_time, end_time;
         xWasDelayed = xTaskDelayUntil( &xLastWakeTime, TASK_NEOPIXELS_FREQUENCY_TICK_COUNT );
         start_time = time_us_32();
 //
-// DMA is re-triggered on each call tothe neopixel task.
+// DMA is re-triggered on each call to the neopixel task.
 // Allows timed effects for lights
 //
         trigger_neopixel_dma();
+        vTaskDelay(5);   /* delay before modifying the neopixels buffer values */
 
 // Process LED data
 
-        for (index = 0 ; index < NOS_NEOPIXEL_LEDS ; index++) {
+        for (index = 0 ; index < NOS_NEOPIXELS ; index++) { 
             switch (neopixel_data[index].command) {
                 case N_CMD_ON:
                     neopixel_data[index].current_colour = neopixel_data[index].on_colour;

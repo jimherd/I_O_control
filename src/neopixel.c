@@ -88,12 +88,12 @@ void trigger_neopixel_dma(void) {
 }
 
 /**
- * @brief 
+ * @brief Configure DMA channel
  * 
  * @param pio 
  * @param state_mach 
  */
-void neopixel_DMA_init(PIO pio, uint32_t state_mach) {
+void init_neopixel_DMA(PIO pio, uint32_t state_mach) {
 
     dma_channel_config channel_config = dma_channel_get_default_config(NEOP_DMA_CHANNEL);
     channel_config_set_transfer_data_size(&channel_config, DMA_SIZE_32);
