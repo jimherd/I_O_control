@@ -30,21 +30,7 @@
 // Constant definitions
 //==============================================================================
 
-const struct colour {
-    uint8_t   red;
-    uint8_t   green;
-    uint8_t   blue;
-} rainbow_col[9] = {
-        {255, 0 , 0},     // Red
-        {255, 127, 0},    // Orange
-        {255, 255, 0},    // Yellow
-        {0, 255, 0},      // Green
-        {0, 0, 255},      // Blue
-        {75, 0, 130},     // Indigo
-        {148, 0, 211},    // Violet
-        {255, 255,255},   // White
-        {0, 0 , 0},       // Black
-};
+
 
 //==============================================================================
 // Main task routine
@@ -67,11 +53,10 @@ uint32_t    start_time, end_time;
 //
 // Some test data
 //
-        load_pixel(1, urgb_u32(0x1f, 0, 0));       // Red
-        load_pixel(2, urgb_u32(0, 0x1f, 0));       // Green
-        load_pixel(0, urgb_u32(0, 0, 0x1f));       // Blue
-        load_pixel(3, urgb_u32(0x10, 0x10, 0x10)); // 
+    set_neopixel_on(0, N_GREEN);
+ //   set_neopixel_on(1, N_BLUE);
 
+    set_neopixel_flash(1, N_GREEN, 20, N_RED, 10);
 //==============================================================================
 // Task code
 //==============================================================================
@@ -92,9 +77,11 @@ uint32_t    start_time, end_time;
             switch (neopixel_data[index].command) {
                 case N_CMD_ON:
                     neopixel_data[index].current_colour = neopixel_data[index].on_colour;
+                    set_pixel(index, neopixel_data[index].on_colour);
                     break;
                 case N_CMD_OFF:
                     neopixel_data[index].current_colour = neopixel_data[index].off_colour;
+                    set_pixel(index, neopixel_data[index].off_colour);
                     break;
                 case N_CMD_FLASH:
                     if (neopixel_data[index].state == N_FLASH_OFF) {
@@ -102,6 +89,7 @@ uint32_t    start_time, end_time;
                         if (neopixel_data[index].flash_off_counter <= 0) {
                             neopixel_data[index].state = N_FLASH_ON;
                             neopixel_data[index].current_colour = neopixel_data[index].on_colour;
+                            set_pixel(index, neopixel_data[index].on_colour);
                             neopixel_data[index].flash_on_counter = neopixel_data[index].flash_on_time;
                         }   
                     }else {  // must bw N_FLASH_ON state
@@ -109,6 +97,7 @@ uint32_t    start_time, end_time;
                         if (neopixel_data[index].flash_on_counter <= 0) {
                             neopixel_data[index].state = N_FLASH_OFF;
                             neopixel_data[index].current_colour = neopixel_data[index].off_colour;
+                            set_pixel(index, neopixel_data[index].off_colour);
                             neopixel_data[index].flash_off_counter = neopixel_data[index].flash_off_time;
                         }   
                     }

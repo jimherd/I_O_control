@@ -138,5 +138,24 @@ touch_button_data_ts   button_data[GEN4_uLCD_MAX_NOS_BUTTONS] = {
     {true, FORM2, GEN4_uLCD_OBJ_WINBUTTON, WINBUTTON2},
 };
 
+struct colour {
+    uint8_t   red;
+    uint8_t   green;
+    uint8_t   blue;
+    uint32_t  grb_value;
+} ;
+
+struct neopixel_colour_s rainbow_col[9] = {
+        {255, 0 , 0, 0x0000ff00},     // Red
+        {255, 127, 0},    // Orange
+        {255, 255, 0},    // Yellow
+        {0, 255, 0, 0x00ff0000},      // Green
+        {0, 0, 255, 0x000000ff},      // Blue
+        {75, 0, 130},     // Indigo
+        {148, 0, 211},    // Violet
+        {255, 255,255},   // White
+        {0, 0 , 0},       // Black
+};
+
 
 

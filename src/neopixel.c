@@ -73,7 +73,6 @@ void init_neopixel_sm(void) {
     );
 }
 
-
 /**
  * @brief Set buffer pointer in DMA channel and go
  * 
@@ -116,9 +115,9 @@ void init_neopixel_DMA(PIO pio, uint32_t state_mach) {
  * @param pixel_no      range 0->(NOS_NEOPIXELS)
  * @param pixel_grb     RGB value (adjusted to GRB) 
  */
-void load_pixel(uint32_t pixel_no, uint32_t pixel_grb) {
+inline void set_pixel(uint32_t pixel_no, colours_et col) {
 
-    neopixel_sys_buffer.cmd.data.neopixel_buffer[pixel_no] = (pixel_grb << 8);
+    neopixel_sys_buffer.cmd.data.neopixel_buffer[pixel_no] = rainbow_col[col].grb_value << 8;  ;
 }
 
 // void put_pixel(uint32_t pixel_grb) {
@@ -133,17 +132,17 @@ uint32_t urgb_u32(uint8_t r, uint8_t g, uint8_t b) {
 }
 
 void set_neopixel_on(uint8_t pixel_no, colours_et on_colour) {
-    xSemaphoreTake(semaphore_neopixel_data, portMAX_DELAY);
+    xSemaphoreTake(neopixel_data_MUTEX_access, portMAX_DELAY);
         neopixel_data[pixel_no].command = N_CMD_ON;
-        neopixel_data[pixel_no].current_colour = on_colour;
-    xSemaphoreGive(semaphore_neopixel_data);
+        neopixel_data[pixel_no].on_colour = on_colour;
+    xSemaphoreGive(neopixel_data_MUTEX_access);
 }
 
 void set_neopixel_off(uint8_t pixel_no, colours_et off_colour) {
-    xSemaphoreTake(semaphore_neopixel_data, portMAX_DELAY);
+    xSemaphoreTake(neopixel_data_MUTEX_access, portMAX_DELAY);
         neopixel_data[pixel_no].command = N_CMD_OFF;
-        neopixel_data[pixel_no].current_colour = off_colour;
-    xSemaphoreGive(semaphore_neopixel_data);
+        neopixel_data[pixel_no].off_colour = off_colour;
+    xSemaphoreGive(neopixel_data_MUTEX_access);
 }
 
 inline void clear_neopixel(uint8_t pixel_no) {
@@ -158,14 +157,14 @@ inline void clear_all_neopixels(void) {
 
 void set_neopixel_flash(uint8_t pixel_no, colours_et on_colour, uint32_t on_time, 
                         colours_et off_colour, uint32_t off_time) {
-    xSemaphoreTake(semaphore_neopixel_data, portMAX_DELAY);
+    xSemaphoreTake(neopixel_data_MUTEX_access, portMAX_DELAY);
         neopixel_data[pixel_no].on_colour = on_colour;
         neopixel_data[pixel_no].flash_on_time = on_time;
         neopixel_data[pixel_no].off_colour =off_colour;
         neopixel_data[pixel_no].flash_off_time = off_time;
         neopixel_data[pixel_no].command = N_CMD_FLASH;
         neopixel_data[pixel_no].state = N_FLASH_ON;
-    xSemaphoreGive(semaphore_neopixel_data);
+    xSemaphoreGive(neopixel_data_MUTEX_access);
 }
 
 // void set_state_neopixel(uint8_t pixel_no, NEOPIXEL_STATE_et state) 

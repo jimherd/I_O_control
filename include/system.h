@@ -288,7 +288,7 @@ struct sm_profile_s {      // single stepper motor seqence
 //==============================================================================
 // Neopixel subsystem
 
-#define     NOS_NEOPIXELS           4
+#define     NOS_NEOPIXELS           2
 
 #define     NEOPIXEL_DOUT_PIN       GP26
 
@@ -311,11 +311,11 @@ typedef enum  {N_CMD_ON, N_CMD_OFF, N_CMD_FLASH} NEOPIXEL_CMD_et;
 struct neopixel_data_s {
     NEOPIXEL_CMD_et      command;
     neopixel_state_te    state;
-    uint32_t             current_colour;
+    colours_et           current_colour;
     uint32_t             current_intensity;     
-    uint32_t             on_colour;         // 3 8-bit RGB values
+    colours_et           on_colour;         // 3 8-bit GRB values
     uint32_t             on_intensity;      // percentage
-    uint32_t             off_colour;        // 3 8-bit RGB values
+    colours_et           off_colour;        // 3 8-bit GRB values
     uint32_t             off_intensity;     // percentage
     uint8_t              flash_on_time;     // units of 100mS
     int32_t              flash_on_counter;
@@ -325,6 +325,13 @@ struct neopixel_data_s {
     int8_t               dim_percent_change;     // +/- % rate
     uint8_t              dim_rate;               // units og 200mS
 } ;
+
+struct neopixel_colour_s {
+    uint8_t   red;
+    uint8_t   green;
+    uint8_t   blue;
+    uint32_t  grb_value;
+};
 
 // struct neopixel_data_s {
 //     struct {

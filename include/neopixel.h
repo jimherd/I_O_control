@@ -14,7 +14,7 @@
 #include "system.h"
 
 // void put_pixel(uint32_t pixel_grb);
-void load_pixel(uint32_t pixel_no, uint32_t pixel_grb);
+void set_pixel(uint32_t pixel_no, colours_et col);
 uint32_t urgb_u32(uint8_t r, uint8_t g, uint8_t b);
 
 void set_neopixel_on(uint8_t pixel_no, colours_et on_colour);

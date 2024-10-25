@@ -52,7 +52,7 @@ QueueHandle_t       queue_free_buffers;
 EventGroupHandle_t  eventgroup_uart_IO;
 
 SemaphoreHandle_t   gen4_uLCD_MUTEX_access;
-SemaphoreHandle_t   semaphore_neopixel_data;
+SemaphoreHandle_t   neopixel_data_MUTEX_access;
 
 //==============================================================================
 // System initiation
@@ -162,6 +162,8 @@ int main()
     eventgroup_uart_IO = xEventGroupCreate (); 
 
     gen4_uLCD_MUTEX_access = xSemaphoreCreateMutex();
+    neopixel_data_MUTEX_access = xSemaphoreCreateMutex();
+
 
     vTaskStartScheduler();
 
