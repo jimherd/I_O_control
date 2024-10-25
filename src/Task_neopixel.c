@@ -53,8 +53,7 @@ uint32_t    start_time, end_time;
 //
 // Some test data
 //
-    set_neopixel_on(0, N_GREEN);
- //   set_neopixel_on(1, N_BLUE);
+    set_neopixel_on(0, N_BLUE);
 
     set_neopixel_flash(1, N_GREEN, 20, N_RED, 10);
 //==============================================================================

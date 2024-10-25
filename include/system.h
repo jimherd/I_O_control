@@ -330,7 +330,7 @@ struct neopixel_colour_s {
     uint8_t   red;
     uint8_t   green;
     uint8_t   blue;
-    uint32_t  grb_value;
+    uint32_t  GRB_value;
 };
 
 // struct neopixel_data_s {

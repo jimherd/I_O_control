@@ -142,19 +142,20 @@ struct colour {
     uint8_t   red;
     uint8_t   green;
     uint8_t   blue;
-    uint32_t  grb_value;
+    uint32_t  GRB_value; // specifically for Neopixel hardware
 } ;
 
 struct neopixel_colour_s rainbow_col[9] = {
-        {255, 0 , 0, 0x0000ff00},     // Red
-        {255, 127, 0},    // Orange
-        {255, 255, 0},    // Yellow
-        {0, 255, 0, 0x00ff0000},      // Green
-        {0, 0, 255, 0x000000ff},      // Blue
-        {75, 0, 130},     // Indigo
-        {148, 0, 211},    // Violet
-        {255, 255,255},   // White
-        {0, 0 , 0},       // Black
+    //    R    G    B
+        {255,   0 ,  0, 0x0000ff00},    // Red
+        {255, 127,   0, 0x007fff00},    // Orange
+        {255, 255,   0, 0x00ffff00},    // Yellow
+        {  0, 255,   0, 0x00ff0000},    // Green
+        {  0,   0, 255, 0x000000ff},    // Blue
+        { 75,   0, 130, 0x00004b82},    // Indigo
+        {148,   0, 211, 0x000094d3},    // Violet
+        {255, 255, 255, 0x00ffffff},    // White
+        {  0,   0 ,  0, 0x00000000},    // Black
 };
 
 

@@ -117,7 +117,7 @@ void init_neopixel_DMA(PIO pio, uint32_t state_mach) {
  */
 inline void set_pixel(uint32_t pixel_no, colours_et col) {
 
-    neopixel_sys_buffer.cmd.data.neopixel_buffer[pixel_no] = rainbow_col[col].grb_value << 8;  ;
+    neopixel_sys_buffer.cmd.data.neopixel_buffer[pixel_no] = rainbow_col[col].GRB_value << 8;  ;
 }
 
 // void put_pixel(uint32_t pixel_grb) {
