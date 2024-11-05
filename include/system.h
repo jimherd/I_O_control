@@ -229,9 +229,10 @@ typedef enum {CLOCKWISE = 0, ANTI_CLOCKWISE = 1} sm_direction;
 enum {CLOCKWISE_COUNT_VALUE = +1, ANTI_CLOCKWISE_COUNT_VALUE = -1};
 
 enum {OFF, ON};
-enum {ASSERTED_LOW, ASSERTED_HIGH};
+enum {ASSERTED_LOW=0, ASSERTED_HIGH=1};
 
 typedef enum {SM_REL_MOVE, SM_ABS_MOVE, SM_REL_MOVE_SYNC, SM_ABS_MOVE_SYNC, SM_CALIBRATE} stepper_commands_te;
+    #define NOS_STEPPER_CMDS        (SM_CALIBRATE + 1)
 typedef enum {SM_ACCEL, SM_COAST, SM_DECEL, SM_SKIP, SM_END , SM_DELAY} sm_command_type_et;
 
 // Stepper motor run state machine states
@@ -295,8 +296,6 @@ struct sm_profile_s {      // single stepper motor seqence
 #define     NEOPIXEL_DATA_RATE      800000      // 800KHz
 #define     NEOPIXEL_BITS_PER_UNIT  24
 
-typedef enum {N_LED_A, N_LED_B, N_LED_C, N_LED_D} NEOPIXEL_te;
-
 #define     NEOPIXEL_PIO_UNIT       pio0
 #define     NEOPIXEL_STATE_MACHINE  0
 
@@ -304,9 +303,13 @@ typedef enum {N_LED_A, N_LED_B, N_LED_C, N_LED_D} NEOPIXEL_te;
 
 typedef enum  {LED_NO_CHANGE, LED_OFF, LED_FLASH, LED_ON} neopixel_state_te;
 typedef enum  { UP, DOWN, NONE} change_mode_et;
-typedef enum  {N_RED, N_ORANGE, N_YELLOW, N_GREEN, N_BLUE, N_INDIGO, N_VIOLET, N_LED_WHITE, N_BLACK} colours_et;
+typedef enum  {N_WHITE, N_RED, N_ORANGE, N_YELLOW, N_GREEN, N_BLUE, N_INDIGO, N_VIOLET, N_BLACK} colours_et;
+    #define NOS_NEOPIXEL_COLOURS   (N_BLACK + 1)
 typedef enum  {N_OFF, N_ON, N_FLASH_OFF, N_FLASH_ON} NEOPIXEL_STATE_et;
 typedef enum  {N_CMD_ON, N_CMD_OFF, N_CMD_FLASH} NEOPIXEL_CMD_et;
+
+typedef enum {NP_SET_PIXEL_ON, NP_SET_PIXEL_OFF, NP_SET_PIXEL_FLASH, NP_BLANK_ALL} neopixel_commands_te;
+    #define NOS_SERVO_CMDS     (NP_BLANK_ALL + 1) 
 
 struct neopixel_data_s {
     NEOPIXEL_CMD_et      command;
@@ -389,30 +392,40 @@ struct neopixel_colour_s {
 //==============================================================================
 // Command string index values
 //
-// Common
+// Common command indices
 
 #define     PRIMARY_CMD_INDEX       0
 #define     PORT_INDEX              1
 
-// Stepper command
+// Stepper command indicies
 
 #define     STEP_MOTOR_CMD_INDEX        2
 #define     STEP_MOTOR_NO_INDEX         3
 #define     STEP_MOTOR_ANGLE_INDEX      4
 #define     STEP_MOTOR_PROFILE_INDEX    5
 
-// servo command
+// servo command indicies
 
 #define     SERVO_CMD_INDEX     2
 #define     SERVO_NUMBER_INDEX  3
 #define     SERVO_ANGLE_INDEX   4
 #define     SERVO_SPEED_INDEX   5
 
-// display command
+// display command indicies
 
 #define     DISPLAY_CMD_INDEX       2
 #define     DISPLAY_FORM_INDEX      3   // for SET_FORM command
 #define     DISPLAY_CONTRAST_INDEX  3   // for SET_CONTRAST command
+
+// neopixel command indicies
+
+#define     NEOPIXEL_CMD_INDEX                 2
+#define     NEOPIXEL_NUMBER_INDEX              3
+#define     NEOPIXEL_COLOUR_INDEX              4
+#define     NEOPIXEL_FLASH_ON_COLOUR_INDEX     4
+#define     NEOPIXEL_FLASH_ON_TIME_INDEX       5
+#define     NEOPIXEL_FLASH_OFF_COLOUR_INDEX    6
+#define     NEOPIXEL_FLASH_OFF_TIME_INDEX      7
 
 //==============================================================================
 // 
@@ -479,6 +492,7 @@ enum {
     TOKENIZER_PING,
     TOKENIZER_TDELAY,
     TOKENIZER_DISPLAY,
+    TOKENIZER_NEOPIXEL,
     TOKENIZER_ERROR,
 };
 

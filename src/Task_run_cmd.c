@@ -19,12 +19,13 @@
 #include "PCA9685.h"
 #include "tokenizer.h"
 #include  "Pico_IO.h"
+#include  "neopixel.h"
 
 //***************************************************************************
 // Function prototypes
 
-int32_t parse_command (void);
-int32_t convert_tokens(void);
+error_codes_te parse_command (void);
+error_codes_te convert_tokens(void);
 error_codes_te check_command(int32_t cmd_token);
 
 //***************************************************************************
@@ -268,6 +269,28 @@ uint32_t                current_form;
                 }
                 break;
 
+            case TOKENIZER_NEOPIXEL:
+                switch (int_parameters[DISPLAY_CMD_INDEX]) {
+                    case NP_SET_PIXEL_ON:
+                        set_neopixel_on(int_parameters[3], int_parameters[4]);
+                        break;
+                    case NP_SET_PIXEL_OFF:
+                        set_neopixel_on(int_parameters[3], N_BLACK);
+                        break;
+                    case NP_SET_PIXEL_FLASH:
+                        set_neopixel_flash(int_parameters[3], int_parameters[4], int_parameters[5],
+                                           int_parameters[6], int_parameters[7]);
+                        break;
+                    case NP_BLANK_ALL:
+                        for (int i = 0; i < NOS_NEOPIXELS; i++) {
+                            set_neopixel_on(int_parameters[3], N_BLACK);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                break;
+
             case TOKENIZER_TDELAY:
                 vTaskDelay(int_parameters[2]);
                 break;
@@ -291,7 +314,7 @@ uint32_t                current_form;
 // defines modes as scan progresses : U=undefined, I=integer, R=real, S=string
 //
 
-int32_t parse_command (void) 
+error_codes_te parse_command (void) 
 {
 int32_t     count, mode, status;
 uint8_t     character_type;
@@ -416,7 +439,7 @@ uint8_t     character_type;
 //***************************************************************************
 // convert_tokens : convert relevant tokens to numerical values
 //
-int32_t convert_tokens(void) 
+error_codes_te convert_tokens(void) 
 {
     if ((arg_type[0] != MODE_W) || (char_type[command[0]] != LETTER)) {
         return BAD_COMMAND;

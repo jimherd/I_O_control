@@ -46,6 +46,6 @@ extern struct token_list_s          commands[NOS_COMMANDS];
 extern struct display_cmd_reply_data_s    display_cmd_info[NOS_GEN4_uLCD_CMDS];
 extern touch_button_data_ts   button_data[GEN4_uLCD_MAX_NOS_BUTTONS];
 extern struct neopixel_data_s  neopixel_data[NOS_NEOPIXELS];
-extern struct neopixel_colour_s  rainbow_col[9];
+extern struct neopixel_colour_s  rainbow_col[NOS_NEOPIXEL_COLOURS];
 
 #endif  // __EXTERNS_H__

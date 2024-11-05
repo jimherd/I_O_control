@@ -27,6 +27,8 @@
 #include    "min_printf.h"
 #include    "gen4_uLCD.h"
 
+bool    display_OK;
+
 //==============================================================================
 // Task code
 //==============================================================================
@@ -36,25 +38,28 @@ void Task_display_control(void *p)
 error_codes_te   status;
 
     uart1_sys_init();
+    display_OK = true;
     status = gen4_uLCD_init();
     if (status != OK) {
-        for(;;) {
-            ;
-        }
+        display_OK = false;
     }
-    status = change_form(FORM1);  // change to form 1
-    if (status != OK) {
-        for(;;) {
-            ;
+    if (display_OK == true) {
+        status = change_form(FORM1);  // change to form 1
+        if (status != OK) {
+            display_OK = false;
         }
+        status = gen4_uLCD_WriteString(0, "New string");
     }
-    status = gen4_uLCD_WriteString(0, "New string");
-
+    
     FOREVER {
-        gen4_uLCD_WriteContrast(5);
-        vTaskDelay(2000);
-        gen4_uLCD_WriteContrast(12);
-        vTaskDelay(2000);
+        if (display_OK == true){
+            gen4_uLCD_WriteContrast(5);
+            vTaskDelay(2000);
+            gen4_uLCD_WriteContrast(12);
+            vTaskDelay(2000);
+        } else {
+            vTaskDelay(10000);
+        }
     }
 }
 

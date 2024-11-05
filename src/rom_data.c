@@ -44,7 +44,7 @@ const uint8_t char_type[256] = {
      OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,     OTHER,  OTHER,     OTHER,  OTHER,  OTHER,  // F0->FF
 };
 
-struct token_list_s commands[] = {
+const struct token_list_s commands[] = {
     {"servo",   TOKENIZER_SERVO},
     {"stepper", TOKENIZER_STEPPER},
     {"sync",    TOKENIZER_SYNC},
@@ -52,6 +52,7 @@ struct token_list_s commands[] = {
     {"get",     TOKENIZER_GET},
     {"ping",    TOKENIZER_PING},
     {"display", TOKENIZER_DISPLAY},
+    {"neopixel",TOKENIZER_NEOPIXEL},
     {"delay",   TOKENIZER_TDELAY},      // always last in list
 };
 
@@ -89,14 +90,15 @@ struct error_list_s errors[] = {
 
 struct command_limits_s    cmd_limits[NOS_COMMANDS] = {     
 // paramter        NOS_PAR     1        2       3          4         5
-    [0].p_limits = {{5, 6}, {0, 63}, {0, 8}, {0, 15}, {-90, +90}, {1, 1000}},   // servo
-    [1].p_limits = {{5, 6}, {0, 63}, {0, 4}, {0, 0}, {-333, +333}},             // stepper
-    [2].p_limits = {{2, 2}, {0, 63}, {0,0}},                                    // sync
-    [3].p_limits = {{0, 0}, {0,  0}, {0,0}},                                    // config
-    [4].p_limits = {{3, 3}, {0, 63}, {0,5}},                                    // info
-    [5].p_limits = {{3, 3}, {0, 63}, {-255, +255}},                             // ping,
-    [6].p_limits = {{3, 3}, {0, 63}, {0, 50000}},                               // delay
-    [7].p_limits = {{4, 5}, {0, 63}, {0, 9}, {0, 0}, {0, 0}},                   // display
+    [TOKENIZER_SERVO].p_limits    = {{5, 6}, {0, 63}, {0, 8}, {0, 15}, {-90, +90}, {1, 1000}},   // servo
+    [TOKENIZER_STEPPER].p_limits  = {{5, 6}, {0, 63}, {0, 4}, {0, 0}, {-333, +333}},             // stepper
+    [TOKENIZER_SYNC].p_limits     = {{2, 2}, {0, 63}, {0,0}},                                    // sync
+    [TOKENIZER_SET].p_limits      = {{0, 0}, {0,  0}, {0,0}},                                    // config
+    [TOKENIZER_GET].p_limits      = {{3, 3}, {0, 63}, {0,5}},                                    // info
+    [TOKENIZER_PING].p_limits     = {{3, 3}, {0, 63}, {-255, +255}},                             // ping,
+    [TOKENIZER_TDELAY].p_limits   = {{3, 3}, {0, 63}, {0, 50000}},                               // delay
+    [TOKENIZER_DISPLAY].p_limits  = {{4, 5}, {0, 63}, {0, 9}, {0, 0}, {0, 0}},                   // display
+    [TOKENIZER_NEOPIXEL].p_limits = {{4, 8}, {0, 63}, {0, 4}, {0, 4}, {N_WHITE, N_BLACK}, {0, 50}, {N_WHITE, N_BLACK}, {0, 50}},   // neopixel
 };
 
 //==============================================================================
@@ -145,16 +147,22 @@ struct colour {
     uint32_t  GRB_value; // specifically for Neopixel hardware
 } ;
 
-struct neopixel_colour_s rainbow_col[9] = {
+//==============================================================================
+// Neopixel rainbow colours. 
+// Must be in the same order as enumerated list 'colours_et'
+// The hex parameter is the GRB value required by the Neopixel hardware
+//     GRB =  ((G<<16) | ((R<<8) | (B))   - could be automated
+
+struct neopixel_colour_s rainbow_col[NOS_NEOPIXEL_COLOURS] = {
     //    R    G    B
-        {255,   0 ,  0, 0x0000ff00},    // Red
+        {255, 255, 255, 0x00ffffff},    // White
+        {255,   0 ,  0, 0x0000ff00},    // Red  
         {255, 127,   0, 0x007fff00},    // Orange
         {255, 255,   0, 0x00ffff00},    // Yellow
         {  0, 255,   0, 0x00ff0000},    // Green
         {  0,   0, 255, 0x000000ff},    // Blue
         { 75,   0, 130, 0x00004b82},    // Indigo
         {148,   0, 211, 0x000094d3},    // Violet
-        {255, 255, 255, 0x00ffffff},    // White
         {  0,   0 ,  0, 0x00000000},    // Black
 };
 
