@@ -54,8 +54,15 @@ uint32_t    start_time, end_time;
 // Some test data
 //
     set_neopixel_on(0, N_BLUE);
-
     set_neopixel_flash(1, N_GREEN, 20, N_RED, 10);
+    set_neopixel_on(2, N_RED);
+    set_neopixel_on(3, N_WHITE);
+    set_neopixel_on(4, N_BLACK);
+    set_neopixel_flash(5, N_ORANGE, 100, N_INDIGO, 100);
+    set_neopixel_flash(6, N_WHITE, 50, N_BLACK, 10);
+    set_neopixel_on(7, N_BLACK);
+    set_neopixel_on(8, N_BLACK);
+    set_neopixel_on(9, N_BLACK);
 //==============================================================================
 // Task code
 //==============================================================================
@@ -63,12 +70,6 @@ uint32_t    start_time, end_time;
     FOREVER {
         xWasDelayed = xTaskDelayUntil( &xLastWakeTime, TASK_NEOPIXELS_FREQUENCY_TICK_COUNT );
         start_time = time_us_32();
-//
-// DMA is re-triggered on each call to the neopixel task.
-// Allows timed effects for lights
-//
-        trigger_neopixel_dma();
-        vTaskDelay(5);   /* delay before modifying the neopixels buffer values */
 
 // Process LED data
 
@@ -105,6 +106,11 @@ uint32_t    start_time, end_time;
                     break;
             }
         }
+//
+// DMA is re-triggered on each call to the neopixel task.
+//
+        trigger_neopixel_dma();
+
         end_time = time_us_32();
         update_task_execution_time(TASK_WRITE_NEOPIXELS, start_time, end_time);
     }

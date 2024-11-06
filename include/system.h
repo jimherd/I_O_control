@@ -289,7 +289,7 @@ struct sm_profile_s {      // single stepper motor seqence
 //==============================================================================
 // Neopixel subsystem
 
-#define     NOS_NEOPIXELS           2
+#define     NOS_NEOPIXELS           10
 
 #define     NEOPIXEL_DOUT_PIN       GP26
 
