@@ -5,6 +5,7 @@ Add RP2040 Pico board to manage head hardware
 
 * Head servo motors
 * Neck stepper motor
+* Neopixel RGB LEDs
 
 ### New hardware
 
@@ -12,6 +13,7 @@ Add RP2040 Pico board to manage head hardware
     - 16 channel Adafruit PCA9685 board
 * Stepper motor control
     - TMC2208 stepper motor board
+* Neopixel channel
 
 ### Tools
 
@@ -30,4 +32,4 @@ Add RP2040 Pico board to manage head hardware
 * Hardware PicoProbe debug probe : CMSIS version
 
 
-Jim Herd March 2023
+Jim Herd November 2024

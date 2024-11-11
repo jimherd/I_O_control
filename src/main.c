@@ -150,7 +150,7 @@ int main()
                 "Neopixel_task",
                 configMINIMAL_STACK_SIZE,
                 NULL,
-                TASK_PRIORITYIDLE,
+                TASK_PRIORITYLOW,
                 &taskhndl_Task_write_neopixels
     );
 

@@ -101,10 +101,10 @@ typedef enum  {
 //==============================================================================
 // Serial comms port (UART)
 
+#define UART0_ID         uart0
 #define UART0_TX_PIN     GP0
 #define UART0_RX_PIN     GP1
 
-#define UART0_ID uart0
 #define UART0_BAUD_RATE 115200
 
 #define LINE_AVAILABLE  0   // bit in eventgroup_uart_IO
@@ -135,13 +135,13 @@ enum {UPPER_CASE, LOWER_CASE};
 //==============================================================================
 // Serial display port (UART) - 4D System display
 
-#define UART1_TX_PIN     GP4
-#define UART1_RX_PIN     GP5
+#define UART1_ID           uart1
+#define DISPLAY_RESET_PIN  GP3
+#define UART1_TX_PIN       GP4
+#define UART1_RX_PIN       GP5
 
-#define UART1_ID uart1
 #define UART1_BAUD_RATE   115200
 
-#define DISPLAY_RESET_PIN  GP3
 #define DISPLAY_WAIT_US    25
 
 #define UART_READ_TIME_OUT_uS  3000000  // 3 seconds
@@ -289,9 +289,9 @@ struct sm_profile_s {      // single stepper motor seqence
 //==============================================================================
 // Neopixel subsystem
 
-#define     NOS_NEOPIXELS           10
-
 #define     NEOPIXEL_DOUT_PIN       GP26
+
+#define     NOS_NEOPIXELS           10
 
 #define     NEOPIXEL_DATA_RATE      800000      // 800KHz
 #define     NEOPIXEL_BITS_PER_UNIT  24
