@@ -17,6 +17,7 @@
 #include "hardware/adc.h"
 #include "hardware/dma.h"
 #include "hardware/i2c.h"
+#include "hardware/clocks.h"
 
 #include  "Pico_IO.h"
 
@@ -25,6 +26,7 @@
 #include "queue.h"
 #include "semphr.h"
 #include "event_groups.h"
+
 
 //==============================================================================
 // Global data

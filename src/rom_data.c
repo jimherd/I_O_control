@@ -22,7 +22,7 @@
 // END       = '\n'
 // OTHER     = all other characters in the 256 extended ASCII set
 //
-// This is uded in the command string parser in "Task_run_cmd" 
+// This is used in the command string parser in "Task_run_cmd" 
 
 const uint8_t char_type[256] = {
     END    ,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER,  OTHER, SEPARATOR, END,     OTHER,  OTHER,     END,  OTHER,  OTHER,  // 00->0F

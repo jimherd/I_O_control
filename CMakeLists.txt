@@ -1,12 +1,12 @@
-# == DO NEVER EDIT THE NEXT LINES for Raspberry Pi Pico VS Code Extension to work ==
+# == DO NOT EDIT THE FOLLOWING LINES for the Raspberry Pi Pico VS Code Extension to work ==
 if(WIN32)
     set(USERHOME $ENV{USERPROFILE})
 else()
     set(USERHOME $ENV{HOME})
 endif()
-set(sdkVersion 2.0.0)
-set(toolchainVersion 13_2_Rel1)
-set(picotoolVersion 2.0.0)
+set(sdkVersion 2.1.1)
+set(toolchainVersion 14_2_Rel1)
+set(picotoolVersion 2.1.1)
 set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
 if (EXISTS ${picoVscode})
     include(${picoVscode})
@@ -23,6 +23,8 @@ include(CMakePrintHelpers)
 set (PROJECT_NAME "Pi_Robot_test")
 
 set(PICO_BOARD pico CACHE STRING "Board type")
+
+add_definitions(-DPICO_USE_FASTEST_SUPPORTED_CLOCK)
 
 # Set PICO_SDK_PATH to point to appropriate sdk direcory
     set(ENV{PICO_SDK_PATH} "${USERHOME}/.pico_sdk")
