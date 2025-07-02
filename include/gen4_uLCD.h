@@ -130,8 +130,38 @@ typedef enum {
 	GEN4_uLCD_OBJ_ILINEAR_INPUT
 } gen4_uLCD_Object_te;
 
-enum {WINBUTTON0, WINBUTTON1, WINBUTTON2, WINBUTTON3, WINBUTTON4, WINBUTTON5,  };
-enum {FORM0, FORM1, FORM2, FORM3, FORM4, FORM5, FORM6 };
+//
+// INDEX codes for objects on the Gen4 uLCD display
+//
+enum {
+	GEN4_uLCD_WINBUTTON0, 
+	GEN4_uLCD_WINBUTTON1, 
+	GEN4_uLCD_WINBUTTON2, 
+	GEN4_uLCD_WINBUTTON3, 
+	GEN4_uLCD_WINBUTTON4, 
+	GEN4_uLCD_WINBUTTON5,  
+};
+
+enum {
+	GEN4_uLCD_FORM0,  
+	GEN4_uLCD_FORM1, 
+	GEN4_uLCD_FORM2, 
+	GEN4_uLCD_FORM3, 	
+	GEN4_uLCD_FORM4, 
+	GEN4_uLCD_FORM5, 
+	GEN4_uLCD_FORM6, 
+};
+
+enum {
+	GEN4_uLCD_STRING0,
+	GEN4_uLCD_STRING1,
+	GEN4_uLCD_STRING2,
+	GEN4_uLCD_STRING3,
+	GEN4_uLCD_STRING4,	
+	GEN4_uLCD_STRING5,
+	GEN4_uLCD_STRING6,	
+	GEN4_uLCD_STRING7,
+};
 
 
 //==============================================================================

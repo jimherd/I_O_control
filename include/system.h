@@ -51,10 +51,8 @@
 //==============================================================================
 // CPU
 
-// #define     CPU_CLOCK_FREQUENCY         125000000   // 125MHz
-#define     CPU_CLOCK_FREQUENCY         200000000   // 200MHz
-
-
+//#define     CPU_CLOCK_FREQUENCY         125000000   // 125MHz
+   #define     CPU_CLOCK_FREQUENCY         200000000   // 200MHz
 
 //==============================================================================
 // Useful times

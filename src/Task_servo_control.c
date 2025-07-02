@@ -41,7 +41,7 @@ servo_states_te      RC_state;
     xLastWakeTime = xTaskGetTickCount ();
     FOREVER {
         xWasDelayed = xTaskDelayUntil( &xLastWakeTime, TASK_SERVO_CONTROL_FREQUENCY_TICK_COUNT );
-        START_PULSE;
+        //START_PULSE;
         start_time = time_us_32();
         sample_count++;
         for (uint32_t i = 0; i < NOS_SERVOS; i++) {
@@ -86,7 +86,7 @@ servo_states_te      RC_state;
 
         end_time = time_us_32();
         update_task_execution_time(TASK_SERVO_CONTROL, start_time, end_time);   
-        STOP_PULSE;
+        //STOP_PULSE;
     }
 }
 

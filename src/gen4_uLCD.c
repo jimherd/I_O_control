@@ -90,7 +90,7 @@ error_codes_te  gen4_uLCD_init(void)
 {
 error_codes_te status;
 
-//	reset_4D_display();
+	reset_4D_display();
 
 	gen4_uLCD_current_form = -1;
 	gen4_uLCD_detected = false;
