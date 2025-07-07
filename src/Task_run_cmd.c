@@ -249,7 +249,7 @@ uint32_t                current_form;
                     case GET_FORM:
                         break;
                     case SET_CONTRAST:
-                        // status = gen4_uLCD_WriteContrast(int_parameters[DISPLAY_CONTRAST_INDEX]);
+                        status = gen4_uLCD_WriteContrast(int_parameters[DISPLAY_CONTRAST_INDEX]);
                         break;
                     case READ_BUTTON:
                         current_form = get_active_form();
@@ -263,7 +263,7 @@ uint32_t                current_form;
                         break;
                     case WRITE_STRING:
                         current_form = get_active_form();
-                        //status = gen4_uLCD_WriteString(int_parameters[3], &command[arg_pt[4]]);
+                        status = gen4_uLCD_WriteString(int_parameters[3], &command[arg_pt[4]]);
                     default:
                         break;
                 }

@@ -61,7 +61,7 @@ uint32_t    start_time, end_time;
                 // if (button_data[i].form != current_form) {
                 //     continue;
                 // }
-                // status = gen4_uLCD_ReadObject(button_data[i].button_type, button_data[i].button_id, &result);
+                //status = gen4_uLCD_ReadObject(button_data[i].button_type, button_data[i].button_id, &result);
                 if (status == OK) {
                     button_data[i].button_value = result;
                     if( result == 1) {
