@@ -27,6 +27,8 @@
 #include "semphr.h"
 #include "event_groups.h"
 
+#include "test.h"
+
 
 //==============================================================================
 // Global data

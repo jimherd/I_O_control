@@ -6,6 +6,8 @@
  * 
  * 
  */
+#include	"system.h"
+
 #include	<stdio.h>
 #include	<stdint.h>
 #include    <string.h>
@@ -16,10 +18,17 @@
 #include	"FreeRTOS.h"
 #include    "timers.h"
 
+
 #include	"externs.h"
 #include	"gen4_uLCD.h"
 
-#include	"system.h"
+//#include  "test.h"
+
+//==============================================================================
+// Function prototypes
+//==============================================================================
+
+//error_codes_te   gen4_uLCD_init(void); 
 
 //==============================================================================
 // Global variables
@@ -29,6 +38,49 @@ gen4_uLCD_cmd_packet_ts    uLCD_cmd;
 gen4_uLCD_reply_packet_tu  uLCD_reply_data;
 bool 		gen4_uLCD_detected, gen4_uLCD_test_apply;
 int32_t		gen4_uLCD_current_form;
+
+form_data_ts    form[GEN4_uLCD_MAX_NOS_FORMS] = {
+    {   // form 0
+        .buttons = {
+            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON0, 0},
+            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON1, 0},
+        },
+        .switches = {
+        },
+        .strings = {
+            {true, "**********"},
+            {true, "Pi the robot"},
+        },
+    },
+    {   // form 1
+        .buttons = {
+            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON2, 100},
+            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON3, 100},
+            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON4, 100},
+        },
+        .switches = {
+            {true, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {true, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {true, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {true, GEN4_uLCD_OBJ_ISWITCHB, 0},
+        },
+        .strings = {},
+    },
+    {   // form 2
+        .buttons = {
+            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON5, 100},
+            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON6, 100},
+            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON7, 100},
+        },
+        .switches = {
+            {true, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {true, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {true, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {true, GEN4_uLCD_OBJ_ISWITCHB, 0},
+        },
+        .strings = {},
+    },
+};
 
 //==============================================================================
 // Display functions
@@ -78,6 +130,8 @@ void uart1_sys_init(void)
  */
 void reset_4D_display(void)
 {
+
+	START_PULSE; STOP_PULSE;
     gpio_put(DISPLAY_RESET_PIN, 0);
     gpio_set_dir(DISPLAY_RESET_PIN, GPIO_OUT);
     busy_wait_us(DISPLAY_WAIT_US);
@@ -86,7 +140,7 @@ void reset_4D_display(void)
 
 //==============================================================================
 
-error_codes_te  gen4_uLCD_init(void) 
+error_codes_te   gen4_uLCD_init(void) 
 {
 error_codes_te status;
 
@@ -183,7 +237,7 @@ error_codes_te status;
  * @param data 
  * @return error_codes_te 
  */
-error_codes_te  gen4_uLCD_WriteObject(uint16_t object, uint16_t index, uint16_t data) 
+error_codes_te   gen4_uLCD_WriteObject(uint16_t object, uint16_t index, uint16_t data) 
 {
 uint8_t  checksum, reply_byte;
 error_codes_te   status;
@@ -349,7 +403,7 @@ uint8_t RX_byte;
 	}
 }
 
-error_codes_te change_form(int32_t new_form) 
+error_codes_te  change_form(int32_t new_form) 
 {
 error_codes_te status;
 
@@ -374,34 +428,41 @@ int32_t  get_active_form(void) {
 }
 
 //==============================================================================
-/**
- * @brief Read state of button on the LCD display
- * 
- * @param object	Code of button type object (e.g. WINBUTTON)
- * @param index		Button index
- * @param result	Pointer to result (0 or 1)
- * @return			error code
- * 
- * @note
- 
- */
-error_codes_te read_LCD_button(uint32_t object, uint32_t index, uint32_t *result)
-{
-uint32_t button_result;
-error_codes_te status;
 
+// /*error_codes_te */ uint32_t    read_LCD_button(uint32_t object, uint32_t index, uint32_t *result)
+// {
+// uint32_t button_result, active_form;
+// error_codes_te status;
+
+// 	active_form = get_active_form();
+// 	if (active_form == 1) {
+// 		return GEN4_uLCD_BUTTON_FORM_INACTIVE;
+// 	} else {
+// 		return OK;
+// 	}
+// }
 // check if object is on the active form
-
+//	for (int i = 0; i < NOS_BUTTONS; i++) {
+        // if ((button_data[i].button_type == GEN4_uLCD_OBJ_WINBUTTON) 
+		// 	     || (button_data[i].button_type ==GEN4_uLCD_OBJ_ISWITCHB)) {
+		// 			continue;
+		// } else {
+		// 	return GEN4_uLCD_EXPECTED_BUTTON_OBJECT;
+		// }
+// 	}
+// 	return OK;
+// }
 
 // read value
-    status = gen4_uLCD_ReadObject(object, index, &button_result);
-	*result = button_result;
-	return status;
-}
+    // status = gen4_uLCD_ReadObject(object, index, &button_result);
+	// *result = button_result;
+// 	return; // status;
+// }
+
 //==============================================================================
 
-int32_t detect_LCD_press(uint32_t object, uint32_t index)
-{
-    
-}
+// int32_t detect_LCD_press(uint32_t object, uint32_t index)
+// {
+//     return OK;
+// }
 

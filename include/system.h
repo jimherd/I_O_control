@@ -16,6 +16,8 @@
 #include    "semphr.h"
 #include    "event_groups.h"
 
+//#include    "gen4_uLCD.h"
+
 //==============================================================================
 // Version number
 //==============================================================================
@@ -97,11 +99,18 @@ typedef enum  {
     GEN4_uLCD_WRITE_STRING_FAIL      = -128,
     GEN4_uLCD_WRITE_STRING_TIMEOUT   = -129,
     GEN4_uLCD_BUTTON_FORM_INACTIVE   = -130,
-    QUOTE_ERROR                      = -131,
+    GEN4_uLCD_EXPECTED_BUTTON_OBJECT = -131,
+    QUOTE_ERROR                      = -132
 } error_codes_te;
+
+typedef enum  {
+    SYS_NO_ERROR = 0,
+    SYS_ERROR = -1,
+} error_te;
 
 //==============================================================================
 // Serial comms port (UART)
+//==============================================================================
 
 #define UART0_ID         uart0
 #define UART0_TX_PIN     GP0
@@ -136,6 +145,7 @@ enum {UPPER_CASE, LOWER_CASE};
 
 //==============================================================================
 // Serial display port (UART) - 4D System display
+//==============================================================================
 
 #define UART1_ID           uart1
 #define DISPLAY_RESET_PIN  GP3
@@ -153,8 +163,176 @@ typedef enum {SET_FORM, GET_FORM, SET_CONTRAST, READ_BUTTON, WRITE_STRING} displ
 #define     NOS_FORMS       3
 #define     NOS_BUTTONS     3
 
+
+
+#define GEN4_uLCD_REPLY_SIZE        6
+
+#define MAX_GEN4_uLCD_EVENTS    	16    // MUST be a power of 2
+
+#define GEN4_uLCD_ACK               0x06
+#define GEN4_uLCD_NAK               0x15
+#define GEN4_uLCD_PING              0x80
+#define GEN4_uLCD_READY             0x81
+#define GEN4_uLCD_DISCONNECTED      0x82
+
+#define MAX_COMMAND_DATA_BYTES	80
+
+#define		NOS_GEN4_uLCD_CMDS  	8
+
+#define		GEN4_uLCD_NOS_PINGS		1   // to set display
+
+typedef enum {
+	GEN4_uLCD_READ_OBJ,
+	GEN4_uLCD_WRITE_OBJ,
+	GEN4_uLCD_WRITE_STR,
+	GEN4_uLCD_WRITE_STRU,
+	GEN4_uLCD_WRITE_CONTRAST,
+	GEN4_uLCD_REPORT_OBJ,
+	GEN4_uLCD_REPORT_EVENT = 7,
+} gen4_uLCD_Command_te;
+
+typedef enum {
+	GEN4_uLCD_OBJ_DIPSW,
+	GEN4_uLCD_OBJ_KNOB,
+	GEN4_uLCD_OBJ_ROCKERSW,
+	GEN4_uLCD_OBJ_ROTARYSW,
+	GEN4_uLCD_OBJ_SLIDER,
+	GEN4_uLCD_OBJ_TRACKBAR,
+	GEN4_uLCD_OBJ_WINBUTTON,
+	GEN4_uLCD_OBJ_ANGULAR_METER,
+	GEN4_uLCD_OBJ_COOL_GAUGE,
+	GEN4_uLCD_OBJ_CUSTOM_DIGITS,
+	GEN4_uLCD_OBJ_FORM,
+	GEN4_uLCD_OBJ_GAUGE,
+	GEN4_uLCD_OBJ_IMAGE,
+	GEN4_uLCD_OBJ_KEYBOARD,
+	GEN4_uLCD_OBJ_LED,
+	GEN4_uLCD_OBJ_LED_DIGITS,
+	GEN4_uLCD_OBJ_METER,
+	GEN4_uLCD_OBJ_STRINGS,
+	GEN4_uLCD_OBJ_THERMOMETER,
+	GEN4_uLCD_OBJ_USER_LED,
+	GEN4_uLCD_OBJ_VIDEO,
+	GEN4_uLCD_OBJ_STATIC_TEXT,
+	GEN4_uLCD_OBJ_SOUND,
+	GEN4_uLCD_OBJ_TIMER,
+	GEN4_uLCD_OBJ_SPECTRUM,
+	GEN4_uLCD_OBJ_SCOPE,
+	GEN4_uLCD_OBJ_TANK,
+	GEN4_uLCD_OBJ_USERIMAGES,
+	GEN4_uLCD_OBJ_PINOUTPUT,
+	GEN4_uLCD_OBJ_PININPUT,
+	GEN4_uLCD_OBJ_4DBUTTON,
+	GEN4_uLCD_OBJ_ANIBUTTON,
+	GEN4_uLCD_OBJ_COLORPICKER,
+	GEN4_uLCD_OBJ_USERBUTTON,
+	GEN4_uLCD_OBJ_MAGIC_RESERVED,
+	GEN4_uLCD_OBJ_SMARTGAUGE,
+	GEN4_uLCD_OBJ_SMARTSLIDER,
+	GEN4_uLCD_OBJ_SMARTKNOB,
+	GEN4_uLCD_OBJ_ILED_DIGITS_H,
+	GEN4_uLCD_OBJ_IANGULAR_METER,
+	GEN4_uLCD_OBJ_IGAUGE,
+	GEN4_uLCD_OBJ_ILABELB,
+	GEN4_uLCD_OBJ_IUSER_GAUGE,
+	GEN4_uLCD_OBJ_IMEDIA_GAUGE,
+	GEN4_uLCD_OBJ_IMEDIA_THERMOMETER,
+	GEN4_uLCD_OBJ_ILED,
+	GEN4_uLCD_OBJ_IMEDIA_LED,
+	GEN4_uLCD_OBJ_ILED_DIGITS_L,
+	GEN4_uLCD_OBJ_ILED_DIGITS,
+	GEN4_uLCD_OBJ_INEEDLE,
+	GEN4_uLCD_OBJ_IRULER,
+	GEN4_uLCD_OBJ_ILED_DIGIT,
+	GEN4_uLCD_OBJ_IBUTTOND,
+	GEN4_uLCD_OBJ_IBUTTONE,
+	GEN4_uLCD_OBJ_IMEDIA_BUTTON,
+	GEN4_uLCD_OBJ_ITOGGLE_INPUT,
+	GEN4_uLCD_OBJ_IDIAL,
+	GEN4_uLCD_OBJ_IMEDIA_ROTARY,
+	GEN4_uLCD_OBJ_IROTARY_INPUT,
+	GEN4_uLCD_OBJ_ISWITCH,
+	GEN4_uLCD_OBJ_ISWITCHB,
+	GEN4_uLCD_OBJ_ISLIDERE,
+	GEN4_uLCD_OBJ_IMEDIA_SLIDER,
+	GEN4_uLCD_OBJ_ISLIDERH,
+	GEN4_uLCD_OBJ_ISLIDERG,
+	GEN4_uLCD_OBJ_ISLIDERF,
+	GEN4_uLCD_OBJ_ISLIDERD,
+	GEN4_uLCD_OBJ_ISLIDERC,
+	GEN4_uLCD_OBJ_ILINEAR_INPUT
+} gen4_uLCD_Object_te;
+
+//
+// INDEX codes for objects on the Gen4 uLCD display
+//
+enum {
+	GEN4_uLCD_WINBUTTON0, 
+	GEN4_uLCD_WINBUTTON1, 
+	GEN4_uLCD_WINBUTTON2, 
+	GEN4_uLCD_WINBUTTON3, 
+	GEN4_uLCD_WINBUTTON4, 
+	GEN4_uLCD_WINBUTTON5,  
+	GEN4_uLCD_WINBUTTON6,  
+	GEN4_uLCD_WINBUTTON7,  
+};
+
+enum {
+	GEN4_uLCD_FORM0,  
+	GEN4_uLCD_FORM1, 
+	GEN4_uLCD_FORM2, 
+	GEN4_uLCD_FORM3, 	
+	GEN4_uLCD_FORM4, 
+	GEN4_uLCD_FORM5, 
+	GEN4_uLCD_FORM6, 
+};
+
+enum {
+	GEN4_uLCD_STRING0,
+	GEN4_uLCD_STRING1,
+	GEN4_uLCD_STRING2,
+	GEN4_uLCD_STRING3,
+	GEN4_uLCD_STRING4,	
+	GEN4_uLCD_STRING5,
+	GEN4_uLCD_STRING6,	
+	GEN4_uLCD_STRING7,
+};
+
+//==============================================================================
+// Structure to hold a command to be sent to the display
+//
+// Although each command is of a fixed length; the seven commands have
+// different lengths.  The last byte of the command is a checksum.
+// The string to be sent to the display starts at "data[0]".
+//
+typedef struct {
+	uint8_t		cmd_length;
+    uint8_t		data[MAX_COMMAND_DATA_BYTES];
+} gen4_uLCD_cmd_packet_ts;
+
+//==============================================================================
+// Structure to hold a reply from a READ_OBJ command
+
+typedef struct  {
+    uint8_t	    cmd;
+    uint8_t		object;
+    uint8_t		index;
+    uint8_t		data_msb;
+    uint8_t     data_lsb;
+	uint8_t		checksum;
+} gen4_uLCD_reply_packet_ts;
+
+// Structure to store replys returned from a display
+// The reply is either an ACK or NACK character, or a 6 byte data packet
+
+typedef union  {
+	gen4_uLCD_reply_packet_ts		reply;
+	uint8_t							packet[6];
+} gen4_uLCD_reply_packet_tu;
+
 //==============================================================================
 //I2C port
+//==============================================================================
 
 #define I2C_PORT    i2c0
 #define I2C_SDA     GP8
@@ -162,6 +340,7 @@ typedef enum {SET_FORM, GET_FORM, SET_CONTRAST, READ_BUTTON, WRITE_STRING} displ
 
 //==============================================================================
 // log and blink pins
+//==============================================================================
 
 #define LED_PIN     PICO_DEFAULT_LED_PIN
 #define LOG_PIN     GP2
@@ -169,6 +348,7 @@ typedef enum {SET_FORM, GET_FORM, SET_CONTRAST, READ_BUTTON, WRITE_STRING} displ
 
 //==============================================================================
 //servo motor interface (PCA9685A)
+//==============================================================================
 
 #define     PCA9685_address     0x40
 
@@ -214,6 +394,7 @@ struct servo_data_s {
 
 //==============================================================================
 //stepper motor interface (TMC2208)
+//==============================================================================
 
 #define     NOS_STEPPERS        1
 #define     MAX_ST_STEP_CMDS   16
@@ -290,6 +471,7 @@ struct sm_profile_s {      // single stepper motor seqence
 
 //==============================================================================
 // Neopixel subsystem
+//==============================================================================
 
 #define     NEOPIXEL_DOUT_PIN       GP26
 
@@ -359,6 +541,7 @@ struct neopixel_colour_s {
 
 //==============================================================================
 // Freertos
+//==============================================================================
 
 #define     TASK_SERVO_CONTROL_FREQUENCY                 10  // Hz
 #define     TASK_SERVO_CONTROL_FREQUENCY_TICK_COUNT      ((1000/TASK_SERVO_CONTROL_FREQUENCY) * portTICK_PERIOD_MS)
@@ -503,16 +686,38 @@ enum {
 //==============================================================================
 // Structure to hold button/form data
 
-#define     GEN4_uLCD_MAX_NOS_FORMS     8
+#define GEN4_uLCD_MAX_NOS_FORMS                 8
+#define GEN4_uLCD_MAX_BUTTONS_PER_FORM          8
+#define GEN4_uLCD_MAX_NOS_SWITCHES_PER_FORM     64
+#define GEN4_uLCD_MAX_NOS_STRINGS_PER_FORM      8
+#define GEN4_uLCD_MAX_STRING_CHARS              32  
+
 #define     GEN4_uLCD_MAX_NOS_BUTTONS   64
 
 typedef struct  {
     bool        enable;
-    int8_t      form;           // related "screen form"
-    uint8_t     button_type;
-    uint8_t     button_id;
+    uint8_t     object_type;
+    uint8_t     object_id;    // e.g. WINBUTTON0, WINBUTTON1, etc.
 	int8_t	    button_value;
     int32_t     time_high;      // High time in time sample units
 } touch_button_data_ts;
 
-#endif /* __SYSTEM_H__ */
+typedef struct  {
+    bool        enable;
+    uint8_t     object_type;
+    uint8_t     object_id;    // e.g. ISWITCHB0, ISWITCHB1, etc.
+	int8_t	    switch_value;
+} touch_switch_data_ts;
+
+typedef struct {
+    bool    enable;
+    char    string[GEN4_uLCD_MAX_STRING_CHARS + 1];  // +1 for null terminator
+} string_data_ts;
+
+typedef struct {
+    touch_button_data_ts    buttons[GEN4_uLCD_MAX_BUTTONS_PER_FORM];
+    touch_switch_data_ts    switches[GEN4_uLCD_MAX_NOS_SWITCHES_PER_FORM];
+    string_data_ts          strings[GEN4_uLCD_MAX_NOS_STRINGS_PER_FORM];
+} form_data_ts;
+
+#endif /* __SYSTEM_H__ */   

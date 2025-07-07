@@ -44,11 +44,11 @@ error_codes_te   status;
         display_OK = false;
     }
     if (display_OK == true) {
-        status = change_form(GEN4_uLCD_FORM1);  // change to form 1
+        // status = change_form(GEN4_uLCD_FORM1);  // change to form 1
         if (status != OK) {
             display_OK = false;
         }
-        status = gen4_uLCD_WriteString(0, "New string");
+        //status = gen4_uLCD_WriteString(0, "New string");
     }
     
     FOREVER {

@@ -249,21 +249,21 @@ uint32_t                current_form;
                     case GET_FORM:
                         break;
                     case SET_CONTRAST:
-                        status = gen4_uLCD_WriteContrast(int_parameters[DISPLAY_CONTRAST_INDEX]);
+                        // status = gen4_uLCD_WriteContrast(int_parameters[DISPLAY_CONTRAST_INDEX]);
                         break;
                     case READ_BUTTON:
                         current_form = get_active_form();
-                        if (button_data[int_parameters[3]].form == current_form) {
-                            status = OK;
-                        } else {
-                            status = GEN4_uLCD_BUTTON_FORM_INACTIVE;
-                        }
+                        // if (button_data[int_parameters[3]].form == current_form) {
+                        //     status = OK;
+                        // } else {
+                        //     status = GEN4_uLCD_BUTTON_FORM_INACTIVE;
+                        // }
                         print_string("%d %d %d\n", int_parameters[1], status, button_data[int_parameters[3]].button_value );
                         reply_done = true;
                         break;
                     case WRITE_STRING:
                         current_form = get_active_form();
-                        status = gen4_uLCD_WriteString(int_parameters[3], &command[arg_pt[4]]);
+                        //status = gen4_uLCD_WriteString(int_parameters[3], &command[arg_pt[4]]);
                     default:
                         break;
                 }
