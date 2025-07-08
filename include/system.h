@@ -103,11 +103,6 @@ typedef enum  {
     QUOTE_ERROR                      = -132
 } error_codes_te;
 
-typedef enum  {
-    SYS_NO_ERROR = 0,
-    SYS_ERROR = -1,
-} error_te;
-
 //==============================================================================
 // Serial comms port (UART)
 //==============================================================================
@@ -154,9 +149,7 @@ enum {UPPER_CASE, LOWER_CASE};
 
 #define UART1_BAUD_RATE   115200
 
-#define DISPLAY_WAIT_US    25
 
-#define UART_READ_TIME_OUT_uS  3000000  // 3 seconds
 
 typedef enum {SET_FORM, GET_FORM, SET_CONTRAST, READ_BUTTON, WRITE_STRING} display_commands_te;
 
@@ -165,19 +158,9 @@ typedef enum {SET_FORM, GET_FORM, SET_CONTRAST, READ_BUTTON, WRITE_STRING} displ
 
 
 
-#define GEN4_uLCD_REPLY_SIZE        6
-
 #define MAX_GEN4_uLCD_EVENTS    	16    // MUST be a power of 2
 
-#define GEN4_uLCD_ACK               0x06
-#define GEN4_uLCD_NAK               0x15
-#define GEN4_uLCD_PING              0x80
-#define GEN4_uLCD_READY             0x81
-#define GEN4_uLCD_DISCONNECTED      0x82
 
-#define MAX_COMMAND_DATA_BYTES	80
-
-#define		NOS_GEN4_uLCD_CMDS  	8
 
 #define		GEN4_uLCD_NOS_PINGS		1   // to set display
 
@@ -198,7 +181,7 @@ typedef enum {
 	GEN4_uLCD_OBJ_ROTARYSW,
 	GEN4_uLCD_OBJ_SLIDER,
 	GEN4_uLCD_OBJ_TRACKBAR,
-	GEN4_uLCD_OBJ_WINBUTTON,
+	GEN4_uLCD_OBJ_WINBUTTON,        // 6, (0x06)
 	GEN4_uLCD_OBJ_ANGULAR_METER,
 	GEN4_uLCD_OBJ_COOL_GAUGE,
 	GEN4_uLCD_OBJ_CUSTOM_DIGITS,
@@ -252,7 +235,7 @@ typedef enum {
 	GEN4_uLCD_OBJ_IMEDIA_ROTARY,
 	GEN4_uLCD_OBJ_IROTARY_INPUT,
 	GEN4_uLCD_OBJ_ISWITCH,
-	GEN4_uLCD_OBJ_ISWITCHB,
+	GEN4_uLCD_OBJ_ISWITCHB,         // 59,(0x3B)
 	GEN4_uLCD_OBJ_ISLIDERE,
 	GEN4_uLCD_OBJ_IMEDIA_SLIDER,
 	GEN4_uLCD_OBJ_ISLIDERH,
@@ -285,6 +268,7 @@ enum {
 	GEN4_uLCD_FORM4, 
 	GEN4_uLCD_FORM5, 
 	GEN4_uLCD_FORM6, 
+    GEN4_uLCD_FORM7,
 };
 
 enum {
@@ -297,38 +281,6 @@ enum {
 	GEN4_uLCD_STRING6,	
 	GEN4_uLCD_STRING7,
 };
-
-//==============================================================================
-// Structure to hold a command to be sent to the display
-//
-// Although each command is of a fixed length; the seven commands have
-// different lengths.  The last byte of the command is a checksum.
-// The string to be sent to the display starts at "data[0]".
-//
-typedef struct {
-	uint8_t		cmd_length;
-    uint8_t		data[MAX_COMMAND_DATA_BYTES];
-} gen4_uLCD_cmd_packet_ts;
-
-//==============================================================================
-// Structure to hold a reply from a READ_OBJ command
-
-typedef struct  {
-    uint8_t	    cmd;
-    uint8_t		object;
-    uint8_t		index;
-    uint8_t		data_msb;
-    uint8_t     data_lsb;
-	uint8_t		checksum;
-} gen4_uLCD_reply_packet_ts;
-
-// Structure to store replys returned from a display
-// The reply is either an ACK or NACK character, or a 6 byte data packet
-
-typedef union  {
-	gen4_uLCD_reply_packet_ts		reply;
-	uint8_t							packet[6];
-} gen4_uLCD_reply_packet_tu;
 
 //==============================================================================
 //I2C port
