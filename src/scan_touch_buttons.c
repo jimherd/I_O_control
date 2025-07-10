@@ -54,20 +54,21 @@ uint32_t    start_time, end_time;
         start_time = time_us_32();
         current_form = get_active_form();
         if ((current_form >= 0) && (current_form <= NOS_FORMS)) {
-            for (int i = 0; i < NOS_BUTTONS; i++) {
-                if (button_data[i].enable == false) {
-                    continue;
+
+            
+            for (int i = 0; i < nos_object[current_form].nos_winbutton; i++) {
+                if (form_data[current_form].buttons[i].state != OBJECT_ENABLED) {
+                    continue;   // on to next winbutton
                 }
-                // if (button_data[i].form != current_form) {
-                //     continue;
-                // }
-                //status = gen4_uLCD_ReadObject(button_data[i].button_type, button_data[i].button_id, &result);
+                status = gen4_uLCD_ReadObject(form_data[current_form].buttons[i].object_type, 
+                                              form_data[current_form].buttons[i].global_object_id, 
+                                              &result);
                 if (status == OK) {
-                    button_data[i].button_value = result;
+                    form_data[current_form].buttons[i].button_value = result;
                     if( result == 1) {
-                        button_data[i].time_high++;
+                        form_data[current_form].buttons[i].time_high++;
                     } else {
-                        button_data[i].time_high = 0;
+                        form_data[current_form].buttons[i].time_high = 0;
                     }
                 }
             }
@@ -75,7 +76,8 @@ uint32_t    start_time, end_time;
             // error
         }
         end_time = time_us_32();
-        update_task_execution_time(TASK_SCAN_TOUCH_BUTTONS, start_time, end_time);   
+        update_task_execution_time(TASK_SCAN_TOUCH_BUTTONS, start_time, end_time);  
+        vTaskDelay(TASK_SCAN_TOUCH_BUTTONS_FREQUENCY_TICK_COUNT); 
     }
 }
 

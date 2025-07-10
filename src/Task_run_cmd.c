@@ -258,7 +258,7 @@ uint32_t                current_form;
                         // } else {
                         //     status = GEN4_uLCD_BUTTON_FORM_INACTIVE;
                         // }
-                        print_string("%d %d %d\n", int_parameters[1], status, button_data[int_parameters[3]].button_value );
+                        //print_string("%d %d %d\n", int_parameters[1], status, button_data[int_parameters[3]].button_value );
                         reply_done = true;
                         break;
                     case WRITE_STRING:

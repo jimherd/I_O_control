@@ -44,8 +44,10 @@ extern const uint8_t                char_type[256];
 extern struct servo_data_s          servo_data[NOS_SERVOS];
 extern struct token_list_s          commands[NOS_COMMANDS];
 extern struct display_cmd_reply_data_s    display_cmd_info[NOS_GEN4_uLCD_CMDS];
-extern touch_button_data_ts   button_data[GEN4_uLCD_MAX_NOS_BUTTONS];
+//extern touch_button_data_ts   button_data[GEN4_uLCD_MAX_NOS_BUTTONS];
 extern struct neopixel_data_s  neopixel_data[NOS_NEOPIXELS];
 extern struct neopixel_colour_s  rainbow_col[NOS_NEOPIXEL_COLOURS];
+extern form_data_ts    form_data[GEN4_uLCD_MAX_NOS_FORMS];
+extern nos_objects_per_form_te		nos_object[NOS_FORMS];
 
 #endif  // __EXTERNS_H__

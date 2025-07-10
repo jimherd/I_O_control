@@ -100,7 +100,8 @@ typedef enum  {
     GEN4_uLCD_WRITE_STRING_TIMEOUT   = -129,
     GEN4_uLCD_BUTTON_FORM_INACTIVE   = -130,
     GEN4_uLCD_EXPECTED_BUTTON_OBJECT = -131,
-    QUOTE_ERROR                      = -132
+    GEN4_uLCD_BUTTON_OBJECT_NOT_USED = -132,
+    QUOTE_ERROR                      = -133,
 } error_codes_te;
 
 //==============================================================================
@@ -506,6 +507,8 @@ struct neopixel_colour_s {
 #define     TASK_NEOPIXELS_TIME_UNIT                    (1000 / TASK_NEOPIXELS_FREQUENCY)
 #define     TASK_NEOPIXELS_FREQUENCY_TICK_COUNT         ((1000/TASK_NEOPIXELS_FREQUENCY) * portTICK_PERIOD_MS)
 
+
+
 //==============================================================================
 // Set of 8 priority levels (set 8 in FreeRTOSconfig.h)
 //==============================================================================
@@ -638,38 +641,38 @@ enum {
 //==============================================================================
 // Structure to hold button/form data
 
-#define GEN4_uLCD_MAX_NOS_FORMS                 8
-#define GEN4_uLCD_MAX_BUTTONS_PER_FORM          8
-#define GEN4_uLCD_MAX_NOS_SWITCHES_PER_FORM     64
-#define GEN4_uLCD_MAX_NOS_STRINGS_PER_FORM      8
-#define GEN4_uLCD_MAX_STRING_CHARS              32  
+// #define GEN4_uLCD_MAX_NOS_FORMS                 8
+// #define GEN4_uLCD_MAX_BUTTONS_PER_FORM          8
+// #define GEN4_uLCD_MAX_NOS_SWITCHES_PER_FORM     64
+// #define GEN4_uLCD_MAX_NOS_STRINGS_PER_FORM      8
+// #define GEN4_uLCD_MAX_STRING_CHARS              32  
 
-#define     GEN4_uLCD_MAX_NOS_BUTTONS   64
+// #define     GEN4_uLCD_MAX_NOS_BUTTONS   64
 
-typedef struct  {
-    bool        enable;
-    uint8_t     object_type;
-    uint8_t     object_id;    // e.g. WINBUTTON0, WINBUTTON1, etc.
-	int8_t	    button_value;
-    int32_t     time_high;      // High time in time sample units
-} touch_button_data_ts;
+// typedef struct  {
+//     bool        enable;
+//     uint8_t     object_type;
+//     uint8_t     object_id;    // e.g. WINBUTTON0, WINBUTTON1, etc.
+// 	int8_t	    button_value;
+//     int32_t     time_high;      // High time in time sample units
+// } touch_button_data_ts;
 
-typedef struct  {
-    bool        enable;
-    uint8_t     object_type;
-    uint8_t     object_id;    // e.g. ISWITCHB0, ISWITCHB1, etc.
-	int8_t	    switch_value;
-} touch_switch_data_ts;
+// typedef struct  {
+//     object_state_te        enable;
+//     uint8_t     object_type;
+//     uint8_t     object_id;    // e.g. ISWITCHB0, ISWITCHB1, etc.
+// 	int8_t	    switch_value;
+// } touch_switch_data_ts;
 
-typedef struct {
-    bool    enable;
-    char    string[GEN4_uLCD_MAX_STRING_CHARS + 1];  // +1 for null terminator
-} string_data_ts;
+// typedef struct {
+//     object_state_te    enable;
+//     char    string[GEN4_uLCD_MAX_STRING_CHARS + 1];  // +1 for null terminator
+// } string_data_ts;
 
-typedef struct {
-    touch_button_data_ts    buttons[GEN4_uLCD_MAX_BUTTONS_PER_FORM];
-    touch_switch_data_ts    switches[GEN4_uLCD_MAX_NOS_SWITCHES_PER_FORM];
-    string_data_ts          strings[GEN4_uLCD_MAX_NOS_STRINGS_PER_FORM];
-} form_data_ts;
+// typedef struct {
+//     touch_button_data_ts    buttons[GEN4_uLCD_MAX_BUTTONS_PER_FORM];
+//     touch_switch_data_ts    switches[GEN4_uLCD_MAX_NOS_SWITCHES_PER_FORM];
+//     string_data_ts          strings[GEN4_uLCD_MAX_NOS_STRINGS_PER_FORM];
+// } form_data_ts;
 
 #endif /* __SYSTEM_H__ */   

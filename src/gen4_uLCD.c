@@ -38,7 +38,6 @@
 #include	"externs.h"
 #include	"gen4_uLCD.h"
 
-//#include  "test.h"
 
 //==============================================================================
 // Global variables
@@ -49,30 +48,30 @@ gen4_uLCD_reply_packet_tu  uLCD_reply_data;
 bool 		gen4_uLCD_detected, gen4_uLCD_test_apply;
 int32_t		gen4_uLCD_current_form;
 
-form_data_ts    form[GEN4_uLCD_MAX_NOS_FORMS] = {
+form_data_ts    form_data[GEN4_uLCD_MAX_NOS_FORMS] = {
     {   // form 0
         .buttons = {
-            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON0, 0},
-            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON1, 0},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON0, 0},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON1, 0},
         },
         .switches = {
         },
         .strings = {
-            {true, "**********"},
-            {true, "Pi the robot"},
+            {OBJECT_ENABLED, "**********"},
+            {OBJECT_ENABLED, "Pi the robot"},
         },
     },
     {   // form 1
         .buttons = {
-            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON2, 100},
-            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON3, 100},
-            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON4, 100},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON2, 100},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON3, 100},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON4, 100},
         },
         .switches = {
-            {true, GEN4_uLCD_OBJ_ISWITCHB, 0},
-            {true, GEN4_uLCD_OBJ_ISWITCHB, 0},
-            {true, GEN4_uLCD_OBJ_ISWITCHB, 0},
-            {true, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
         },
         .strings = {},
     },
@@ -91,6 +90,8 @@ form_data_ts    form[GEN4_uLCD_MAX_NOS_FORMS] = {
         .strings = {},
     },
 };
+
+nos_objects_per_form_te		nos_object[NOS_FORMS] = { 0 };  // set to zero
 
 //==============================================================================
 // Display functions
@@ -153,11 +154,40 @@ void reset_4D_display(void)
 error_codes_te   gen4_uLCD_init(void) 
 {
 error_codes_te status;
+uint32_t       count, i, j;
 
 	reset_4D_display();
 
 	gen4_uLCD_current_form = -1;
 	gen4_uLCD_detected = false;
+//
+// Precalculate number of each of the folloeing types per form
+//     WINBUTTON, ISWITCHB, and STRINGS
+//
+
+	for (i = 0; i < NOS_FORMS; i++ ) {
+		count = 0;
+		for (j = 0; j < GEN4_uLCD_MAX_BUTTONS_PER_FORM; j++) {
+			if (form_data[i].buttons[j].state != OBJECT_UNUSED) {
+				count++;
+			}
+		}
+		nos_object[i].nos_winbutton = count;
+		count = 0;
+		for (j = 0; j < GEN4_uLCD_MAX_BUTTONS_PER_FORM; j++) {
+			if (form_data[i].switches[j].state != OBJECT_UNUSED) {
+				count++;
+			}
+		}
+		nos_object[i].nos_strings = count;
+		count = 0;
+		for (j = 0; j < GEN4_uLCD_MAX_BUTTONS_PER_FORM; j++) {
+			if (form_data[i].strings[j].state != OBJECT_UNUSED) {
+				count++;
+			}
+		}
+		nos_object[i].nos_strings = count;
+	}
 //
 // Use some WriteContrast command as ping. 
 // Disable display check this one time.
@@ -247,7 +277,7 @@ error_codes_te status;
  * @param data 
  * @return error_codes_te 
  */
-error_codes_te   gen4_uLCD_WriteObject(int32_t form, uint16_t object, uint16_t global_index, uint16_t data) 
+error_codes_te   gen4_uLCD_WriteObject(uint16_t object, uint16_t global_index, uint16_t data) 
 {
 uint8_t  checksum, reply_byte;
 error_codes_te   status;
@@ -296,7 +326,7 @@ error_codes_te   status;
 
 //==============================================================================
 /**
- * @brief  Execute WriteObject command (command 0x04)
+ * @brief  Execute WriteContrast command (command 0x04)
  * 
  * @param value 
  * @return error_codes_te 
@@ -349,7 +379,7 @@ error_codes_te   status;
  * @return error_codes_te 
  */
 
-error_codes_te    gen4_uLCD_WriteString(int32_t form, uint16_t global_index, uint8_t *text)
+error_codes_te    gen4_uLCD_WriteString(uint16_t local_index, uint8_t *text)
 {
 uint8_t   checksum, reply_byte, text_length;
 error_codes_te   status;
@@ -361,7 +391,7 @@ error_codes_te   status;
 	}
 	xSemaphoreTake(gen4_uLCD_MUTEX_access, portMAX_DELAY);
 	uLCD_cmd.data[0] = GEN4_uLCD_WRITE_STR;
-	uLCD_cmd.data[1] = global_index;
+	uLCD_cmd.data[1] = local_index;
 	text_length = strlen(text);   // does not include terminating '\0' character
 	if (text_length > MAX_GEN4_uLCD_WRITE_STR_SIZE) {
 		xSemaphoreGive(gen4_uLCD_MUTEX_access);
@@ -418,7 +448,7 @@ error_codes_te  change_form(int32_t new_form)
 error_codes_te status;
 
 	if ((new_form > -1) && (new_form < NOS_FORMS)) {
-		status = gen4_uLCD_WriteObject(0, GEN4_uLCD_OBJ_FORM, new_form, 0);
+		status = gen4_uLCD_WriteObject(GEN4_uLCD_OBJ_FORM, new_form, 0);
         if (status == OK) {
             gen4_uLCD_current_form = new_form;
         }
@@ -438,10 +468,18 @@ inline  int32_t get_active_form(void) {
 }
 
 //==============================================================================
+// check that object is an enabled and of the correct type in the current form
+//
+error_codes_te    check_uLCD_parameters(int32_t form, uint32_t object, uint32_t local_index)
+{
+	return OK;
+}
+
+//==============================================================================
 
 error_codes_te    read_uLCD_winbutton(int32_t form, uint32_t object, uint32_t local_index, uint32_t *result)
 {
-uint32_t button_result, active_form;
+uint32_t button_result, active_form, index;
 error_codes_te status;
 
 	active_form = get_active_form();
@@ -451,15 +489,12 @@ error_codes_te status;
 		return OK;
 	}
 // check if object is on the active form
-	for (int i = 0; i < NOS_BUTTONS; i++) {
-        if ((button_data[i].button_type == GEN4_uLCD_OBJ_WINBUTTON) 
-			     || (button_data[i].button_type ==GEN4_uLCD_OBJ_ISWITCHB)) {
-					continue;
-		} else {
-			return GEN4_uLCD_EXPECTED_BUTTON_OBJECT;
-		}
+	if (form_data[form].buttons[local_index].state == OBJECT_UNUSED) {
+		return GEN4_uLCD_BUTTON_OBJECT_NOT_USED;
 	}
+	
 // read value
+	index = form_data[form].buttons[local_index].global_object_id;
     status = gen4_uLCD_ReadObject(object, index, &button_result);
 	*result = button_result;
 	return status;

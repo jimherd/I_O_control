@@ -24,6 +24,20 @@
 #define GEN4_uLCD_READY             0x81
 #define GEN4_uLCD_DISCONNECTED      0x82
 
+#define GEN4_uLCD_MAX_NOS_FORMS                 8
+#define GEN4_uLCD_MAX_BUTTONS_PER_FORM          8
+#define GEN4_uLCD_MAX_NOS_SWITCHES_PER_FORM     64
+#define GEN4_uLCD_MAX_NOS_STRINGS_PER_FORM      8
+#define GEN4_uLCD_MAX_STRING_CHARS              32  
+
+#define     GEN4_uLCD_MAX_NOS_BUTTONS   64
+
+typedef enum {
+    OBJECT_UNUSED,
+    OBJECT_ENABLED,
+    OBJECT_DISABLED,
+}object_state_te;
+
 //==============================================================================
 // Definition of structures relevant to low level access to LCD display
 //==============================================================================
@@ -70,18 +84,63 @@ enum {
 };
 
 //==============================================================================
+// Set of structures to hold details of the objects on the Gen4 LCD touch
+// screen. "form_data_te" aggregates the data for all
+
+typedef struct  {   // for WINBUTTON objects
+    object_state_te state;
+    uint8_t         object_type;
+    uint8_t         global_object_id;    // e.g. WINBUTTON0, WINBUTTON1, etc.
+	int8_t	        button_value;
+    int32_t         time_high;      // High time in time sample units
+} touch_button_data_ts;
+
+typedef struct  {   // for ISWITCHB objects
+    object_state_te state;
+    uint8_t         object_type;
+    uint8_t         object_id;    // e.g. ISWITCHB0, ISWITCHB1, etc.
+	int8_t	        switch_value;
+} touch_switch_data_ts;
+
+typedef struct {    // for STRINGS objects
+    object_state_te    state;
+    char    string[GEN4_uLCD_MAX_STRING_CHARS + 1];  // +1 for null terminator
+} string_data_ts;
+
+typedef struct {
+    touch_button_data_ts    buttons[GEN4_uLCD_MAX_BUTTONS_PER_FORM];
+    touch_switch_data_ts    switches[GEN4_uLCD_MAX_NOS_SWITCHES_PER_FORM];
+    string_data_ts          strings[GEN4_uLCD_MAX_NOS_STRINGS_PER_FORM];
+} form_data_ts;
+
+//==============================================================================
+// structure to hold number of actual objects per form.
+// Only applies to WINBUTTON, ISWITCHB, and STRINGS objects
+
+typedef struct  {
+	uint32_t nos_winbutton;
+	uint32_t nos_iswitchb;
+	uint32_t nos_strings;
+} nos_objects_per_form_te;
+
+//==============================================================================
 // Function prototypes
 //==============================================================================
 
-error_codes_te  gen4_uLCD_init(void);
+error_codes_te    gen4_uLCD_init(void);
 void              uart1_sys_init(void);
+void              flush_RX_fifo(uart_inst_t *uart);
 void              reset_4D_display(void);
+
+// basic API calls
 error_codes_te    gen4_uLCD_ReadObject(uint16_t object, uint16_t global_index, uint32_t *result);
-error_codes_te    gen4_uLCD_WriteObject(int32_t form, uint16_t object, uint16_t global_index, uint16_t data);
+error_codes_te    gen4_uLCD_WriteObject(uint16_t object, uint16_t global_index, uint16_t data);
 error_codes_te    gen4_uLCD_WriteContrast(uint8_t value);
-error_codes_te    gen4_uLCD_WriteString(int32_t form, uint16_t global_index, uint8_t *text);
-void     flush_RX_fifo(uart_inst_t *uart);
+error_codes_te    gen4_uLCD_WriteString(uint16_t global_index, uint8_t *text);
+
+// higher level calls
 int32_t  get_active_form(void);
+error_codes_te    check_uLCD_parameters(int32_t form, uint32_t object, uint32_t local_index);
 error_codes_te    change_form(int32_t new_form);
 error_codes_te    read_uLCD_winbutton(int32_t form, uint32_t object, uint32_t local_index, uint32_t *result);
 error_codes_te    read_uLCD_iswitchb(int32_t form, uint32_t object, uint32_t local_index, uint32_t *result);
