@@ -38,6 +38,11 @@ typedef enum {
     OBJECT_DISABLED,
 }object_state_te;
 
+typedef enum {
+    PRESSED,
+    NOT_PRESSED,
+} button_state_te;  // state held after button released
+
 //==============================================================================
 // Definition of structures relevant to low level access to LCD display
 //==============================================================================
@@ -96,15 +101,17 @@ typedef struct  {   // for WINBUTTON objects
 } touch_button_data_ts;
 
 typedef struct  {   // for ISWITCHB objects
-    object_state_te state;
+    object_state_te state;          // enabled, disabled, unused
     uint8_t         object_type;
-    uint8_t         object_id;    // e.g. ISWITCHB0, ISWITCHB1, etc.
+    uint8_t         global_object_id;    // e.g. ISWITCHB0, ISWITCHB1, etc.
 	int8_t	        switch_value;
+    button_state_te button_state;   // PRESSED, NOT_PRESSED
 } touch_switch_data_ts;
 
 typedef struct {    // for STRINGS objects
-    object_state_te    state;
-    char    string[GEN4_uLCD_MAX_STRING_CHARS + 1];  // +1 for null terminator
+    object_state_te state;
+    uint8_t         global_object_id;
+    char            string[GEN4_uLCD_MAX_STRING_CHARS + 1];  // +1 for null terminator
 } string_data_ts;
 
 typedef struct {

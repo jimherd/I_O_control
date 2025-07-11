@@ -38,7 +38,6 @@
 #include	"externs.h"
 #include	"gen4_uLCD.h"
 
-
 //==============================================================================
 // Global variables
 //==============================================================================
@@ -51,21 +50,21 @@ int32_t		gen4_uLCD_current_form;
 form_data_ts    form_data[GEN4_uLCD_MAX_NOS_FORMS] = {
     {   // form 0
         .buttons = {
-            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON0, 0},
-            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON1, 0},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON0, 0, NOT_PRESSED},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON1, 0, NOT_PRESSED},
         },
         .switches = {
         },
         .strings = {
-            {OBJECT_ENABLED, "**********"},
-            {OBJECT_ENABLED, "Pi the robot"},
+            {OBJECT_ENABLED, GEN4_uLCD_STRING0, "**********"},
+            {OBJECT_ENABLED, GEN4_uLCD_STRING1, "Pi the robot"},
         },
     },
     {   // form 1
         .buttons = {
-            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON2, 100},
-            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON3, 100},
-            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON4, 100},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON2, 0, NOT_PRESSED},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON3, 0, NOT_PRESSED},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON4, 0, NOT_PRESSED},
         },
         .switches = {
             {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
@@ -77,9 +76,9 @@ form_data_ts    form_data[GEN4_uLCD_MAX_NOS_FORMS] = {
     },
     {   // form 2
         .buttons = {
-            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON5, 100},
-            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON6, 100},
-            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON7, 100},
+            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON5, 0, NOT_PRESSED},
+            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON6, 0, NOT_PRESSED},
+            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON7, 0, NOT_PRESSED},
         },
         .switches = {
             {true, GEN4_uLCD_OBJ_ISWITCHB, 0},
@@ -378,10 +377,11 @@ error_codes_te   status;
  * @param text 		   		ASCII null terminated string
  * @return error_codes_te 
  */
+uint8_t  string_too_long[] = "string too long";
 
-error_codes_te    gen4_uLCD_WriteString(uint16_t local_index, uint8_t *text)
-{
-uint8_t   checksum, reply_byte, text_length;
+error_codes_te    gen4_uLCD_WriteString(uint16_t global_index, uint8_t *text) {
+
+uint8_t   checksum, reply_byte, text_length, *str_pt;
 error_codes_te   status;
 
 	if (gen4_uLCD_test_apply == true) {
@@ -389,22 +389,28 @@ error_codes_te   status;
 			return GEN4_uLCD_NOT_DETECTED;
 		}
 	}
-	xSemaphoreTake(gen4_uLCD_MUTEX_access, portMAX_DELAY);
-	uLCD_cmd.data[0] = GEN4_uLCD_WRITE_STR;
-	uLCD_cmd.data[1] = local_index;
+	str_pt = text;
 	text_length = strlen(text);   // does not include terminating '\0' character
 	if (text_length > MAX_GEN4_uLCD_WRITE_STR_SIZE) {
-		xSemaphoreGive(gen4_uLCD_MUTEX_access);
-		return GEN4_uLCD_WRITE_STR_TOO_BIG;
+		// replace string with error message
+		str_pt = string_too_long;
+		text_length = strlen(str_pt);
+		// return GEN4_uLCD_WRITE_STR_TOO_BIG;
 	}
+
+	xSemaphoreTake(gen4_uLCD_MUTEX_access, portMAX_DELAY);
+
+	uLCD_cmd.data[0] = GEN4_uLCD_WRITE_STR;
+	uLCD_cmd.data[1] = global_index;
 	uLCD_cmd.cmd_length = text_length + 1 + display_cmd_info[GEN4_uLCD_WRITE_STR].length;
 	uLCD_cmd.data[2] = text_length + 1;
-	strcat(&uLCD_cmd.data[3], text);
+	strncpy(&uLCD_cmd.data[3], str_pt, MAX_GEN4_uLCD_WRITE_STR_SIZE);
 	checksum = 0;
 	for (int i=0 ; i < (uLCD_cmd.cmd_length - 1) ; i++) {
 		checksum ^= uLCD_cmd.data[i];
 	}
     uLCD_cmd.data[uLCD_cmd.cmd_length - 1] = checksum;
+
     uart_write_blocking(uart1, &uLCD_cmd.data[0], uLCD_cmd.cmd_length);
 //
 // Reply from the display is either an ACK or NACK character
@@ -421,6 +427,9 @@ error_codes_te   status;
 	 	status = GEN4_uLCD_WRITE_STRING_TIMEOUT;
 	 }
 	 xSemaphoreGive(gen4_uLCD_MUTEX_access);
+	 // retain copy of string in form data structure
+	 strncpy(form_data[get_active_form()].strings[global_index].string, str_pt, MAX_GEN4_uLCD_WRITE_STR_SIZE);
+
 	 return status;
 }
 
@@ -443,6 +452,16 @@ uint8_t RX_byte;
 	}
 }
 
+//==============================================================================
+/**
+ * @brief Change the active form
+ * 
+ * @param 	new_form 	0 to NOS_FORMS - 1
+ * @return 	error_codes_te 
+ * 
+ * @note 	Update the string objects on this form
+ *          (Docs suggest that sting display to not retained when form is )
+ */
 error_codes_te  change_form(int32_t new_form) 
 {
 error_codes_te status;
@@ -454,6 +473,13 @@ error_codes_te status;
         }
     } else {
 		status = GEN4_uLCD_CMD_BAD_FORM_INDEX;
+	}
+	// update string objects on form
+	if (nos_object[new_form].nos_strings > 0){
+		for (int i = 0; i < nos_object[new_form].nos_strings; i++){
+			gen4_uLCD_WriteString(form_data[gen4_uLCD_current_form].strings[i].global_object_id, 
+			                      form_data[gen4_uLCD_current_form].strings[i].string);
+		}
 	}
 }
 

@@ -104,6 +104,8 @@ typedef enum  {
     QUOTE_ERROR                      = -133,
 } error_codes_te;
 
+
+
 //==============================================================================
 // Serial comms port (UART)
 //==============================================================================
@@ -126,7 +128,7 @@ typedef enum  {
 #define     PERCENT     '%'
 
 #define     MAX_STRING_LENGTH       80
-#define     MAX_GEN4_uLCD_WRITE_STR_SIZE    70
+#define     MAX_GEN4_uLCD_WRITE_STR_SIZE    40
 
 #define     MAX_COMMAND_LENGTH      100
 
