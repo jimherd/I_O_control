@@ -4,9 +4,10 @@
  * @brief Scan display touch buttons
  * 
  * @details
- * Task runs at TASK_SCAN_TOUCH_BUTTONS_FREQUENCY (typ 10Hz) to scan touch
+ * Task runs at TASK_SCAN_TOUCH_BUTTONS_FREQUENCY (typ 5Hz) to scan touch
  * buttons on a Gen4_uLCD display.  The code will only scan the buttons
  * of the currently active form which keeps overheads to a minumum.
+ * 
  * System also measures the duration of a press of a button.  This allows
  * the detection of a long press, which can be used to enable "hidden" modes,
  * eg test modes.
@@ -21,18 +22,14 @@
 
 #include    "hardware/gpio.h"
 #include    "hardware/uart.h"
-// #include    "hardware/irq.h"
 
 #include    "FreeRTOS.h"
-// #include    "event_groups.h"
 #include    "timers.h"
-// #include    "queue.h"
 
 #include    "system.h"
 #include    "externs.h"
 #include    "sys_routines.h"
 #include    "string_IO.h"
-// #include    "min_printf.h"
 #include    "gen4_uLCD.h"
 
 //==============================================================================
@@ -44,31 +41,49 @@ void Task_scan_touch_buttons(void *p)
 error_codes_te   status;
 TickType_t  xLastWakeTime;
 BaseType_t  xWasDelayed;
-int32_t     current_form, result;
+int32_t     new_value, old_value, current_form, result;
 uint32_t    start_time, end_time;
+
+touch_button_data_ts  *obj_pt;
 
     vTaskDelay(4000);
     xLastWakeTime = xTaskGetTickCount ();
     FOREVER {
         xWasDelayed = xTaskDelayUntil( &xLastWakeTime, TASK_SERVO_CONTROL_FREQUENCY_TICK_COUNT );
         start_time = time_us_32();
+
         current_form = get_active_form();
         if ((current_form >= 0) && (current_form <= NOS_FORMS)) {
-
-            
             for (int i = 0; i < nos_object[current_form].nos_winbutton; i++) {
-                if (form_data[current_form].buttons[i].state != OBJECT_ENABLED) {
-                    continue;   // on to next winbutton
+                obj_pt = &form_data[current_form].buttons[i];
+                if (obj_pt->state != OBJECT_ENABLED) {
+                    continue;   // on to next button
                 }
-                status = gen4_uLCD_ReadObject(form_data[current_form].buttons[i].object_type, 
-                                              form_data[current_form].buttons[i].global_object_id, 
+                status = gen4_uLCD_ReadObject(obj_pt->object_type, 
+                                              obj_pt->global_object_id, 
                                               &result);
                 if (status == OK) {
-                    form_data[current_form].buttons[i].button_value = result;
+                    old_value = obj_pt->button_value;
+                    new_value = result;
+                    if (new_value == old_value) {   // no change to value
+                        if (new_value == 1) {  // 
+                            obj_pt->time_high++;
+                        }
+                        continue;     // next button
+                    } else {  // must be a rising or falling edge
+                        if (new_value == 1) {  // rising edge
+                            obj_pt->state = NOT_PRESSED;
+                            obj_pt->time_high = 0;
+                        } else {               // falling edge
+                            obj_pt->state = PRESSED;
+                        }
+                    }
+                // log result and increment pulse time if appropriate
+                    obj_pt->button_value = result;
                     if( result == 1) {
-                        form_data[current_form].buttons[i].time_high++;
+                        obj_pt->time_high++;
                     } else {
-                        form_data[current_form].buttons[i].time_high = 0;
+                        obj_pt->time_high = 0;
                     }
                 }
             }

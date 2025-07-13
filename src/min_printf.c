@@ -30,7 +30,7 @@
 /**
  * @brief 
  * 
- * @param buff_pt 
+ * @param &string_buffer *buff_pt 
  * @param character 
  */
 static inline void printchar(struct string_buffer *buff_pt, char character)
@@ -44,7 +44,7 @@ static inline void printchar(struct string_buffer *buff_pt, char character)
 /**
  * @brief 
  * 
- * @param buff_pt
+ * @param &string_buffer *buff_pt
  * @param string 
  * @param width 
  * @param pad 
@@ -55,7 +55,7 @@ static void prints(struct string_buffer *buff_pt, const char *string)
 	add_string_to_char_buffer(buff_pt, string);
 }
 
-// static void prints(struct string_buffer *buff_pt, const char *string, int32_t width, int32_t pad)
+// static void prints(struct string_buffer *buff_pt *&string_buffer *buff_pt, const char *string, int32_t width, int32_t pad)
 // {
 // int32_t  len, padchar = SPACE;
 // const char*	ptr;
@@ -75,14 +75,14 @@ static void prints(struct string_buffer *buff_pt, const char *string)
 //     	}
 // 		if (!(pad & PAD_RIGHT)) {
 // 			for (; width > 0; --width) {
-// 				printchar(buff_pt, padchar);
+// 				printchar(&string_buffer *buff_pt, padchar);
 // 			}
 //     	}
 // 		for (; *string; ++string) {
-// 			printchar(buff_pt, *string);
+// 			printchar(&string_buffer *buff_pt, *string);
 // 		}
 // 		for (; width > 0; --width) {
-// 			printchar(buff_pt, padchar);
+// 			printchar(&string_buffer *buff_pt, padchar);
 // 		}
 // 		return;
 // 	}
@@ -93,7 +93,7 @@ static void prints(struct string_buffer *buff_pt, const char *string)
 /**
  * @brief   print various integer formats
  * 
- * @param buff_pt 		buffer to receive string
+ * @param &string_buffer *buff_pt 		buffer to receive string
  * @param i 			number to be converted to a string
  * @param base			number base (typ 10, 16)
  * @param signed_numb	number can be signed
@@ -107,7 +107,7 @@ static void printi(struct string_buffer *buff_pt, int32_t int_value, uint32_t ba
 	add_int_to_char_buffer(buff_pt, int_value, base, letter_case);
 }
 
-// static void printi(struct string_buffer *buff_pt, int32_t i, int32_t base, bool signed_numb, int32_t width, int32_t pad, int32_t letbase)
+// static void printi(struct string_buffer *buff_pt *&string_buffer *buff_pt, int32_t i, int32_t base, bool signed_numb, int32_t width, int32_t pad, int32_t letbase)
 // {
 // char 	  temp_buf[PRINT_BUF_LEN];
 // char 	  *str_pt;
@@ -119,7 +119,7 @@ static void printi(struct string_buffer *buff_pt, int32_t int_value, uint32_t ba
 //     if (i == 0) {
 // 		temp_buf[0] = CHAR_0;
 // 		temp_buf[1] = STRING_NULL;
-// 		prints (buff_pt, temp_buf /* ,width, pad */);
+// 		prints (&string_buffer *buff_pt, temp_buf /* ,width, pad */);
 // 		return;
 // 	}
 
@@ -142,13 +142,13 @@ static void printi(struct string_buffer *buff_pt, int32_t int_value, uint32_t ba
 
 // 	if (neg == true) {
 // 		if( width && (pad & PAD_ZERO) ) {
-// 			printchar (buff_pt, MINUS);
+// 			printchar (&string_buffer *buff_pt, MINUS);
 // 			--width;
 // 		} else {
 // 			*--str_pt = MINUS;
 // 		}
 // 	}
-// 	prints (buff_pt, str_pt /* ,width, pad */);
+// 	prints (&string_buffer *buff_pt, str_pt /* ,width, pad */);
 // 	return;
 // }
 
@@ -156,11 +156,11 @@ static void printi(struct string_buffer *buff_pt, int32_t int_value, uint32_t ba
 /**
  * @brief Minimal sprintf routine (s, d, x, X, u, c)
  * 
- * @param buff_pt 	pointer to destination cgaracter buffer
+ * @param &string_buffer *buff_pt 	pointer to destination cgaracter buffer
  * @param format 	standard printf format string
  * @param vargs 	access to variable list of parameters
  */
-void min_sprintf(struct string_buffer *buff_pt, const char *format, va_list vargs)
+void min_format_string(struct string_buffer *buff_pt, const char *format, va_list vargs)
 {
 int32_t width, pad;
 
@@ -204,7 +204,7 @@ int32_t width, pad;
 				continue;
 			}
 			if( *format == 'u' ) {
-			//	printi (buff_pt, (int32_t)va_arg(vargs, int32_t), 10, false, width, pad, 'a');
+			//	printi (&string_buffer *buff_pt, (int32_t)va_arg(vargs, int32_t), 10, false, width, pad, 'a');
 				continue;
 			}
 			if( *format == 'c' ) {
@@ -219,4 +219,55 @@ int32_t width, pad;
 	}
 	printchar(buff_pt, STRING_NULL);
 	return;
+}
+
+//==============================================================================
+//==============================================================================
+//
+// Usage - micro_printf("Hello %s, number is %d\n", "World", 42);
+
+// void micro_printf(const char *format, ...) {
+//     va_list args;  // Declare a va_list variable to manage the variable arguments
+
+//     // Initialize the va_list 'args' to start at the argument after 'format'
+//     va_start(args, format);
+
+//     while (*format)  // Loop through the format string
+//     {
+//         // If a format specifier is encountered
+//         if (*format == '%') {
+//             format++;
+//             if (*format == 'd') {
+//                 // Fetch the next argument as an integer and print it
+//                 printf("%d", va_arg(args, int));
+//             } else if (*format == 's') {
+//                 // Fetch the next argument as a string and print it
+//                 printf("%s", va_arg(args, char *));
+//             }
+//         } else {
+//             // Print regular characters
+//             putchar(*format);
+//         }
+//         format++;  // Move to the next character
+//     }
+//     // Cleanup the va_list 'args' after processing
+//     va_end(args);
+// }
+
+//==============================================================================
+/**
+ * @brief 
+ * 
+ * @param format  string with characters, %d, and %s. 
+ * @param ...     string and integer parameters
+ */
+
+struct string_buffer reply_buffer;
+
+void min_sprintf(const char *format, ...)
+{
+    va_list vargs;
+    va_start(vargs, format);
+    min_format_string(&reply_buffer, format, vargs);
+    va_end(vargs); 
 }

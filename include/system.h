@@ -495,21 +495,19 @@ struct neopixel_colour_s {
 // } ;
 
 //==============================================================================
-// Freertos
+// Freertos : task rates
 //==============================================================================
 
 #define     TASK_SERVO_CONTROL_FREQUENCY                 10  // Hz
 #define     TASK_SERVO_CONTROL_FREQUENCY_TICK_COUNT      ((1000/TASK_SERVO_CONTROL_FREQUENCY) * portTICK_PERIOD_MS)
 
 
-#define     TASK_SCAN_TOUCH_BUTTONS_FREQUENCY            10  // Hz
+#define     TASK_SCAN_TOUCH_BUTTONS_FREQUENCY             5  // Hz
 #define     TASK_SCAN_TOUCH_BUTTONS_FREQUENCY_TICK_COUNT      ((1000/TASK_SCAN_TOUCH_BUTTONS_FREQUENCY) * portTICK_PERIOD_MS)
 
-#define     TASK_NEOPIXELS_FREQUENCY                    10  // Hz
+#define     TASK_NEOPIXELS_FREQUENCY                     10  // Hz
 #define     TASK_NEOPIXELS_TIME_UNIT                    (1000 / TASK_NEOPIXELS_FREQUENCY)
 #define     TASK_NEOPIXELS_FREQUENCY_TICK_COUNT         ((1000/TASK_NEOPIXELS_FREQUENCY) * portTICK_PERIOD_MS)
-
-
 
 //==============================================================================
 // Set of 8 priority levels (set 8 in FreeRTOSconfig.h)
@@ -528,7 +526,7 @@ struct neopixel_colour_s {
 // Print task information
 //==============================================================================
 
-#define     NOS_PRINT_STRING_BUFFERS    8
+#define     NOS_PRINT_STRING_BUFFERS   8
 #define     MAX_PRINT_STRING_LENGTH     128
 
 //==============================================================================

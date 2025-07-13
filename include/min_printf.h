@@ -3,7 +3,11 @@
 
 #include    "pico/stdlib.h"
 
-void min_sprintf(struct string_buffer *buff_pt, const char *format, va_list vargs);
+static void prints(struct string_buffer *buff_pt, const char *string);
+static void printi(struct string_buffer *buff_pt, int32_t int_value, uint32_t base, uint32_t letter_case);
+
+void min_format_string(struct string_buffer *buff_pt, const char *format, va_list vargs);
+void min_sprintf(const char *format, ...);
 
 
 #endif

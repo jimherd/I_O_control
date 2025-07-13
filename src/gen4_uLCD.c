@@ -483,6 +483,7 @@ error_codes_te status;
 	}
 }
 
+//==============================================================================
 /**
  * @brief Get the active form object
  * 
@@ -528,7 +529,7 @@ error_codes_te status;
 
 //==============================================================================
 
-int32_t detect_LCD_press(uint32_t object, uint32_t index)
+int32_t detect_LCD_press(int32_t form, uint32_t object, uint32_t index)
 {
     return OK;
 // This function is not implemented yet. It is a placeholder for future development.
