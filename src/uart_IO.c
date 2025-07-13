@@ -208,7 +208,7 @@ line_read_states_te  state;
 
 #define     DEBUG_REPLY     'D'
 #define     CMD_REPLY       'C'
-#define     MAX_SIZE_REPLY_STRING   128
+#define     MAX_MAX_STRING_SIZE   128
 
 struct string_buffer reply_buffer;
 
@@ -224,7 +224,7 @@ void print_string(const char *format, ...)
     init_string_buffer(&reply_buffer);
     va_list vargs;
     va_start(vargs, format);
-    min_sprintf(&reply_buffer, format, vargs);
+    min_format_string(&reply_buffer, format, vargs);  // min_sprintf
     va_end(vargs);
     uart_putstring(&reply_buffer.buffer[0]);
 }

@@ -151,5 +151,6 @@ error_codes_te    check_uLCD_parameters(int32_t form, uint32_t object, uint32_t 
 error_codes_te    change_form(int32_t new_form);
 error_codes_te    read_uLCD_winbutton(int32_t form, uint32_t object, uint32_t local_index, uint32_t *result);
 error_codes_te    read_uLCD_iswitchb(int32_t form, uint32_t object, uint32_t local_index, uint32_t *result);
+error_codes_te    write_uLCD_string(int32_t form, uint32_t object, uint32_t local_index, struct string_buffer *buff_pt);
 
 #endif  /* __GEN4_uLCD_H__ */

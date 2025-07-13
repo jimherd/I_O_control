@@ -379,8 +379,8 @@ error_codes_te   status;
  */
 uint8_t  string_too_long[] = "string too long";
 
-error_codes_te    gen4_uLCD_WriteString(uint16_t global_index, uint8_t *text) {
-
+error_codes_te    gen4_uLCD_WriteString(uint16_t global_index, uint8_t *text) 
+{
 uint8_t   checksum, reply_byte, text_length, *str_pt;
 error_codes_te   status;
 
@@ -489,7 +489,8 @@ error_codes_te status;
  * 
  * @return uint32_t -1 = no form active
  */
-inline  int32_t get_active_form(void) {
+inline  int32_t get_active_form(void) 
+{
 	
 	return gen4_uLCD_current_form;
 }
@@ -540,4 +541,33 @@ error_codes_te    read_uLCD_iswitchb(int32_t form, uint32_t object, uint32_t loc
 {
 	return OK;
 // This function is not implemented yet. It is a placeholder for future development.
+}
+
+error_codes_te    write_uLCD_string(int32_t form, uint32_t object, uint32_t local_index, struct string_buffer *buff_pt) 
+{
+error_codes_te status;
+uint32_t	active_form, global_index;
+
+	// Check that form is the active form
+	active_form = get_active_form();
+	if ( form != active_form) {
+		return GEN4_uLCD_BUTTON_FORM_INACTIVE;
+	} else {
+		return OK;
+	}
+	// check if object is on the active form
+	if (form_data[form].strings[local_index].state == OBJECT_UNUSED) {
+		return GEN4_uLCD_BUTTON_OBJECT_NOT_USED;
+	}	
+	// write string
+	global_index = form_data[form].strings[local_index].global_object_id;
+	status = gen4_uLCD_WriteString(global_index, buff_pt->buffer);
+	if (status != OK) {
+		return status;
+	}
+	// log string on form_data structure
+	strncpy(form_data[form].strings[local_index].string, buff_pt->buffer, GEN4_uLCD_MAX_STRING_CHARS);
+	
+	return OK;
+
 }

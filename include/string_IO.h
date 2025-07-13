@@ -11,13 +11,13 @@
 
 #include    "pico/stdlib.h"
 
-#define     SIZE_REPLY_STRING   128
+// #define     MAX_STRING_SIZE   128
 
-struct string_buffer {
-    char        buffer[SIZE_REPLY_STRING];
-    uint32_t    char_pt;
-    bool        full;
-};
+// struct string_buffer {
+//     char        buffer[MAX_STRING_SIZE];
+//     uint32_t    char_pt;
+//     bool        full;
+// };
 
 //==============================================================================
 // Function prototypes

@@ -24,8 +24,8 @@
 void init_string_buffer(struct string_buffer *buff_pt) {
 
     buff_pt->char_pt = 0;
-    buff_pt->buffer[SIZE_REPLY_STRING - 1] = STRING_NULL;
-    buff_pt->buffer[SIZE_REPLY_STRING - 2] = NEWLINE;
+    buff_pt->buffer[MAX_STRING_SIZE - 1] = STRING_NULL;
+    buff_pt->buffer[MAX_STRING_SIZE - 2] = NEWLINE;
     buff_pt->full = false;
 }
 
@@ -43,7 +43,7 @@ void add_char_to_char_buffer(struct string_buffer *buff_pt, char ch) {
     if (buff_pt->full == false) {
         buff_pt->buffer[buff_pt->char_pt++] = ch;
     }
-    if (buff_pt->char_pt >= (SIZE_REPLY_STRING - 3)) {
+    if (buff_pt->char_pt >= (MAX_STRING_SIZE - 3)) {
         buff_pt->full = true;
     }
 }

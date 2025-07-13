@@ -64,6 +64,17 @@
 #define     TWO_SECONDS      (2000/portTICK_PERIOD_MS)
 
 //==============================================================================
+// Useful general system structures
+
+#define     MAX_STRING_SIZE   128
+
+struct string_buffer {
+    char        buffer[MAX_STRING_SIZE];
+    uint32_t    char_pt;
+    bool        full;
+};
+
+//==============================================================================
 // error codes
 
 typedef enum  {

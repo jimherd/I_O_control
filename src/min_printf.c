@@ -262,12 +262,12 @@ int32_t width, pad;
  * @param ...     string and integer parameters
  */
 
-struct string_buffer reply_buffer;
+struct string_buffer st_buffer;
 
 void min_sprintf(const char *format, ...)
 {
     va_list vargs;
     va_start(vargs, format);
-    min_format_string(&reply_buffer, format, vargs);
+    min_format_string(&st_buffer, format, vargs);
     va_end(vargs); 
 }
