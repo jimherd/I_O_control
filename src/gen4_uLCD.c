@@ -379,7 +379,7 @@ error_codes_te   status;
  */
 uint8_t  string_too_long[] = "string too long";
 
-error_codes_te    gen4_uLCD_WriteString(uint16_t global_index, uint8_t *text) 
+error_codes_te    gen4_uLCD_WriteString(uint16_t global_index, char *text) 
 {
 uint8_t   checksum, reply_byte, text_length, *str_pt;
 error_codes_te   status;

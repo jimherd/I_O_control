@@ -66,7 +66,7 @@
 //==============================================================================
 // Useful general system structures
 
-#define     MAX_STRING_SIZE   128
+#define     MAX_STRING_SIZE   48
 
 struct string_buffer {
     char        buffer[MAX_STRING_SIZE];
@@ -112,7 +112,8 @@ typedef enum  {
     GEN4_uLCD_BUTTON_FORM_INACTIVE   = -130,
     GEN4_uLCD_EXPECTED_BUTTON_OBJECT = -131,
     GEN4_uLCD_BUTTON_OBJECT_NOT_USED = -132,
-    QUOTE_ERROR                      = -133,
+    GEN4_uLCD_STRING_FORM_INACTIVE   = -133,
+    QUOTE_ERROR                      = -134,
 } error_codes_te;
 
 

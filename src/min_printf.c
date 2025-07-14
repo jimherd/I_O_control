@@ -19,10 +19,13 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 
+#include "externs.h"
 #include "system.h"
 #include "uart_IO.h"
 #include "string_IO.h"
+#include "gen4_uLCD.h"
 
 #include "pico/stdlib.h"
 
@@ -262,12 +265,60 @@ int32_t width, pad;
  * @param ...     string and integer parameters
  */
 
-struct string_buffer st_buffer;
-
-void min_sprintf(const char *format, ...)
+void min_sprintf(struct string_buffer *buff_pt, char *format, va_list args)
 {
-    va_list vargs;
-    va_start(vargs, format);
-    min_format_string(&st_buffer, format, vargs);
-    va_end(vargs); 
+   int32_t width, pad;
+
+	for (; *format != 0; ++format) {
+        if (*format == PERCENT) {
+			++format;
+			if (*format == STRING_NULL) {
+				break;
+			}
+			if( *format == 's' ) {
+				char *s = (char *)va_arg(args, int32_t);
+				prints (buff_pt, s?s:"(null)" /*, width, pad */);
+				continue;
+			}
+			if( *format == 'd' ) {
+				printi (buff_pt, (int32_t)va_arg(args, int32_t), BASE_10, LOWER_CASE);
+				continue;
+			}
+			if( *format == 'c' ) {
+				printchar(buff_pt, (char)va_arg(args, int32_t));
+				continue;
+			}
+		}
+		else {
+	out:
+			printchar (buff_pt, *format);
+		}
+	}
+	printchar(buff_pt, STRING_NULL);
+	return;
+} 
+
+
+//==============================================================================
+
+error_codes_te uLCD_printf(uint32_t form, uint32_t local_index, const char* format, ...)
+{
+struct string_buffer buff;
+error_codes_te  status;
+
+	if (form != get_active_form()) {
+		return GEN4_uLCD_STRING_FORM_INACTIVE;
+	}
+	va_list  args;
+	init_string_buffer(&buff);
+	va_start(args, format);
+	min_format_string(&buff, format, args);
+	va_end(args);
+	// write buffer to LCD
+	status = gen4_uLCD_WriteString(form_data[form].strings[local_index].global_object_id, 
+		                  &buff.buffer[0]);
+	if (status == OK) {  // copy to 'form_data' structure
+		strncpy(form_data[form].strings[local_index].string, &buff.buffer[0], GEN4_uLCD_MAX_STRING_CHARS);
+	}
+	return status;
 }

@@ -9,5 +9,7 @@ static void printi(struct string_buffer *buff_pt, int32_t int_value, uint32_t ba
 void min_format_string(struct string_buffer *buff_pt, const char *format, va_list vargs);
 void min_sprintf(const char *format, ...);
 
+error_codes_te uLCD_printf(uint32_t form, uint32_t local_index, const char* format, ...);
+
 
 #endif

@@ -143,7 +143,7 @@ void              reset_4D_display(void);
 error_codes_te    gen4_uLCD_ReadObject(uint16_t object, uint16_t global_index, uint32_t *result);
 error_codes_te    gen4_uLCD_WriteObject(uint16_t object, uint16_t global_index, uint16_t data);
 error_codes_te    gen4_uLCD_WriteContrast(uint8_t value);
-error_codes_te    gen4_uLCD_WriteString(uint16_t global_index, uint8_t *text);
+error_codes_te    gen4_uLCD_WriteString(uint16_t global_index, char *text);
 
 // higher level calls
 int32_t  get_active_form(void);

@@ -49,7 +49,8 @@ error_codes_te   status;
             display_OK = false;
         }
         
-        status = gen4_uLCD_WriteString(0, "New string");
+        status = uLCD_printf(GEN4_uLCD_FORM0, GEN4_uLCD_STRING0, "V%d.%d", MAJOR_VERSION, MINOR_VERSION);
+        //status = uLCD_WriteString(FORM0, STRING0, "New string");
     }
     
     FOREVER {
