@@ -72,19 +72,14 @@ touch_button_data_ts  *obj_pt;
                         continue;     // next button
                     } else {  // must be a rising or falling edge
                         if (new_value == 1) {  // rising edge
-                            obj_pt->state = NOT_PRESSED;
+                            obj_pt->button_state = NOT_PRESSED;
                             obj_pt->time_high = 0;
                         } else {               // falling edge
-                            obj_pt->state = PRESSED;
+                            obj_pt->button_state = PRESSED;
                         }
                     }
-                // log result and increment pulse time if appropriate
-                    obj_pt->button_value = result;
-                    if( result == 1) {
-                        obj_pt->time_high++;
-                    } else {
-                        obj_pt->time_high = 0;
-                    }
+                    // log result 
+                    obj_pt->button_value = new_value;   
                 }
             }
         } else {

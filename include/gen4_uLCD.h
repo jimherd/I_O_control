@@ -98,6 +98,7 @@ typedef struct  {   // for WINBUTTON objects
     uint8_t         global_object_id;    // e.g. WINBUTTON0, WINBUTTON1, etc.
 	int8_t	        button_value;
     int32_t         time_high;      // High time in time sample units
+    button_state_te button_state;   // PRESSED, NOT_PRESSED
 } touch_button_data_ts;
 
 typedef struct  {   // for ISWITCHB objects
@@ -105,7 +106,7 @@ typedef struct  {   // for ISWITCHB objects
     uint8_t         object_type;
     uint8_t         global_object_id;    // e.g. ISWITCHB0, ISWITCHB1, etc.
 	int8_t	        switch_value;
-    button_state_te button_state;   // PRESSED, NOT_PRESSED
+//    button_state_te button_state;   // PRESSED, NOT_PRESSED
 } touch_switch_data_ts;
 
 typedef struct {    // for STRINGS objects
