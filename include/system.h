@@ -162,6 +162,7 @@ enum {UPPER_CASE, LOWER_CASE};
 #define UART1_TX_PIN       GP4
 #define UART1_RX_PIN       GP5
 
+//#define UART1_BAUD_RATE   200000
 #define UART1_BAUD_RATE   115200
 
 

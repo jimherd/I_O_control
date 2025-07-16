@@ -143,15 +143,18 @@ void              reset_4D_display(void);
 // basic API calls
 error_codes_te    gen4_uLCD_ReadObject(uint16_t object, uint16_t global_index, uint32_t *result);
 error_codes_te    gen4_uLCD_WriteObject(uint16_t object, uint16_t global_index, uint16_t data);
-error_codes_te    gen4_uLCD_WriteContrast(uint8_t value);
 error_codes_te    gen4_uLCD_WriteString(uint16_t global_index, char *text);
+error_codes_te    gen4_uLCD_WriteContrast(uint8_t value);
 
 // higher level calls
-int32_t  get_active_form(void);
-error_codes_te    check_uLCD_parameters(int32_t form, uint32_t object, uint32_t local_index);
+
 error_codes_te    change_form(int32_t new_form);
 error_codes_te    read_uLCD_winbutton(int32_t form, uint32_t object, uint32_t local_index, uint32_t *result);
 error_codes_te    read_uLCD_iswitchb(int32_t form, uint32_t object, uint32_t local_index, uint32_t *result);
 error_codes_te    write_uLCD_string(int32_t form, uint32_t object, uint32_t local_index, struct string_buffer *buff_pt);
+
+int32_t  get_active_form(void);
+
+//error_codes_te    check_uLCD_parameters(int32_t form, uint32_t object, uint32_t local_index);
 
 #endif  /* __GEN4_uLCD_H__ */
