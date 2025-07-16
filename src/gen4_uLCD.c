@@ -411,7 +411,7 @@ error_codes_te   status;
 	 }
 	 xSemaphoreGive(gen4_uLCD_MUTEX_access);
 	 // retain copy of string in form data structure
-	 strncpy(form_data[get_active_form()].strings[global_index].string, str_pt, MAX_GEN4_uLCD_WRITE_STR_SIZE);
+	 strncpy(form_data[get_uLCD_active_form()].strings[global_index].string, str_pt, MAX_GEN4_uLCD_WRITE_STR_SIZE);
 
 	 return status;
 }
@@ -475,7 +475,7 @@ error_codes_te   status;
  * @note 	Update the string objects on this form
  *          (Docs suggest that sting display to not retained when form is )
  */
-error_codes_te  change_form(int32_t new_form) 
+error_codes_te  change_uLCD_form(int32_t new_form) 
 {
 error_codes_te status;
 
@@ -502,32 +502,46 @@ error_codes_te status;
  * 
  * @return uint32_t -1 = no form active
  */
-inline  int32_t get_active_form(void) 
+inline  int32_t get_uLCD_active_form(void) 
 {
-	
 	return gen4_uLCD_current_form;
 }
 
 //==============================================================================
-// check that object is an enabled and of the correct type in the current form
-//
-error_codes_te    check_uLCD_parameters(int32_t form, uint32_t object, uint32_t local_index)
+error_codes_te    read_uLCD_switch(int32_t form, uint32_t object, uint32_t local_index, uint32_t *result)
 {
-	return OK;
-}
+uint32_t switch_result, active_form, index;
+error_codes_te status;
 
+	active_form = get_uLCD_active_form();
+	if ( form != active_form) {
+		return GEN4_uLCD_BUTTON_FORM_INACTIVE;
+	} else {
+		status = OK;
+	}
+	// check if object is on the active form
+	if (form_data[form].switches[local_index].state == OBJECT_UNUSED) {
+		return GEN4_uLCD_SWITCH_OBJECT_NOT_USED;
+	}
+	
+// read value
+	index = form_data[form].switches[local_index].global_object_id;
+    status = gen4_uLCD_ReadObject(object, index, &switch_result);
+	*result = switch_result;
+	return status;
+}
 //==============================================================================
 
-error_codes_te    read_uLCD_winbutton(int32_t form, uint32_t object, uint32_t local_index, uint32_t *result)
+error_codes_te    read_uLCD_button(int32_t form, uint32_t object, uint32_t local_index, uint32_t *result)
 {
 uint32_t button_result, active_form, index;
 error_codes_te status;
 
-	active_form = get_active_form();
+	active_form = get_uLCD_active_form();
 	if ( form != active_form) {
 		return GEN4_uLCD_BUTTON_FORM_INACTIVE;
 	} else {
-		return OK;
+		status = OK;
 	}
 // check if object is on the active form
 	if (form_data[form].buttons[local_index].state == OBJECT_UNUSED) {
@@ -542,31 +556,17 @@ error_codes_te status;
 }
 
 //==============================================================================
-
-int32_t detect_LCD_press(int32_t form, uint32_t object, uint32_t index)
-{
-    return OK;
-// This function is not implemented yet. It is a placeholder for future development.
-}
-
-
-error_codes_te    read_uLCD_iswitchb(int32_t form, uint32_t object, uint32_t local_index, uint32_t *result)
-{
-	return OK;
-// This function is not implemented yet. It is a placeholder for future development.
-}
-
 error_codes_te    write_uLCD_string(int32_t form, uint32_t object, uint32_t local_index, struct string_buffer *buff_pt) 
 {
 error_codes_te status;
 uint32_t	active_form, global_index;
 
 	// Check that form is the active form
-	active_form = get_active_form();
+	active_form = get_uLCD_active_form();
 	if ( form != active_form) {
 		return GEN4_uLCD_BUTTON_FORM_INACTIVE;
 	} else {
-		return OK;
+		status = OK;
 	}
 	// check if object is on the active form
 	if (form_data[form].strings[local_index].state == OBJECT_UNUSED) {
@@ -582,5 +582,31 @@ uint32_t	active_form, global_index;
 	strncpy(form_data[form].strings[local_index].string, buff_pt->buffer, GEN4_uLCD_MAX_STRING_CHARS);
 	
 	return OK;
+}
 
+//==============================================================================
+error_codes_te    get_uLCD_button_press(int32_t form, uint32_t object, uint32_t *result)
+{
+error_codes_te status;
+uint32_t	   active_form, global_index;
+
+	// Check that form is the active form
+	active_form = get_uLCD_active_form();
+	if ( form != active_form) {
+		return GEN4_uLCD_BUTTON_FORM_INACTIVE;
+	} else {
+		status = OK;
+	}
+	// update button objects on form starting at index 0
+	*result = -1;   // indicates that no buttons on the form have been pressed
+	if (nos_object[form].nos_winbutton > 0){
+		for (int i = 0; i < nos_object[form].nos_winbutton; i++){
+			if (form_data[form].buttons[i].button_state == PRESSED) {
+				*result = i;
+			} else {
+				continue;    // check next button
+			}
+		}
+	}
+	return OK;
 }

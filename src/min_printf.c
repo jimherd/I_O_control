@@ -306,7 +306,7 @@ error_codes_te uLCD_printf(uint32_t form, uint32_t local_index, const char* form
 struct string_buffer buff;
 error_codes_te  status;
 
-	if (form != get_active_form()) {
+	if (form != get_uLCD_active_form()) {
 		return GEN4_uLCD_STRING_FORM_INACTIVE;
 	}
 	va_list  args;

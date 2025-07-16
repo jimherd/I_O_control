@@ -52,7 +52,7 @@ touch_button_data_ts  *obj_pt;
         xWasDelayed = xTaskDelayUntil( &xLastWakeTime, TASK_SERVO_CONTROL_FREQUENCY_TICK_COUNT );
         start_time = time_us_32();
 
-        current_form = get_active_form();
+        current_form = get_uLCD_active_form();
         if ((current_form >= 0) && (current_form <= NOS_FORMS)) {
             for (int i = 0; i < nos_object[current_form].nos_winbutton; i++) {
                 obj_pt = &form_data[current_form].buttons[i];

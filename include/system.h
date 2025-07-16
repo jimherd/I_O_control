@@ -113,7 +113,8 @@ typedef enum  {
     GEN4_uLCD_EXPECTED_BUTTON_OBJECT = -131,
     GEN4_uLCD_BUTTON_OBJECT_NOT_USED = -132,
     GEN4_uLCD_STRING_FORM_INACTIVE   = -133,
-    QUOTE_ERROR                      = -134,
+    GEN4_uLCD_SWITCH_OBJECT_NOT_USED = -134,
+    QUOTE_ERROR                      = -135,
 } error_codes_te;
 
 

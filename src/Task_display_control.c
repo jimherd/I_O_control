@@ -44,7 +44,7 @@ error_codes_te   status;
         display_OK = false;
     }
     if (display_OK == true) {
-        status = change_form(GEN4_uLCD_FORM0);  // change to form 1
+        status = change_uLCD_form(GEN4_uLCD_FORM0);  // change to form 1
         if (status != OK) {
             display_OK = false;
         }

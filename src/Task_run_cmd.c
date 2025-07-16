@@ -252,7 +252,7 @@ uint32_t                current_form;
                         status = gen4_uLCD_WriteContrast(int_parameters[DISPLAY_CONTRAST_INDEX]);
                         break;
                     case READ_BUTTON:
-                        current_form = get_active_form();
+                        current_form = get_uLCD_active_form();
                         // if (button_data[int_parameters[3]].form == current_form) {
                         //     status = OK;
                         // } else {
@@ -262,7 +262,7 @@ uint32_t                current_form;
                         reply_done = true;
                         break;
                     case WRITE_STRING:
-                        current_form = get_active_form();
+                        current_form = get_uLCD_active_form();
                         status = gen4_uLCD_WriteString(int_parameters[3], &command[arg_pt[4]]);
                     default:
                         break;
