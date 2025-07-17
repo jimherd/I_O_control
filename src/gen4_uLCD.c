@@ -171,7 +171,7 @@ uint32_t       count, i, j;
 				count++;
 			}
 		}
-		nos_object[i].nos_winbutton = count;
+		nos_object[i].nos_buttons = count;
 		count = 0;
 		for (j = 0; j < GEN4_uLCD_MAX_BUTTONS_PER_FORM; j++) {
 			if (form_data[i].switches[j].state != OBJECT_UNUSED) {
@@ -599,8 +599,8 @@ uint32_t	   active_form, global_index;
 	}
 	// update button objects on form starting at index 0
 	*result = -1;   // indicates that no buttons on the form have been pressed
-	if (nos_object[form].nos_winbutton > 0){
-		for (int i = 0; i < nos_object[form].nos_winbutton; i++){
+	if (nos_object[form].nos_buttons > 0){
+		for (int i = 0; i < nos_object[form].nos_buttons; i++){
 			if (form_data[form].buttons[i].button_state == PRESSED) {
 				*result = i;
 			} else {

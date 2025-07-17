@@ -126,8 +126,8 @@ typedef struct {
 // Only applies to WINBUTTON, ISWITCHB, and STRINGS objects
 
 typedef struct  {
-	uint32_t nos_winbutton;
-	uint32_t nos_iswitchb;
+	uint32_t nos_buttons;
+	uint32_t nos_switchs;
 	uint32_t nos_strings;
 } nos_objects_per_form_te;
 

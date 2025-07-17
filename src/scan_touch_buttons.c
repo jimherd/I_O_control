@@ -54,7 +54,7 @@ touch_button_data_ts  *obj_pt;
 
         current_form = get_uLCD_active_form();
         if ((current_form >= 0) && (current_form <= NOS_FORMS)) {
-            for (int i = 0; i < nos_object[current_form].nos_winbutton; i++) {
+            for (int i = 0; i < nos_object[current_form].nos_buttons; i++) {
                 obj_pt = &form_data[current_form].buttons[i];
                 if (obj_pt->state != OBJECT_ENABLED) {
                     continue;   // on to next button
