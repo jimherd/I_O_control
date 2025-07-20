@@ -127,7 +127,7 @@ typedef struct {
 
 typedef struct  {
 	uint32_t nos_buttons;
-	uint32_t nos_switchs;
+	uint32_t nos_switches;
 	uint32_t nos_strings;
 } nos_objects_per_form_te;
 
@@ -155,6 +155,8 @@ error_codes_te    write_uLCD_string(int32_t form, uint32_t object, uint32_t loca
 error_codes_te    get_uLCD_button_press(int32_t form, uint32_t object, uint32_t *result);
 
 int32_t  get_uLCD_active_form(void);
+
+void clear_button_state(uint32_t form, uint32_t local_index);
 
 
 #endif  /* __GEN4_uLCD_H__ */

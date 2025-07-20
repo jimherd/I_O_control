@@ -78,44 +78,44 @@ struct string_buffer {
 // error codes
 
 typedef enum  {
-    OK                               = 0,
+    OK                               =   0,
     LETTER_ERROR                     = -100,
     DOT_ERROR                        = -101,
     PLUSMINUS_ERROR                  = -102,
-    BAD_COMMAND                      = -103,
-    BAD_PORT_NUMBER                  = -104,
-    BAD_NOS_PARAMETERS               = -105,
-    BAD_BASE_PARAMETER               = -106,
-    PARAMETER_OUTWITH_LIMITS         = -107,
-    BAD_SERVO_COMMAND                = -108,
-    STEPPER_CALIBRATE_FAIL           = -109,
-    BAD_STEPPER_COMMAND              = -110,
-    BAD_STEP_VALUE                   = -111,
-    MOVE_ON_UNCALIBRATED_MOTOR       = -112,
-    EXISTING_FAULT_WITH_MOTOR        = -113,
-    SM_MOVE_TOO_SMALL                = -114,
-    LIMIT_SWITCH_ERROR               = -115,
-    UNKNOWN_STEPPER_MOTOR_STATE      = -116,
-    STEPPER_BUSY                     = -117,
-    SERVO_BUSY                       = -118,
-    GEN4_uLCD_NOT_DETECTED           = -119,
-    GEN4_uLCD_WRITE_OBJ_FAIL         = -120,
-    GEN4_uLCD_WRITE_OBJ_TIMEOUT      = -121,
-    GEN4_uLCD_WRITE_CONTRAST_FAIL    = -122,
-    GEN4_uLCD_WRITE_CONTRAST_BAD_VALUE = -123,
-    GEN4_uLCD_WRITE_CONTRAST_TIMEOUT = -124,
-    GEN4_uLCD_READ_OBJ_FAIL          = -125,
-    GEN4_uLCD_READ_OBJ_TIMEOUT       = -126,
-    GEN4_uLCD_CMD_BAD_FORM_INDEX     = -127,
-    GEN4_uLCD_WRITE_STR_TOO_BIG      = -128,
-    GEN4_uLCD_WRITE_STRING_FAIL      = -129,
-    GEN4_uLCD_WRITE_STRING_TIMEOUT   = -130,
-    GEN4_uLCD_BUTTON_FORM_INACTIVE   = -131,
-    GEN4_uLCD_EXPECTED_BUTTON_OBJECT = -132,
-    GEN4_uLCD_BUTTON_OBJECT_NOT_USED = -133,
-    GEN4_uLCD_STRING_FORM_INACTIVE   = -134,
-    GEN4_uLCD_SWITCH_OBJECT_NOT_USED = -135,
-    QUOTE_ERROR                      = -136,
+    QUOTE_ERROR                      = -103,
+    BAD_COMMAND                      = -104,
+    BAD_PORT_NUMBER                  = -105,
+    BAD_NOS_PARAMETERS               = -106,
+    BAD_BASE_PARAMETER               = -107,
+    PARAMETER_OUTWITH_LIMITS         = -108,
+    BAD_SERVO_COMMAND                = -109,
+    STEPPER_CALIBRATE_FAIL           = -110,
+    BAD_STEPPER_COMMAND              = -111,
+    BAD_STEP_VALUE                   = -112,
+    MOVE_ON_UNCALIBRATED_MOTOR       = -113,
+    EXISTING_FAULT_WITH_MOTOR        = -114,
+    SM_MOVE_TOO_SMALL                = -115,
+    LIMIT_SWITCH_ERROR               = -116,
+    UNKNOWN_STEPPER_MOTOR_STATE      = -117,
+    STEPPER_BUSY                     = -118,
+    SERVO_BUSY                       = -119,
+    GEN4_uLCD_NOT_DETECTED           = -120,
+    GEN4_uLCD_WRITE_OBJ_FAIL         = -121,
+    GEN4_uLCD_WRITE_OBJ_TIMEOUT      = -122,
+    GEN4_uLCD_WRITE_CONTRAST_FAIL    = -123,
+    GEN4_uLCD_WRITE_CONTRAST_BAD_VALUE = -124,
+    GEN4_uLCD_WRITE_CONTRAST_TIMEOUT = -125,
+    GEN4_uLCD_READ_OBJ_FAIL          = -126,
+    GEN4_uLCD_READ_OBJ_TIMEOUT       = -127,
+    GEN4_uLCD_CMD_BAD_FORM_INDEX     = -128,
+    GEN4_uLCD_WRITE_STR_TOO_BIG      = -129,
+    GEN4_uLCD_WRITE_STRING_FAIL      = -130,
+    GEN4_uLCD_WRITE_STRING_TIMEOUT   = -131,
+    GEN4_uLCD_BUTTON_FORM_INACTIVE   = -132,
+    GEN4_uLCD_EXPECTED_BUTTON_OBJECT = -133,
+    GEN4_uLCD_BUTTON_OBJECT_NOT_USED = -134,
+    GEN4_uLCD_STRING_FORM_INACTIVE   = -135,
+    GEN4_uLCD_SWITCH_OBJECT_NOT_USED = -136,
 } error_codes_te;
 
 
@@ -544,7 +544,7 @@ struct neopixel_colour_s {
 #define     MAX_PRINT_STRING_LENGTH     128
 
 //==============================================================================
-// Command string index values
+// Command string index values for the parameter list
 //
 // Common command indices
 
@@ -553,33 +553,39 @@ struct neopixel_colour_s {
 
 // Stepper command indicies
 
-#define     STEP_MOTOR_CMD_INDEX        2
+#define     STEP_MOTOR_SUB_CMD_INDEX    2
 #define     STEP_MOTOR_NO_INDEX         3
 #define     STEP_MOTOR_ANGLE_INDEX      4
 #define     STEP_MOTOR_PROFILE_INDEX    5
 
 // servo command indicies
 
-#define     SERVO_CMD_INDEX     2
-#define     SERVO_NUMBER_INDEX  3
-#define     SERVO_ANGLE_INDEX   4
-#define     SERVO_SPEED_INDEX   5
+#define     SERVO_SUB_CMD_INDEX     2
+#define     SERVO_NUMBER_INDEX      3
+#define     SERVO_ANGLE_INDEX       4
+#define     SERVO_SPEED_INDEX       5
 
 // display command indicies
 
-#define     DISPLAY_CMD_INDEX       2
-#define     DISPLAY_FORM_INDEX      3   // for SET_FORM command
+#define     DISPLAY_SUB_CMD_INDEX   2
+#define     DISPLAY_FORM_INDEX      3
 #define     DISPLAY_CONTRAST_INDEX  3   // for SET_CONTRAST command
+#define     DISPLAY_LOCAL_ID_INDEX  4
+#define     DISPLAY_STRING_INDEX    5
 
 // neopixel command indicies
 
-#define     NEOPIXEL_CMD_INDEX                 2
+#define     NEOPIXEL_SUB_CMD_INDEX             2
 #define     NEOPIXEL_NUMBER_INDEX              3
 #define     NEOPIXEL_COLOUR_INDEX              4
 #define     NEOPIXEL_FLASH_ON_COLOUR_INDEX     4
 #define     NEOPIXEL_FLASH_ON_TIME_INDEX       5
 #define     NEOPIXEL_FLASH_OFF_COLOUR_INDEX    6
 #define     NEOPIXEL_FLASH_OFF_TIME_INDEX      7
+
+// Ping command
+
+#define     PING_VALUE_INDEX        2
 
 //==============================================================================
 // 

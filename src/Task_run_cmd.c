@@ -20,6 +20,7 @@
 #include "tokenizer.h"
 #include  "Pico_IO.h"
 #include  "neopixel.h"
+#include  "gen4_uLCD.h"
 
 //***************************************************************************
 // Function prototypes
@@ -66,7 +67,7 @@ uint32_t                current_form, result, i;
         token = string_to_token(commands, &command[arg_pt[0]]);
         status = check_command(token);
         if (status != OK) {
-            print_error(int_parameters[1], status);
+            print_error(int_parameters[PORT_INDEX], status);
             continue;
         }
 
@@ -74,7 +75,7 @@ uint32_t                current_form, result, i;
         status = OK;
         switch (token) {
             case TOKENIZER_SERVO: 
-                switch (int_parameters[SERVO_CMD_INDEX]) {
+                switch (int_parameters[SERVO_SUB_CMD_INDEX]) {
                     case ABS_MOVE: 
                         status = set_servo_move( int_parameters[SERVO_NUMBER_INDEX], MOVE, int_parameters[SERVO_ANGLE_INDEX], false);
                         break;
@@ -88,13 +89,13 @@ uint32_t                current_form, result, i;
                         status = set_servo_speed_move(int_parameters[SERVO_NUMBER_INDEX], TIMED_MOVE, int_parameters[SERVO_ANGLE_INDEX], int_parameters[SERVO_SPEED_INDEX], true);
                         break;
                     case RUN_SYNC_MOVES: 
-                        status = set_servo_move(int_parameters[SERVO_CMD_INDEX], int_parameters[SERVO_NUMBER_INDEX], int_parameters[SERVO_ANGLE_INDEX], false);
+                        status = set_servo_move(int_parameters[SERVO_SUB_CMD_INDEX], int_parameters[SERVO_NUMBER_INDEX], int_parameters[SERVO_ANGLE_INDEX], false);
                         break;
                     case STOP:
-                        status = set_servo_move(int_parameters[SERVO_CMD_INDEX], int_parameters[SERVO_NUMBER_INDEX], int_parameters[SERVO_ANGLE_INDEX], false);  
+                        status = set_servo_move(int_parameters[SERVO_SUB_CMD_INDEX], int_parameters[SERVO_NUMBER_INDEX], int_parameters[SERVO_ANGLE_INDEX], false);  
                         break;
                     case STOP_ALL: 
-                        status = set_servo_move(int_parameters[SERVO_CMD_INDEX], int_parameters[SERVO_NUMBER_INDEX], int_parameters[SERVO_ANGLE_INDEX], false);
+                        status = set_servo_move(int_parameters[SERVO_SUB_CMD_INDEX], int_parameters[SERVO_NUMBER_INDEX], int_parameters[SERVO_ANGLE_INDEX], false);
                         break;
                     case ENABLE :
                         status = set_servo_state(int_parameters[SERVO_NUMBER_INDEX], DISABLED, int_parameters[SERVO_ANGLE_INDEX]);
@@ -103,7 +104,7 @@ uint32_t                current_form, result, i;
                         status = BAD_SERVO_COMMAND;
                         break;
                 }  // end of inner switch
-                print_string("%d %d\n", int_parameters[1], status);
+                print_string("%d %d\n", int_parameters[PORT_INDEX], status);
                 reply_done = true;
                 break;
 
@@ -116,7 +117,7 @@ uint32_t                current_form, result, i;
                     break;
                 }
                 sm_number = int_parameters[STEP_MOTOR_NO_INDEX];
-                switch (int_parameters[STEP_MOTOR_CMD_INDEX]) { 
+                switch (int_parameters[STEP_MOTOR_SUB_CMD_INDEX]) { 
 
                     case SM_REL_MOVE : 
                     case SM_REL_MOVE_SYNC :
@@ -148,7 +149,7 @@ uint32_t                current_form, result, i;
                         stepper_data[sm_number].sm_profile = 0;
                         stepper_data[sm_number].coast_step_count = (abs(rel_nos_steps) - (sequences[sm_number].nos_sm_cmds - 1));
                         stepper_data[sm_number].cmd_index = 0;
-                        if (int_parameters[STEP_MOTOR_CMD_INDEX] == SM_REL_MOVE) {
+                        if (int_parameters[STEP_MOTOR_SUB_CMD_INDEX] == SM_REL_MOVE) {
                             stepper_data[sm_number].state = STATE_SM_INIT;
                         } else {
                             stepper_data[sm_number].state = STATE_SM_SYNC;
@@ -194,7 +195,7 @@ uint32_t                current_form, result, i;
                         status = BAD_STEPPER_COMMAND;
                         break;
                 }
-                print_string("%d %d\n", int_parameters[1], status);
+                print_string("%d %d\n", int_parameters[PORT_INDEX], status);
                 reply_done = true;
                 break;
 
@@ -216,15 +217,15 @@ uint32_t                current_form, result, i;
             case TOKENIZER_GET:
                 switch (int_parameters[2]) {
                     case SYS_INFO:
-                        print_string("%d %d %d\n", int_parameters[1], NOS_SERVOS, NOS_STEPPERS);
+                        print_string("%d %d %d\n", int_parameters[PORT_INDEX], NOS_SERVOS, NOS_STEPPERS);
                         reply_done = true;
                         break;
                     case SERVO_INFO:
-                        print_string("%d\n", int_parameters[1]);
+                        print_string("%d\n", int_parameters[PORT_INDEX]);
                         reply_done = true;
                         break;
                     case STEPPER_INFO:
-                        print_string("%d\n", int_parameters[1]);
+                        print_string("%d\n", int_parameters[PORT_INDEX]);
                         reply_done = true;
                         break;
                     default:
@@ -233,21 +234,21 @@ uint32_t                current_form, result, i;
                 break;
 
             case TOKENIZER_PING: 
-                print_string("%d %d %d\n", int_parameters[1], OK, (int_parameters[2] + 1));
+                print_string("%d %d %d\n", int_parameters[PORT_INDEX], OK, (int_parameters[PING_VALUE_INDEX] + 1));
                 reply_done = true;
                 break;
 
             case TOKENIZER_DISPLAY:
-                switch (int_parameters[DISPLAY_CMD_INDEX]) {
+                switch (int_parameters[DISPLAY_SUB_CMD_INDEX]) {
                     case SET_FORM: 
                         if (int_parameters[DISPLAY_FORM_INDEX] > NOS_FORMS) {
                             status = GEN4_uLCD_CMD_BAD_FORM_INDEX;
                             break;
                         }
-                        status = gen4_uLCD_WriteObject(GEN4_uLCD_OBJ_FORM, int_parameters[DISPLAY_FORM_INDEX], 0);
+                        change_uLCD_form(int_parameters[DISPLAY_FORM_INDEX]);
                         break;
                     case GET_FORM:
-                        print_string("%d %d %d\n", int_parameters[1], OK, get_uLCD_active_form());
+                        print_string("%d %d %d\n", int_parameters[PORT_INDEX], OK, get_uLCD_active_form());
                         reply_done = true;
                         break;
                     case SET_CONTRAST:
@@ -259,56 +260,63 @@ uint32_t                current_form, result, i;
                         break;
                     case READ_BUTTON:
                         current_form = get_uLCD_active_form();
-                        if (int_parameters[3] != current_form ) {
+                        if (int_parameters[DISPLAY_FORM_INDEX] != current_form ) {
                             status = GEN4_uLCD_BUTTON_FORM_INACTIVE;
                             break;
                         } 
                         status = gen4_uLCD_ReadObject(GEN4_uLCD_OBJ_WINBUTTON, 
                                              form_data[current_form].buttons[int_parameters[4]].global_object_id,
                                              &result);
-                        print_string("%d %d %d\n", int_parameters[1], status, result );
+                        print_string("%d %d %d\n", int_parameters[PORT_INDEX], status, result );
                         reply_done = true;
                         break;
                     case READ_SWITCH:
                         current_form = get_uLCD_active_form();
-                        if (int_parameters[3] != current_form ) {
+                        if (int_parameters[DISPLAY_FORM_INDEX] != current_form ) {
                             status = GEN4_uLCD_BUTTON_FORM_INACTIVE;
                             break;
                         } 
                         status = gen4_uLCD_ReadObject(GEN4_uLCD_OBJ_ISWITCHB, 
-                                             form_data[current_form].switches[int_parameters[4]].global_object_id,
+                                             form_data[current_form].switches[int_parameters[DISPLAY_LOCAL_ID_INDEX]].global_object_id,
                                              &result);
-                        print_string("%d %d %d\n", int_parameters[1], status, result );
+                        print_string("%d %d %d\n", int_parameters[PORT_INDEX], status, result );
                         reply_done = true;
                         break;
                     case SCAN_BUTTONS:
                         current_form = get_uLCD_active_form();
-                        if (int_parameters[3] != current_form ) {
+                        if (int_parameters[DISPLAY_FORM_INDEX] != current_form ) {
                             status = GEN4_uLCD_BUTTON_FORM_INACTIVE;
                             break;
                         } 
-                        for (i=0 ; i < nos_object[current_form].nos_switchs; i++) {
+                        for (i=0 ; i < nos_object[current_form].nos_switches; i++) {
                             if (form_data[current_form].switches[i].state == PRESSED) {
-                                print_string("%d %d %d\n", int_parameters[1], OK, i );
+                                print_string("%d %d %d\n", int_parameters[PORT_INDEX], OK, i );
                                 reply_done = true;
+                                // clear state to button data
+                                clear_button_state(current_form, i);
                                 break;
                             }
                         }
                         if (reply_done != true) {
-                            print_string("%d %d %d\n", int_parameters[1], OK, -1 );
+                            print_string("%d %d %d\n", int_parameters[PORT_INDEX], OK, -1 );
                             reply_done = true;
                         }
                         break;
                     case WRITE_STRING:
                         current_form = get_uLCD_active_form();
-                        status = gen4_uLCD_WriteString(int_parameters[3], &command[arg_pt[4]]);
+                        if (int_parameters[DISPLAY_FORM_INDEX] != current_form ) {
+                            status = GEN4_uLCD_BUTTON_FORM_INACTIVE;
+                            break;
+                        } 
+                        status = gen4_uLCD_WriteString(form_data[current_form].switches[int_parameters[DISPLAY_LOCAL_ID_INDEX]].global_object_id,
+                                                       &command[arg_pt[DISPLAY_STRING_INDEX]]);
                     default:
                         break;
                 }
                 break;
 
             case TOKENIZER_NEOPIXEL:
-                switch (int_parameters[DISPLAY_CMD_INDEX]) {
+                switch (int_parameters[NEOPIXEL_SUB_CMD_INDEX]) {
                     case NP_SET_PIXEL_ON:
                         set_neopixel_on(int_parameters[3], int_parameters[4]);
                         break;
@@ -527,4 +535,6 @@ uint32_t i, span;
     }
     return status;
 }
+
+
 

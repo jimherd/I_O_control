@@ -610,3 +610,8 @@ uint32_t	   active_form, global_index;
 	}
 	return OK;
 }
+
+void inline clear_button_state(uint32_t form, uint32_t local_index) {
+    form_data[form].switches[local_index].state = PRESSED;
+    form_data[form].switches[local_index].state == NOT_PRESSED;
+}
