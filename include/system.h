@@ -167,17 +167,16 @@ enum {UPPER_CASE, LOWER_CASE};
 //#define UART1_BAUD_RATE   200000
 #define UART1_BAUD_RATE   115200
 
+// set of displat sub-commands
 
-typedef enum {SET_FORM, GET_FORM, SET_CONTRAST, READ_BUTTON, READ_SWITCH, WRITE_STRING, SCAN_BUTTONS} display_commands_te;
+typedef enum {SET_uLCD_FORM, GET_uLCD_FORM, SET_uLCD_CONTRAST, 
+              READ_uLCD_BUTTON, READ_uLCD_SWITCH, READ_uLCD_OBJECT, 
+              WRITE_uLCD_STRING, SCAN_uLCD_BUTTONS
+             } display_commands_te;
 
 #define     NOS_FORMS       3
-#define     NOS_BUTTONS     3
-
-
 
 #define MAX_GEN4_uLCD_EVENTS    	16    // MUST be a power of 2
-
-
 
 #define		GEN4_uLCD_NOS_PINGS		1   // to set display
 
