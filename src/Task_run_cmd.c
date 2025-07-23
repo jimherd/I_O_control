@@ -247,10 +247,14 @@ uint32_t                current_form, result, i, value, pressed_state;
                         } 
                         change_uLCD_form(int_parameters[DISPLAY_FORM_INDEX]);
                         // clear button states
-                        for (i=0 ; i < nos_object->nos_buttons ; i++) {
+                        for (i = 0; i < nos_object->nos_buttons; i++) {
                             clear_button_state(current_form, int_parameters[DISPLAY_FORM_INDEX]);
                         }
-                        // update any 
+                        // update any strings
+                        for (i = 0; i < nos_object[DISPLAY_FORM_INDEX].nos_strings; i++) {
+                            status = gen4_uLCD_WriteString(form_data[DISPLAY_FORM_INDEX].switches[int_parameters[DISPLAY_LOCAL_ID_INDEX]].global_object_id,
+                                                       &command[arg_pt[DISPLAY_STRING_INDEX]]);
+                        }
                         break;
                     case GET_uLCD_FORM:
                         print_string("%d %d %d\n", int_parameters[PORT_INDEX], OK, get_uLCD_active_form());
@@ -269,9 +273,6 @@ uint32_t                current_form, result, i, value, pressed_state;
                             status = GEN4_uLCD_BUTTON_FORM_INACTIVE;
                             break;
                         } 
-        // status = gen4_uLCD_ReadObject(GEN4_uLCD_OBJ_WINBUTTON, 
-        //                      form_data[current_form].buttons[int_parameters[4]].global_object_id,
-        //                      &result);
                         pressed_state = form_data[current_form].buttons[int_parameters[4]].button_state;
                         value = form_data[current_form].buttons[int_parameters[4]].button_value;
                         print_string("%d %d %d %d %d\n", int_parameters[PORT_INDEX], value, pressed_state, status);
@@ -283,16 +284,16 @@ uint32_t                current_form, result, i, value, pressed_state;
                             status = GEN4_uLCD_BUTTON_FORM_INACTIVE;
                             break;
                         } 
-        // status = gen4_uLCD_ReadObject(GEN4_uLCD_OBJ_ISWITCHB, 
-        //                      form_data[current_form].switches[int_parameters[DISPLAY_LOCAL_ID_INDEX]].global_object_id,
-        //                      &result);
-        // print_string("%d %d %d\n", int_parameters[PORT_INDEX], status, result );
+        
                         value = form_data[current_form].switches[int_parameters[4]].switch_value;
                         print_string("%d %d %d\n", int_parameters[PORT_INDEX], value, status);
                         reply_done = true;
                         break;
                     case READ_uLCD_OBJECT:
-
+                        status = gen4_uLCD_ReadObject(GEN4_uLCD_OBJ_ISWITCHB,
+                                                      form_data[current_form].switches[int_parameters[DISPLAY_LOCAL_ID_INDEX]].global_object_id,
+                                                      &result);
+                        print_string("%d %d %d\n", int_parameters[PORT_INDEX], status, result);
                         break;
                     case SCAN_uLCD_BUTTONS:
                         current_form = get_uLCD_active_form();
