@@ -34,9 +34,10 @@
 
 typedef enum {
     OBJECT_UNUSED,
-    OBJECT_ENABLED,
     OBJECT_DISABLED,
-}object_state_te;
+    OBJECT_ENABLED,
+    OBJECT_SCAN_ENABLED,
+}object_mode_te;
 
 typedef enum {
     PRESSED,
@@ -93,7 +94,7 @@ enum {
 // screen. "form_data_te" aggregates the data for all
 
 typedef struct  {   // for WINBUTTON objects
-    object_state_te state;
+    object_mode_te  object_mode;
     uint8_t         object_type;
     uint8_t         global_object_id;    // e.g. WINBUTTON0, WINBUTTON1, etc.
 	int8_t	        button_value;
@@ -102,7 +103,7 @@ typedef struct  {   // for WINBUTTON objects
 } touch_button_data_ts;
 
 typedef struct  {   // for ISWITCHB objects
-    object_state_te state;          // enabled, disabled, unused
+    object_mode_te  object_mode;          // enabled, disabled, unused
     uint8_t         object_type;
     uint8_t         global_object_id;    // e.g. ISWITCHB0, ISWITCHB1, etc.
 	int8_t	        switch_value;
@@ -110,7 +111,7 @@ typedef struct  {   // for ISWITCHB objects
 } touch_switch_data_ts;
 
 typedef struct {    // for STRINGS objects
-    object_state_te state;
+    object_mode_te  object_mode;
     uint8_t         global_object_id;
     char            string[GEN4_uLCD_MAX_STRING_CHARS + 1];  // +1 for null terminator
 } string_data_ts;

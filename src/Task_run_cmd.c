@@ -257,7 +257,7 @@ uint32_t                current_form, result, i, value, pressed_state;
                         }
                         break;
                     case GET_uLCD_FORM:
-                        print_string("%d %d %d\n", int_parameters[PORT_INDEX], OK, get_uLCD_active_form(), OK);
+                        print_string("%d %d %d\n",int_parameters[PORT_INDEX], OK,  get_uLCD_active_form());
                         reply_done = true;
                         break;
                     case SET_uLCD_CONTRAST:
@@ -302,7 +302,7 @@ uint32_t                current_form, result, i, value, pressed_state;
                             break;
                         } 
                         for (i=0 ; i < nos_object[current_form].nos_switches; i++) {
-                            if (form_data[current_form].switches[i].state == PRESSED) {
+                            if (form_data[current_form].switches[i].object_mode == PRESSED) {
                                 print_string("%d %d %d\n" , OK, int_parameters[PORT_INDEX], i);
                                 reply_done = true;
                                 // clear state to button data

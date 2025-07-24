@@ -167,21 +167,21 @@ uint32_t       count, i, j;
 	for (i = 0; i < NOS_FORMS; i++ ) {
 		count = 0;
 		for (j = 0; j < GEN4_uLCD_MAX_BUTTONS_PER_FORM; j++) {
-			if (form_data[i].buttons[j].state != OBJECT_UNUSED) {
+			if (form_data[i].buttons[j].object_mode != OBJECT_UNUSED) {
 				count++;
 			}
 		}
 		nos_object[i].nos_buttons = count;
 		count = 0;
 		for (j = 0; j < GEN4_uLCD_MAX_BUTTONS_PER_FORM; j++) {
-			if (form_data[i].switches[j].state != OBJECT_UNUSED) {
+			if (form_data[i].switches[j].object_mode != OBJECT_UNUSED) {
 				count++;
 			}
 		}
 		nos_object[i].nos_strings = count;
 		count = 0;
 		for (j = 0; j < GEN4_uLCD_MAX_BUTTONS_PER_FORM; j++) {
-			if (form_data[i].strings[j].state != OBJECT_UNUSED) {
+			if (form_data[i].strings[j].object_mode != OBJECT_UNUSED) {
 				count++;
 			}
 		}
@@ -520,7 +520,7 @@ error_codes_te status;
 		status = OK;
 	}
 	// check if object is on the active form
-	if (form_data[form].switches[local_index].state == OBJECT_UNUSED) {
+	if (form_data[form].switches[local_index].object_mode == OBJECT_UNUSED) {
 		return GEN4_uLCD_SWITCH_OBJECT_NOT_USED;
 	}
 	
@@ -544,7 +544,7 @@ error_codes_te status;
 		status = OK;
 	}
 // check if object is on the active form
-	if (form_data[form].buttons[local_index].state == OBJECT_UNUSED) {
+	if (form_data[form].buttons[local_index].object_mode == OBJECT_UNUSED) {
 		return GEN4_uLCD_BUTTON_OBJECT_NOT_USED;
 	}
 	
@@ -569,7 +569,7 @@ uint32_t	active_form, global_index;
 		status = OK;
 	}
 	// check if object is on the active form
-	if (form_data[form].strings[local_index].state == OBJECT_UNUSED) {
+	if (form_data[form].strings[local_index].object_mode == OBJECT_UNUSED) {
 		return GEN4_uLCD_BUTTON_OBJECT_NOT_USED;
 	}	
 	// write string
@@ -612,6 +612,6 @@ uint32_t	   active_form, global_index;
 }
 
 void inline clear_button_state(uint32_t form, uint32_t local_index) {
-    form_data[form].switches[local_index].state = PRESSED;
-    form_data[form].switches[local_index].state == NOT_PRESSED;
+    form_data[form].switches[local_index].object_mode = PRESSED;
+    form_data[form].switches[local_index].object_mode == NOT_PRESSED;
 }
