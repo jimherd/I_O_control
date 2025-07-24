@@ -301,7 +301,10 @@ uint32_t                current_form, result, i, value, pressed_state;
                             status = GEN4_uLCD_BUTTON_FORM_INACTIVE;
                             break;
                         } 
-                        for (i=0 ; i < nos_object[current_form].nos_switches; i++) {
+                        for (i=0 ; i < nos_object[current_form].nos_buttons; i++) {
+                            if (form_data[current_form].buttons[i].object_mode != OBJECT_SCAN_ENABLED) {
+                                break;
+                            }
                             if (form_data[current_form].switches[i].object_mode == PRESSED) {
                                 print_string("%d %d %d\n" , OK, int_parameters[PORT_INDEX], i);
                                 reply_done = true;

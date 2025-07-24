@@ -50,8 +50,8 @@ int32_t		gen4_uLCD_current_form;
 form_data_ts    form_data[GEN4_uLCD_MAX_NOS_FORMS] = {
     {   // form 0
         .buttons = {
-            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON0, 0, 0, NOT_PRESSED},
-            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON1, 0, 0, NOT_PRESSED},
+            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON0, 0, 0, NOT_PRESSED},
+            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON1, 0, 0, NOT_PRESSED},
         },
         .switches = {
         },
@@ -62,9 +62,9 @@ form_data_ts    form_data[GEN4_uLCD_MAX_NOS_FORMS] = {
     },
     {   // form 1
         .buttons = {
-            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON2, 0, 0, NOT_PRESSED},
-            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON3, 0, 0, NOT_PRESSED},
-            {OBJECT_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON4, 0, 0, NOT_PRESSED},
+            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON2, 0, 0, NOT_PRESSED},
+            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON3, 0, 0, NOT_PRESSED},
+            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON4, 0, 0, NOT_PRESSED},
         },
         .switches = {
             {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
@@ -76,15 +76,15 @@ form_data_ts    form_data[GEN4_uLCD_MAX_NOS_FORMS] = {
     },
     {   // form 2
         .buttons = {
-            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON5, 0, 0, NOT_PRESSED},
-            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON6, 0, 0, NOT_PRESSED},
-            {true, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON7, 0, 0, NOT_PRESSED},
+            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON5, 0, 0, NOT_PRESSED},
+            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON6, 0, 0, NOT_PRESSED},
+            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON7, 0, 0, NOT_PRESSED},
         },
         .switches = {
-            {true, GEN4_uLCD_OBJ_ISWITCHB, 0},
-            {true, GEN4_uLCD_OBJ_ISWITCHB, 0},
-            {true, GEN4_uLCD_OBJ_ISWITCHB, 0},
-            {true, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
         },
         .strings = {},
     },
