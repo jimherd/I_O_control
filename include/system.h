@@ -116,6 +116,7 @@ typedef enum  {
     GEN4_uLCD_BUTTON_OBJECT_NOT_USED = -134,
     GEN4_uLCD_STRING_FORM_INACTIVE   = -135,
     GEN4_uLCD_SWITCH_OBJECT_NOT_USED = -136,
+    GEN4_UNKNOWN_DISPLAY_SUB_COMMAND = -137,
 } error_codes_te;
 
 
@@ -171,7 +172,8 @@ enum {UPPER_CASE, LOWER_CASE};
 
 typedef enum {SET_uLCD_FORM, GET_uLCD_FORM, SET_uLCD_CONTRAST, 
               READ_uLCD_BUTTON, READ_uLCD_SWITCH, READ_uLCD_OBJECT, 
-              WRITE_uLCD_STRING, SCAN_uLCD_BUTTONS
+              WRITE_uLCD_STRING, WRITE_uLCD_OBJECT,
+              SCAN_uLCD_BUTTON_PRESSES
              } display_commands_te;
 
 #define     NOS_FORMS       3

@@ -55,9 +55,9 @@ error_codes_te   status;
     
     FOREVER {
         if (display_OK == true){
-            gen4_uLCD_WriteContrast(5);
+            //gen4_uLCD_WriteContrast(5);
             vTaskDelay(2000);
-            gen4_uLCD_WriteContrast(12);
+            //gen4_uLCD_WriteContrast(12);
             vTaskDelay(2000);
         } else {
             vTaskDelay(10000);

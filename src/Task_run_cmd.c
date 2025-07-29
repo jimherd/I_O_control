@@ -256,10 +256,12 @@ uint32_t                current_form, result, i, value, pressed_state;
                                                        &command[arg_pt[DISPLAY_STRING_INDEX]]);
                         }
                         break;
+
                     case GET_uLCD_FORM:
                         print_string("%d %d %d\n",int_parameters[PORT_INDEX], OK,  get_uLCD_active_form());
                         reply_done = true;
                         break;
+
                     case SET_uLCD_CONTRAST:
                         if (int_parameters[DISPLAY_CONTRAST_INDEX] < 0 || int_parameters[DISPLAY_CONTRAST_INDEX] > 100) {
                             status = GEN4_uLCD_WRITE_CONTRAST_BAD_VALUE;
@@ -267,6 +269,7 @@ uint32_t                current_form, result, i, value, pressed_state;
                         }
                         status = gen4_uLCD_WriteContrast(int_parameters[DISPLAY_CONTRAST_INDEX]);
                         break;
+
                     case READ_uLCD_BUTTON:   // read from 'form_data' structure
                         current_form = get_uLCD_active_form();
                         if (int_parameters[DISPLAY_FORM_INDEX] != current_form ) {
@@ -278,6 +281,7 @@ uint32_t                current_form, result, i, value, pressed_state;
                         print_string("%d %d %d %d\n", int_parameters[PORT_INDEX], status, value, pressed_state);
                         reply_done = true;
                         break;
+
                     case READ_uLCD_SWITCH:   // read from 'form_data' structure
                         current_form = get_uLCD_active_form();
                         if (int_parameters[DISPLAY_FORM_INDEX] != current_form ) {
@@ -289,13 +293,28 @@ uint32_t                current_form, result, i, value, pressed_state;
                         print_string("%d %d %d\n", status, int_parameters[PORT_INDEX], value);
                         reply_done = true;
                         break;
+
                     case READ_uLCD_OBJECT:  //read from display hardware
                         status = gen4_uLCD_ReadObject(GEN4_uLCD_OBJ_ISWITCHB,
                                                       form_data[current_form].switches[int_parameters[DISPLAY_LOCAL_ID_INDEX]].global_object_id,
                                                       &result);
                         print_string("%d %d %d\n", status, int_parameters[PORT_INDEX], result);
                         break;
-                    case SCAN_uLCD_BUTTONS:
+
+                    case WRITE_uLCD_STRING:
+                        current_form = get_uLCD_active_form();
+                        if (int_parameters[DISPLAY_FORM_INDEX] != current_form ) {
+                            status = GEN4_uLCD_BUTTON_FORM_INACTIVE;
+                            break;
+                        } 
+                        status = gen4_uLCD_WriteString(form_data[current_form].switches[int_parameters[DISPLAY_LOCAL_ID_INDEX]].global_object_id,
+                                                       &command[arg_pt[DISPLAY_STRING_INDEX]]);
+
+                    case WRITE_uLCD_OBJECT :
+                            status = gen4_uLCD_WriteObject(int_parameters[3], int_parameters[4], int_parameters[5]);
+                            break;
+
+                    case SCAN_uLCD_BUTTON_PRESSES:
                         current_form = get_uLCD_active_form();
                         if (int_parameters[DISPLAY_FORM_INDEX] != current_form ) {
                             status = GEN4_uLCD_BUTTON_FORM_INACTIVE;
@@ -318,15 +337,9 @@ uint32_t                current_form, result, i, value, pressed_state;
                             reply_done = true;
                         }
                         break;
-                    case WRITE_uLCD_STRING:
-                        current_form = get_uLCD_active_form();
-                        if (int_parameters[DISPLAY_FORM_INDEX] != current_form ) {
-                            status = GEN4_uLCD_BUTTON_FORM_INACTIVE;
-                            break;
-                        } 
-                        status = gen4_uLCD_WriteString(form_data[current_form].switches[int_parameters[DISPLAY_LOCAL_ID_INDEX]].global_object_id,
-                                                       &command[arg_pt[DISPLAY_STRING_INDEX]]);
+
                     default:
+                        status = GEN4_UNKNOWN_DISPLAY_SUB_COMMAND;
                         break;
                 }
                 break;

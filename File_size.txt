@@ -713,3 +713,18 @@
 24/07/2025 
       text       data        bss      total filename
      43776       1652      81700     127128 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+25/07/2025 
+      text       data        bss      total filename
+     43776       1652      81700     127128 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+29/07/2025 
+      text       data        bss      total filename
+     43776       1656      81700     127132 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+29/07/2025 
+      text       data        bss      total filename
+     43776       1656      81700     127132 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+29/07/2025 
+      text       data        bss      total filename
+     43808       1656      81700     127164 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+29/07/2025 
+      text       data        bss      total filename
+     43792       1656      81700     127148 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
