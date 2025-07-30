@@ -252,7 +252,7 @@ uint32_t                current_form, result, i, value, pressed_state;
                         }
                         // update any strings
                         for (i = 0; i < nos_object[DISPLAY_FORM_INDEX].nos_strings; i++) {
-                            status = gen4_uLCD_WriteString(form_data[DISPLAY_FORM_INDEX].switches[int_parameters[DISPLAY_LOCAL_ID_INDEX]].global_object_id,
+                            status = gen4_uLCD_WriteString(form_data[DISPLAY_FORM_INDEX].strings[int_parameters[DISPLAY_LOCAL_ID_INDEX]].global_object_id,
                                                        &command[arg_pt[DISPLAY_STRING_INDEX]]);
                         }
                         break;
