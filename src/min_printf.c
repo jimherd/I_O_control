@@ -318,7 +318,7 @@ error_codes_te  status;
 	status = gen4_uLCD_WriteString(form_data[form].strings[local_index].global_object_id, 
 		                  &buff.buffer[0]);
 	if (status == OK) {  // copy to 'form_data' structure
-		strncpy(form_data[form].strings[local_index].string, &buff.buffer[0], GEN4_uLCD_MAX_STRING_CHARS);
+		strcpy(form_data[form].strings[local_index].string, &buff.buffer[0]);
 	}
 	return status;
 }

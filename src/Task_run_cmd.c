@@ -49,7 +49,7 @@ static int32_t          token;
 bool                    reply_done;
 int32_t                 sm_number;
 int32_t                 rel_nos_steps, abs_nos_steps, move_count, move_angle;
-uint32_t                current_form, result, i, value, pressed_state;
+uint32_t                current_form, new_form, result, i, value, pressed_state;
 
     status = OK;
     FOREVER {
@@ -241,19 +241,23 @@ uint32_t                current_form, result, i, value, pressed_state;
             case TOKENIZER_DISPLAY:
                 switch (int_parameters[DISPLAY_SUB_CMD_INDEX]) {
                     case SET_uLCD_FORM: 
-                        if (int_parameters[DISPLAY_FORM_INDEX] > NOS_FORMS) {
+                        new_form = int_parameters[DISPLAY_FORM_INDEX];
+                        if (new_form > NOS_FORMS) {
                             status = GEN4_uLCD_CMD_BAD_FORM_INDEX;
                             break;
                         } 
-                        change_uLCD_form(int_parameters[DISPLAY_FORM_INDEX]);
+                        status = change_uLCD_form(new_form);
+                        if (status != OK) {
+                            break;
+                        }
                         // clear button states
-                        for (i = 0; i < nos_object->nos_buttons; i++) {
-                            clear_button_state(current_form, int_parameters[DISPLAY_FORM_INDEX]);
+                        for (i = 0; i < nos_object[new_form].nos_buttons; i++) {
+                            clear_button_state(new_form, i);
                         }
                         // update any strings
-                        for (i = 0; i < nos_object[DISPLAY_FORM_INDEX].nos_strings; i++) {
-                            status = gen4_uLCD_WriteString(form_data[DISPLAY_FORM_INDEX].strings[int_parameters[DISPLAY_LOCAL_ID_INDEX]].global_object_id,
-                                                       &command[arg_pt[DISPLAY_STRING_INDEX]]);
+                        for (i = 0; i < nos_object[new_form].nos_strings; i++) {
+                            status = gen4_uLCD_WriteString(form_data[new_form].strings[i].global_object_id,
+                                              &form_data[new_form].strings[i].string[0]);
                         }
                         break;
 
@@ -307,7 +311,7 @@ uint32_t                current_form, result, i, value, pressed_state;
                             status = GEN4_uLCD_BUTTON_FORM_INACTIVE;
                             break;
                         } 
-                        status = gen4_uLCD_WriteString(form_data[current_form].switches[int_parameters[DISPLAY_LOCAL_ID_INDEX]].global_object_id,
+                        status = gen4_uLCD_WriteString(form_data[current_form].strings[int_parameters[DISPLAY_LOCAL_ID_INDEX]].global_object_id,
                                                        &command[arg_pt[DISPLAY_STRING_INDEX]]);
 
                     case WRITE_uLCD_OBJECT :

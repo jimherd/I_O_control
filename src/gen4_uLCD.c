@@ -172,15 +172,17 @@ uint32_t       count, i, j;
 			}
 		}
 		nos_object[i].nos_buttons = count;
+
 		count = 0;
-		for (j = 0; j < GEN4_uLCD_MAX_BUTTONS_PER_FORM; j++) {
+		for (j = 0; j < GEN4_uLCD_MAX_SWITCHES_PER_FORM; j++) {
 			if (form_data[i].switches[j].object_mode != OBJECT_UNUSED) {
 				count++;
 			}
 		}
-		nos_object[i].nos_strings = count;
+		nos_object[i].nos_switches = count;
+
 		count = 0;
-		for (j = 0; j < GEN4_uLCD_MAX_BUTTONS_PER_FORM; j++) {
+		for (j = 0; j < GEN4_uLCD_MAX_STRINGS_PER_FORM; j++) {
 			if (form_data[i].strings[j].object_mode != OBJECT_UNUSED) {
 				count++;
 			}
@@ -387,7 +389,7 @@ error_codes_te   status;
 	uLCD_cmd.data[1] = global_index;
 	uLCD_cmd.cmd_length = text_length + 1 + display_cmd_info[GEN4_uLCD_WRITE_STR].length;
 	uLCD_cmd.data[2] = text_length + 1;
-	strncpy(&uLCD_cmd.data[3], str_pt, MAX_GEN4_uLCD_WRITE_STR_SIZE);
+	strcpy(&uLCD_cmd.data[3], str_pt);
 	checksum = 0;
 	for (int i=0 ; i < (uLCD_cmd.cmd_length - 1) ; i++) {
 		checksum ^= uLCD_cmd.data[i];
@@ -411,7 +413,7 @@ error_codes_te   status;
 	 }
 	 xSemaphoreGive(gen4_uLCD_MUTEX_access);
 	 // retain copy of string in form data structure
-	 strncpy(form_data[get_uLCD_active_form()].strings[global_index].string, str_pt, MAX_GEN4_uLCD_WRITE_STR_SIZE);
+	 strcpy(form_data[get_uLCD_active_form()].strings[global_index].string, str_pt);
 
 	 return status;
 }
@@ -473,7 +475,7 @@ error_codes_te   status;
  * @return 	error_codes_te 
  * 
  * @note 	Update the string objects on this form
- *          (Docs suggest that sting display to not retained when form is )
+ *          (Docs suggest that sting display are not retained when form is changed)
  */
 error_codes_te  change_uLCD_form(int32_t new_form) 
 {
@@ -579,7 +581,7 @@ uint32_t	active_form, global_index;
 		return status;
 	}
 	// log string on form_data structure
-	strncpy(form_data[form].strings[local_index].string, buff_pt->buffer, GEN4_uLCD_MAX_STRING_CHARS);
+	strcpy(form_data[form].strings[local_index].string, buff_pt->buffer);
 	
 	return OK;
 }
@@ -612,6 +614,7 @@ uint32_t	   active_form, global_index;
 }
 
 void inline clear_button_state(uint32_t form, uint32_t local_index) {
-    form_data[form].switches[local_index].object_mode = PRESSED;
-    form_data[form].switches[local_index].object_mode == NOT_PRESSED;
+	form_data[form].buttons[local_index].button_value = 0;
+    form_data[form].buttons[local_index].time_high = 0;
+    form_data[form].buttons[local_index].button_state = NOT_PRESSED;
 }

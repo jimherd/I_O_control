@@ -26,8 +26,8 @@
 
 #define GEN4_uLCD_MAX_NOS_FORMS                 8
 #define GEN4_uLCD_MAX_BUTTONS_PER_FORM          8
-#define GEN4_uLCD_MAX_NOS_SWITCHES_PER_FORM     64
-#define GEN4_uLCD_MAX_NOS_STRINGS_PER_FORM      8
+#define GEN4_uLCD_MAX_SWITCHES_PER_FORM     8
+#define GEN4_uLCD_MAX_STRINGS_PER_FORM      8
 #define GEN4_uLCD_MAX_STRING_CHARS              32  
 
 #define     GEN4_uLCD_MAX_NOS_BUTTONS   64
@@ -118,8 +118,8 @@ typedef struct {    // for STRINGS objects
 
 typedef struct {
     touch_button_data_ts    buttons[GEN4_uLCD_MAX_BUTTONS_PER_FORM];
-    touch_switch_data_ts    switches[GEN4_uLCD_MAX_NOS_SWITCHES_PER_FORM];
-    string_data_ts          strings[GEN4_uLCD_MAX_NOS_STRINGS_PER_FORM];
+    touch_switch_data_ts    switches[GEN4_uLCD_MAX_SWITCHES_PER_FORM];
+    string_data_ts          strings[GEN4_uLCD_MAX_STRINGS_PER_FORM];
 } form_data_ts;
 
 //==============================================================================
