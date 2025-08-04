@@ -755,3 +755,6 @@
 02/08/2025 
       text       data        bss      total filename
      41648       1656      81700     125004 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+04/08/2025 
+      text       data        bss      total filename
+     41792       1656      85796     129244 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
