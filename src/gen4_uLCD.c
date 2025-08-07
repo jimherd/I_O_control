@@ -368,6 +368,7 @@ error_codes_te    gen4_uLCD_WriteString(uint16_t global_index, char *text)
 {
 uint8_t   checksum, reply_byte, text_length, *str_pt;
 error_codes_te   status;
+int32_t   local_index;
 
 	if (gen4_uLCD_test_apply == true) {
 		if (gen4_uLCD_detected == false) {
@@ -413,7 +414,8 @@ error_codes_te   status;
 	 }
 	 xSemaphoreGive(gen4_uLCD_MUTEX_access);
 	 // retain copy of string in form data structure
-	 strcpy(form_data[get_uLCD_active_form()].strings[global_index].string, str_pt);
+	 local_index = global_id_to_local_id(get_uLCD_active_form(), global_index);
+	 strcpy(form_data[get_uLCD_active_form()].strings[local_index].string, str_pt);
 
 	 return status;
 }
@@ -613,8 +615,26 @@ uint32_t	   active_form, global_index;
 	return OK;
 }
 
+//==============================================================================
 void inline clear_button_state(uint32_t form, uint32_t local_index) {
 	form_data[form].buttons[local_index].button_value = 0;
     form_data[form].buttons[local_index].time_high = 0;
     form_data[form].buttons[local_index].button_state = NOT_PRESSED;
+}
+
+//==============================================================================
+int32_t global_to_local_id(uint32_t form, uint32_t global_id)
+{
+uint32_t nos_str, i;
+
+	nos_str = nos_object[form].nos_strings;
+	if (nos_str == 0) {
+		return -1;
+	}
+	for (i=0 ; i < nos_str ; i++) {
+		if (form_data[form].strings[i].global_object_id = global_id) {
+			return i;
+		}
+	return -1;
+	}
 }
