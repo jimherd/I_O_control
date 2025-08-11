@@ -414,7 +414,7 @@ int32_t   local_index;
 	 }
 	 xSemaphoreGive(gen4_uLCD_MUTEX_access);
 	 // retain copy of string in form data structure
-	 local_index = global_id_to_local_id(get_uLCD_active_form(), global_index);
+	 local_index = global_to_local_id(get_uLCD_active_form(), global_index);
 	 strcpy(form_data[get_uLCD_active_form()].strings[local_index].string, str_pt);
 
 	 return status;
@@ -632,7 +632,7 @@ uint32_t nos_str, i;
 		return -1;
 	}
 	for (i=0 ; i < nos_str ; i++) {
-		if (form_data[form].strings[i].global_object_id = global_id) {
+		if (form_data[form].strings[i].global_object_id == global_id) {
 			return i;
 		}
 	return -1;

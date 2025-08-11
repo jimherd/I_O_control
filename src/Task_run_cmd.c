@@ -328,8 +328,8 @@ uint32_t                current_form, new_form, result, i, value, pressed_state;
                             if (form_data[current_form].buttons[i].object_mode != OBJECT_SCAN_ENABLED) {
                                 break;
                             }
-                            if (form_data[current_form].switches[i].object_mode == PRESSED) {
-                                print_string("%d %d %d\n" , OK, int_parameters[PORT_INDEX], i);
+                            if (form_data[current_form].buttons[i].button_state == PRESSED) {
+                                print_string("%d %d %d %d\n" , OK, int_parameters[PORT_INDEX], i, form_data[current_form].buttons[i].time_high);
                                 reply_done = true;
                                 // clear state to button data
                                 clear_button_state(current_form, i);
