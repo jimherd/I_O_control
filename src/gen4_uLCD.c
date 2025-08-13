@@ -638,3 +638,31 @@ uint32_t nos_str, i;
 	return -1;
 	}
 }
+
+//==============================================================================
+// scan_switches : 
+//
+// read all switches in the current form and load into form_data structure
+
+error_codes_te    scan_switches(int32_t form)
+{
+touch_switch_data_ts  *obj_pt;
+error_codes_te		  status;
+int32_t				  result;
+
+	for (int i = 0; i < nos_object[form].nos_buttons; i++) {
+		obj_pt = &form_data[form].switches[i];
+		if (obj_pt->object_mode != OBJECT_ENABLED) {
+			continue;   // on to next switch
+		}
+		status = gen4_uLCD_ReadObject(obj_pt->object_type, 
+										obj_pt->global_object_id, 
+										&result);
+		if (status != OK) {
+			return status;
+		}
+		// log result 
+		obj_pt->switch_value = result;   
+		}
+	return OK;
+	}

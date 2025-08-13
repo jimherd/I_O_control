@@ -159,6 +159,7 @@ int32_t  get_uLCD_active_form(void);
 
 void clear_button_state(uint32_t form, uint32_t local_index);
 int32_t global_to_local_id(uint32_t form, uint32_t global_id);
+error_codes_te    scan_switches(int32_t form);
 
 
 #endif  /* __GEN4_uLCD_H__ */
