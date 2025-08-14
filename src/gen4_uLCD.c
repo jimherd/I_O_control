@@ -67,10 +67,10 @@ form_data_ts    form_data[GEN4_uLCD_MAX_NOS_FORMS] = {
             {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON4, 0, 0, NOT_PRESSED},
         },
         .switches = {
-            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
-            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
-            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
-            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
         },
         .strings = {},
     },
@@ -81,10 +81,10 @@ form_data_ts    form_data[GEN4_uLCD_MAX_NOS_FORMS] = {
             {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON7, 0, 0, NOT_PRESSED},
         },
         .switches = {
-            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
-            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
-            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
-            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
         },
         .strings = {},
     },
@@ -652,9 +652,9 @@ int32_t				  result;
 
 	for (int i = 0; i < nos_object[form].nos_buttons; i++) {
 		obj_pt = &form_data[form].switches[i];
-		if (obj_pt->object_mode != OBJECT_ENABLED) {
-			continue;   // on to next switch
-		}
+		if (obj_pt->object_mode != OBJECT_SCAN_ENABLED) {
+                    continue;   // on to next button
+                }
 		status = gen4_uLCD_ReadObject(obj_pt->object_type, 
 										obj_pt->global_object_id, 
 										&result);

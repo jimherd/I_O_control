@@ -49,7 +49,7 @@ static int32_t          token;
 bool                    reply_done;
 int32_t                 sm_number;
 int32_t                 rel_nos_steps, abs_nos_steps, move_count, move_angle;
-uint32_t                current_form, new_form, result, i, value, pressed_state;
+uint32_t                current_form, new_form, old_form, result, i, value, pressed_state;
 
     status = OK;
     FOREVER {
@@ -240,7 +240,18 @@ uint32_t                current_form, new_form, result, i, value, pressed_state;
 
             case TOKENIZER_DISPLAY:
                 switch (int_parameters[DISPLAY_SUB_CMD_INDEX]) {
-                    case SET_uLCD_FORM: 
+                    case SET_uLCD_FORM:
+                        new_form = int_parameters[DISPLAY_FORM_INDEX];
+                        if (new_form > NOS_FORMS) {
+                            status = GEN4_uLCD_CMD_BAD_FORM_INDEX;
+                            break;
+                        } 
+                        // scan any switches marked to be scanned and put their 
+                        // values in the 'form_data' structure
+                        status = scan_switches(get_uLCD_active_form());
+                        if (status != OK) {
+                            break;
+                        }
                         new_form = int_parameters[DISPLAY_FORM_INDEX];
                         if (new_form > NOS_FORMS) {
                             status = GEN4_uLCD_CMD_BAD_FORM_INDEX;
@@ -280,8 +291,8 @@ uint32_t                current_form, new_form, result, i, value, pressed_state;
                             status = GEN4_uLCD_BUTTON_FORM_INACTIVE;
                             break;
                         } 
-                        pressed_state = form_data[current_form].buttons[int_parameters[4]].button_state;
-                        value = form_data[current_form].buttons[int_parameters[4]].button_value;
+                        pressed_state = form_data[current_form].buttons[int_parameters[DISPLAY_LOCAL_ID_INDEX]].button_state;
+                        value = form_data[current_form].buttons[int_parameters[DISPLAY_LOCAL_ID_INDEX]].button_value;
                         print_string("%d %d %d %d\n", int_parameters[PORT_INDEX], status, value, pressed_state);
                         reply_done = true;
                         break;
@@ -292,15 +303,27 @@ uint32_t                current_form, new_form, result, i, value, pressed_state;
                             status = GEN4_uLCD_BUTTON_FORM_INACTIVE;
                             break;
                         } 
-        
-                        value = form_data[current_form].switches[int_parameters[4]].switch_value;
-                        print_string("%d %d %d\n", status, int_parameters[PORT_INDEX], value);
+                        if (int_parameters[DISPLAY_DATA_SOURCE_INDEX] == SRC_HARDWARE) {    // read from display hardware
+                            int32_t object_type = form_data[current_form].switches[int_parameters[DISPLAY_LOCAL_ID_INDEX]].object_type;
+                            int32_t global_object_id = form_data[current_form].switches[int_parameters[DISPLAY_LOCAL_ID_INDEX]].global_object_id;
+                            status = gen4_uLCD_ReadObject(object_type, 
+                                                            global_object_id, 
+                                                            &result);
+                            if (status != OK) {
+                                break;
+                            }
+                            // log result 
+		                    form_data[current_form].switches[int_parameters[DISPLAY_LOCAL_ID_INDEX]].switch_value = result;
+                        } else {      // read from 'form_data' structure
+                            result = form_data[current_form].switches[int_parameters[DISPLAY_LOCAL_ID_INDEX]].switch_value;
+                        }
+                        print_string("%d %d %d\n", int_parameters[PORT_INDEX], status, result);
                         reply_done = true;
                         break;
 
                     case READ_uLCD_OBJECT:  //read from display hardware
-                        status = gen4_uLCD_ReadObject(GEN4_uLCD_OBJ_ISWITCHB,
-                                                      form_data[current_form].switches[int_parameters[DISPLAY_LOCAL_ID_INDEX]].global_object_id,
+                        status = gen4_uLCD_ReadObject(int_parameters[DISPLAY_OBJECT_TYPE_INDEX],
+                                                      int_parameters[DISPLAY_GLOBAL_ID_INDEX],
                                                       &result);
                         print_string("%d %d %d\n", status, int_parameters[PORT_INDEX], result);
                         break;
@@ -314,8 +337,10 @@ uint32_t                current_form, new_form, result, i, value, pressed_state;
                         status = gen4_uLCD_WriteString(form_data[current_form].strings[int_parameters[DISPLAY_LOCAL_ID_INDEX]].global_object_id,
                                                        &command[arg_pt[DISPLAY_STRING_INDEX]]);
 
-                    case WRITE_uLCD_OBJECT :
-                            status = gen4_uLCD_WriteObject(int_parameters[3], int_parameters[4], int_parameters[5]);
+                    case WRITE_uLCD_OBJECT :   // raw write to a screen object
+                            status = gen4_uLCD_WriteObject(int_parameters[DISPLAY_OBJECT_TYPE_INDEX], 
+                                                           int_parameters[DISPLAY_GLOBAL_ID_INDEX], 
+                                                           int_parameters[DISPLAY_WRITE_VALUE_INDEX]);
                             break;
 
                     case SCAN_uLCD_BUTTON_PRESSES:

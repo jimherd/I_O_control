@@ -300,6 +300,8 @@ enum {
     GEN4_uLCD_STRING7,
 };
 
+enum {SRC_HARDWARE, SRC_FORM_DATA};
+
 //==============================================================================
 //I2C port
 //==============================================================================
@@ -568,11 +570,15 @@ struct neopixel_colour_s {
 
 // display command indicies
 
-#define     DISPLAY_SUB_CMD_INDEX   2
-#define     DISPLAY_FORM_INDEX      3
-#define     DISPLAY_CONTRAST_INDEX  3   // for SET_CONTRAST command
-#define     DISPLAY_LOCAL_ID_INDEX  4
-#define     DISPLAY_STRING_INDEX    5
+#define     DISPLAY_SUB_CMD_INDEX       2
+#define     DISPLAY_FORM_INDEX          3
+#define     DISPLAY_CONTRAST_INDEX      3   // for SET_CONTRAST command
+#define     DISPLAY_OBJECT_TYPE_INDEX   3
+#define     DISPLAY_LOCAL_ID_INDEX      4
+#define     DISPLAY_GLOBAL_ID_INDEX     4
+#define     DISPLAY_STRING_INDEX        5
+#define     DISPLAY_DATA_SOURCE_INDEX   5
+#define     DISPLAY_WRITE_VALUE_INDEX   5
 
 // neopixel command indicies
 
