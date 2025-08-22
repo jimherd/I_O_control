@@ -45,6 +45,7 @@ const uint8_t char_type[256] = {
 };
 
 const struct token_list_s commands[] = {
+    {"sys",     TOKENIZER_SYS},
     {"servo",   TOKENIZER_SERVO},
     {"stepper", TOKENIZER_STEPPER},
     {"sync",    TOKENIZER_SYNC},
@@ -90,11 +91,12 @@ struct error_list_s errors[] = {
 
 struct command_limits_s    cmd_limits[NOS_COMMANDS] = {     
 // paramter        NOS_PAR     1        2       3          4         5
+    [TOKENIZER_SYS].p_limits      = {{3, 3}, {0, 63}, {0, 4}},  
     [TOKENIZER_SERVO].p_limits    = {{5, 6}, {0, 63}, {0, 8}, {0, 15}, {-90, +90}, {1, 1000}},   // servo
     [TOKENIZER_STEPPER].p_limits  = {{5, 6}, {0, 63}, {0, 4}, {0, 0}, {-333, +333}},             // stepper
-    [TOKENIZER_SYNC].p_limits     = {{2, 2}, {0, 63}, {0,0}},                                    // sync
-    [TOKENIZER_SET].p_limits      = {{0, 0}, {0,  0}, {0,0}},                                    // config
-    [TOKENIZER_GET].p_limits      = {{3, 3}, {0, 63}, {0,5}},                                    // info
+    [TOKENIZER_SYNC].p_limits     = {{2, 2}, {0, 63}, {0, 0}},                                    // sync
+    [TOKENIZER_SET].p_limits      = {{0, 0}, {0,  0}, {0, 0}},                                    // config
+    [TOKENIZER_GET].p_limits      = {{3, 3}, {0, 63}, {0, 5}},                                    // info
     [TOKENIZER_PING].p_limits     = {{3, 3}, {0, 63}, {-255, +255}},                             // ping,
     [TOKENIZER_TDELAY].p_limits   = {{3, 3}, {0, 63}, {0, 50000}},                               // delay
     [TOKENIZER_DISPLAY].p_limits  = {{4, 5}, {0, 63}, {0, 9}, {0, 0}, {0, 0}},                   // display

@@ -74,6 +74,20 @@ uint32_t                current_form, new_form, old_form, result, i, value, pres
         reply_done = false;
         status = OK;
         switch (token) {
+            case TOKENIZER_SYS:
+                switch(int_parameters[2]) {  // SYS_SUB_CMD_INDEX
+                    case SOFT_RESET :    
+                        // special : NO RETURN FROM THIS COMMAND
+                        // Therefor send OK response BEFORE executing command to
+                        // ensure that remote comuputer does not enter a hang state
+                        print_string("%d %d\n", int_parameters[PORT_INDEX], status);
+                        software_reset();
+                    default :
+                        status = -9999;
+                        break;
+                break;
+                }
+
             case TOKENIZER_SERVO: 
                 switch (int_parameters[SERVO_SUB_CMD_INDEX]) {
                     case ABS_MOVE: 
@@ -248,7 +262,7 @@ uint32_t                current_form, new_form, old_form, result, i, value, pres
                         } 
                         // scan any switches marked to be scanned and put their 
                         // values in the 'form_data' structure
-                        status = scan_switches(get_uLCD_active_form());
+                        status = scan_switches(get_uLCD_active_form(), &result);
                         if (status != OK) {
                             break;
                         }
@@ -325,7 +339,7 @@ uint32_t                current_form, new_form, old_form, result, i, value, pres
                         status = gen4_uLCD_ReadObject(int_parameters[DISPLAY_OBJECT_TYPE_INDEX],
                                                       int_parameters[DISPLAY_GLOBAL_ID_INDEX],
                                                       &result);
-                        print_string("%d %d %d\n", status, int_parameters[PORT_INDEX], result);
+                        print_string("%d %d %d\n", int_parameters[PORT_INDEX], status, result);
                         break;
 
                     case WRITE_uLCD_STRING:
@@ -354,7 +368,7 @@ uint32_t                current_form, new_form, old_form, result, i, value, pres
                                 break;
                             }
                             if (form_data[current_form].buttons[i].button_state == PRESSED) {
-                                print_string("%d %d %d %d\n" , OK, int_parameters[PORT_INDEX], i, form_data[current_form].buttons[i].time_high);
+                                print_string("%d %d %d %d\n", int_parameters[PORT_INDEX] , OK, i, form_data[current_form].buttons[i].time_high);
                                 reply_done = true;
                                 // clear state to button data
                                 clear_button_state(current_form, i);
@@ -362,11 +376,20 @@ uint32_t                current_form, new_form, old_form, result, i, value, pres
                             }
                         }
                         if (reply_done != true) {
-                            print_string("%d %d %d\n" , OK, int_parameters[PORT_INDEX], -1);
+                            print_string("%d %d %d\n", int_parameters[PORT_INDEX], OK, -1);
                             reply_done = true;
                         }
                         break;
 
+                    case SCAN_uLCD_SWITCHES:
+                        status = scan_switches(get_uLCD_active_form(), &result);
+                        if (status == OK) {
+                            print_string("%d %d %d\n", int_parameters[PORT_INDEX], OK, result);
+                            reply_done = true;
+                            break;
+                        }
+                        break;
+                        
                     default:
                         status = GEN4_UNKNOWN_DISPLAY_SUB_COMMAND;
                         break;
@@ -414,7 +437,7 @@ uint32_t                current_form, new_form, old_form, result, i, value, pres
 //
 // Code uses a STATE MACHINE to walkthrough the command string.  Refer
 // to associated documentation.  
-
+//
 // defines modes as scan progresses : U=undefined, I=integer, R=real, S=string
 //
 

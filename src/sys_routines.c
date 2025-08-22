@@ -12,6 +12,8 @@
 
 #include "pico/stdlib.h"
 
+#include "hardware/watchdog.h"
+
 #include "FreeRTOS.h"
 #include "task.h"
 #include "queue.h"
@@ -59,3 +61,8 @@ void print_error(int32_t port, error_codes_te sys_error)
     print_string("%d %d\n", port, sys_error);
 }
 
+void software_reset(void)
+{
+    watchdog_enable(1, 1);
+    while(1);
+}

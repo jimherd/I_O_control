@@ -22,7 +22,7 @@
 // Version number
 //==============================================================================
 #define     MAJOR_VERSION       0
-#define     MINOR_VERSION       3
+#define     MINOR_VERSION       4
 #define     PATCH_VERSION       0
 
 //==============================================================================
@@ -117,6 +117,7 @@ typedef enum  {
     GEN4_uLCD_STRING_FORM_INACTIVE   = -135,
     GEN4_uLCD_SWITCH_OBJECT_NOT_USED = -136,
     GEN4_UNKNOWN_DISPLAY_SUB_COMMAND = -137,
+    GEN4_uLCD_BAD_REPLY_CHECKSUM     = -138,
 } error_codes_te;
 
 
@@ -168,12 +169,12 @@ enum {UPPER_CASE, LOWER_CASE};
 //#define UART1_BAUD_RATE   200000
 #define UART1_BAUD_RATE   115200
 
-// set of displat sub-commands
+// set of display sub-commands
 
 typedef enum {SET_uLCD_FORM, GET_uLCD_FORM, SET_uLCD_CONTRAST, 
               READ_uLCD_BUTTON, READ_uLCD_SWITCH, READ_uLCD_OBJECT, 
               WRITE_uLCD_STRING, WRITE_uLCD_OBJECT,
-              SCAN_uLCD_BUTTON_PRESSES
+              SCAN_uLCD_BUTTON_PRESSES, SCAN_uLCD_SWITCHES,
              } display_commands_te;
 
 #define     NOS_FORMS       3
@@ -203,7 +204,7 @@ typedef enum {
     GEN4_uLCD_OBJ_ANGULAR_METER,
     GEN4_uLCD_OBJ_COOL_GAUGE,
     GEN4_uLCD_OBJ_CUSTOM_DIGITS,
-    GEN4_uLCD_OBJ_FORM,
+    GEN4_uLCD_OBJ_FORM,             // 10
     GEN4_uLCD_OBJ_GAUGE,
     GEN4_uLCD_OBJ_IMAGE,
     GEN4_uLCD_OBJ_KEYBOARD,
@@ -213,7 +214,7 @@ typedef enum {
     GEN4_uLCD_OBJ_STRINGS,
     GEN4_uLCD_OBJ_THERMOMETER,
     GEN4_uLCD_OBJ_USER_LED,
-    GEN4_uLCD_OBJ_VIDEO,
+    GEN4_uLCD_OBJ_VIDEO,            // 20
     GEN4_uLCD_OBJ_STATIC_TEXT,
     GEN4_uLCD_OBJ_SOUND,
     GEN4_uLCD_OBJ_TIMER,
@@ -223,7 +224,7 @@ typedef enum {
     GEN4_uLCD_OBJ_USERIMAGES,
     GEN4_uLCD_OBJ_PINOUTPUT,
     GEN4_uLCD_OBJ_PININPUT,
-    GEN4_uLCD_OBJ_4DBUTTON,
+    GEN4_uLCD_OBJ_4DBUTTON,         // 30
     GEN4_uLCD_OBJ_ANIBUTTON,
     GEN4_uLCD_OBJ_COLORPICKER,
     GEN4_uLCD_OBJ_USERBUTTON,
@@ -233,18 +234,17 @@ typedef enum {
     GEN4_uLCD_OBJ_SMARTKNOB,
     GEN4_uLCD_OBJ_ILED_DIGITS_H,
     GEN4_uLCD_OBJ_IANGULAR_METER,
-    GEN4_uLCD_OBJ_IGAUGE,
+    GEN4_uLCD_OBJ_IGAUGE,           // 40
     GEN4_uLCD_OBJ_ILABELB,
     GEN4_uLCD_OBJ_IUSER_GAUGE,
     GEN4_uLCD_OBJ_IMEDIA_GAUGE,
     GEN4_uLCD_OBJ_IMEDIA_THERMOMETER,
     GEN4_uLCD_OBJ_ILED,
     GEN4_uLCD_OBJ_IMEDIA_LED,
-    GEN4_uLCD_OBJ_ILED_DIGITS_L,
     GEN4_uLCD_OBJ_ILED_DIGITS,
     GEN4_uLCD_OBJ_INEEDLE,
     GEN4_uLCD_OBJ_IRULER,
-    GEN4_uLCD_OBJ_ILED_DIGIT,
+    GEN4_uLCD_OBJ_ILED_DIGIT,       // 50
     GEN4_uLCD_OBJ_IBUTTOND,
     GEN4_uLCD_OBJ_IBUTTONE,
     GEN4_uLCD_OBJ_IMEDIA_BUTTON,
@@ -254,7 +254,7 @@ typedef enum {
     GEN4_uLCD_OBJ_IROTARY_INPUT,
     GEN4_uLCD_OBJ_ISWITCH,
     GEN4_uLCD_OBJ_ISWITCHB,         // 59,(0x3B)
-    GEN4_uLCD_OBJ_ISLIDERE,
+    GEN4_uLCD_OBJ_ISLIDERE,         // 60
     GEN4_uLCD_OBJ_IMEDIA_SLIDER,
     GEN4_uLCD_OBJ_ISLIDERH,
     GEN4_uLCD_OBJ_ISLIDERG,
@@ -268,6 +268,28 @@ typedef enum {
 // INDEX codes for objects on the Gen4 uLCD display
 //
 enum {
+    GEN4_uLCD_FORM0,  
+    GEN4_uLCD_FORM1, 
+    GEN4_uLCD_FORM2, 
+    GEN4_uLCD_FORM3, 	
+    GEN4_uLCD_FORM4, 
+    GEN4_uLCD_FORM5, 
+    GEN4_uLCD_FORM6, 
+    GEN4_uLCD_FORM7,
+};
+
+enum {
+    GEN4_uLCD_SWITCH0, 
+    GEN4_uLCD_SWITCH1, 
+    GEN4_uLCD_SWITCH2, 
+    GEN4_uLCD_SWITCH3, 
+    GEN4_uLCD_SWITCH4, 
+    GEN4_uLCD_SWITCH5,  
+    GEN4_uLCD_SWITCH6,  
+    GEN4_uLCD_SWITCH7,  
+};
+
+enum {
     GEN4_uLCD_WINBUTTON0, 
     GEN4_uLCD_WINBUTTON1, 
     GEN4_uLCD_WINBUTTON2, 
@@ -278,16 +300,7 @@ enum {
     GEN4_uLCD_WINBUTTON7,  
 };
 
-enum {
-    GEN4_uLCD_FORM0,  
-    GEN4_uLCD_FORM1, 
-    GEN4_uLCD_FORM2, 
-    GEN4_uLCD_FORM3, 	
-    GEN4_uLCD_FORM4, 
-    GEN4_uLCD_FORM5, 
-    GEN4_uLCD_FORM6, 
-    GEN4_uLCD_FORM7,
-};
+
 
 enum {
     GEN4_uLCD_STRING0,
@@ -317,6 +330,13 @@ enum {SRC_HARDWARE, SRC_FORM_DATA};
 #define LED_PIN     PICO_DEFAULT_LED_PIN
 #define LOG_PIN     GP2
 #define BLINK_PIN   LED_PIN
+
+//==============================================================================
+// sys commands
+//==============================================================================
+
+typedef enum {SOFT_RESET} sys_commands_te;
+
 
 //==============================================================================
 //servo motor interface (PCA9685A)
@@ -544,7 +564,7 @@ struct neopixel_colour_s {
 //==============================================================================
 
 #define     NOS_PRINT_STRING_BUFFERS   8
-#define     MAX_PRINT_STRING_LENGTH     128
+#define     MAX_PRINT_STRING_LENGTH   128
 
 //==============================================================================
 // Command string index values for the parameter list
@@ -553,6 +573,10 @@ struct neopixel_colour_s {
 
 #define     PRIMARY_CMD_INDEX       0
 #define     PORT_INDEX              1
+
+// sys command indices
+
+#define     SYS_SUB_CMD_INDEX           2
 
 // Stepper command indicies
 
@@ -651,6 +675,7 @@ struct display_cmd_reply_data_s {
 } ;
 
 enum {
+    TOKENIZER_SYS,
     TOKENIZER_SERVO,
     TOKENIZER_STEPPER,
     TOKENIZER_SYNC,

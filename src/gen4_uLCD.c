@@ -55,6 +55,7 @@ form_data_ts    form_data[GEN4_uLCD_MAX_NOS_FORMS] = {
         },
         .switches = {
         },
+		.switch_bit_list = 0,
         .strings = {
             {OBJECT_ENABLED, GEN4_uLCD_STRING0, "**********"},
             {OBJECT_ENABLED, GEN4_uLCD_STRING1, "Pi the robot"},
@@ -67,11 +68,12 @@ form_data_ts    form_data[GEN4_uLCD_MAX_NOS_FORMS] = {
             {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON4, 0, 0, NOT_PRESSED},
         },
         .switches = {
-            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
-            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
-            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
-            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, GEN4_uLCD_SWITCH0, 0},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, GEN4_uLCD_SWITCH1, 0},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, GEN4_uLCD_SWITCH2, 0},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, GEN4_uLCD_SWITCH3, 0}, 
         },
+		.switch_bit_list = 0,
         .strings = {},
     },
     {   // form 2
@@ -81,11 +83,12 @@ form_data_ts    form_data[GEN4_uLCD_MAX_NOS_FORMS] = {
             {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_WINBUTTON, GEN4_uLCD_WINBUTTON7, 0, 0, NOT_PRESSED},
         },
         .switches = {
-            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
-            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
-            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
-            {OBJECT_SCAN_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, 0},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, GEN4_uLCD_SWITCH4, 0},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, GEN4_uLCD_SWITCH5, 0},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, GEN4_uLCD_SWITCH6, 0},
+            {OBJECT_ENABLED, GEN4_uLCD_OBJ_ISWITCHB, GEN4_uLCD_SWITCH7, 0}, 
         },
+		.switch_bit_list = 0,
         .strings = {},
     },
 };
@@ -284,8 +287,11 @@ error_codes_te status;
 			uLCD_reply_data.reply.cmd = reply_byte;
 			uart_read_blocking(uart1, &uLCD_reply_data.reply.object, (sizeof(gen4_uLCD_reply_packet_ts) - 1));
 			checksum = 0;
-			for (i=0 ; i < (sizeof(gen4_uLCD_reply_packet_ts) - 1) ; i++) {
+			for (i=0 ; i < (sizeof(gen4_uLCD_reply_packet_ts)) ; i++) {
 				checksum = checksum ^ uLCD_reply_data.packet[i];
+			}
+			if (checksum != 0) {
+				return GEN4_uLCD_BAD_REPLY_CHECKSUM;
 			}
 			*result = (((uint32_t)(uLCD_reply_data.packet[3]) << 8 ) & 0xFF00) + (uint32_t)(uLCD_reply_data.packet[4]);
 			status = OK;
@@ -491,13 +497,17 @@ error_codes_te status;
     } else {
 		status = GEN4_uLCD_CMD_BAD_FORM_INDEX;
 	}
-	// update string objects on form
+	// update string objects on new form
 	if (nos_object[new_form].nos_strings > 0){
 		for (int i = 0; i < nos_object[new_form].nos_strings; i++){
-			gen4_uLCD_WriteString(form_data[gen4_uLCD_current_form].strings[i].global_object_id, 
+			status = gen4_uLCD_WriteString(form_data[gen4_uLCD_current_form].strings[i].global_object_id, 
 			                      form_data[gen4_uLCD_current_form].strings[i].string);
+			if (status != OK){
+				return status;
+			}
 		}
 	}
+	return OK;
 }
 
 //==============================================================================
@@ -642,19 +652,20 @@ uint32_t nos_str, i;
 //==============================================================================
 // scan_switches : 
 //
-// read all switches in the current form and load into form_data structure
+// read all switches in the current form and load into form_data structure.
+// Create a bit list of the switch values. Scanning the switches in reverse
+// order makes this simpler.
 
-error_codes_te    scan_switches(int32_t form)
+error_codes_te    scan_switches(uint32_t form, uint32_t *switch_data) 
 {
 touch_switch_data_ts  *obj_pt;
 error_codes_te		  status;
-int32_t				  result;
+uint32_t			  result, scan_list, nos_switches;
 
-	for (int i = 0; i < nos_object[form].nos_buttons; i++) {
+	scan_list = 0;
+	nos_switches = nos_object[form].nos_switches;
+	for (int i = (nos_switches - 1); i >= 0; i--) {
 		obj_pt = &form_data[form].switches[i];
-		if (obj_pt->object_mode != OBJECT_SCAN_ENABLED) {
-                    continue;   // on to next button
-                }
 		status = gen4_uLCD_ReadObject(obj_pt->object_type, 
 										obj_pt->global_object_id, 
 										&result);
@@ -662,7 +673,10 @@ int32_t				  result;
 			return status;
 		}
 		// log result 
-		obj_pt->switch_value = result;   
+		obj_pt->switch_value = result;  
+		scan_list = (scan_list << 1) | result;
 		}
+	form_data[form].switch_bit_list = scan_list;
+	*switch_data = scan_list;
 	return OK;
-	}
+}

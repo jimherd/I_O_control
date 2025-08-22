@@ -107,7 +107,6 @@ typedef struct  {   // for ISWITCHB objects
     uint8_t         object_type;
     uint8_t         global_object_id;    // e.g. ISWITCHB0, ISWITCHB1, etc.
 	int8_t	        switch_value;
-//    button_state_te button_state;   // PRESSED, NOT_PRESSED
 } touch_switch_data_ts;
 
 typedef struct {    // for STRINGS objects
@@ -119,6 +118,7 @@ typedef struct {    // for STRINGS objects
 typedef struct {
     touch_button_data_ts    buttons[GEN4_uLCD_MAX_BUTTONS_PER_FORM];
     touch_switch_data_ts    switches[GEN4_uLCD_MAX_SWITCHES_PER_FORM];
+    uint32_t                switch_bit_list;
     string_data_ts          strings[GEN4_uLCD_MAX_STRINGS_PER_FORM];
 } form_data_ts;
 
@@ -159,7 +159,7 @@ int32_t  get_uLCD_active_form(void);
 
 void clear_button_state(uint32_t form, uint32_t local_index);
 int32_t global_to_local_id(uint32_t form, uint32_t global_id);
-error_codes_te    scan_switches(int32_t form);
+error_codes_te    scan_switches(uint32_t form, uint32_t *switch_data);
 
 
 #endif  /* __GEN4_uLCD_H__ */

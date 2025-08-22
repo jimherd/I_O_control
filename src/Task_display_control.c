@@ -48,9 +48,7 @@ error_codes_te   status;
         if (status != OK) {
             display_OK = false;
         }
-        
         status = uLCD_printf(GEN4_uLCD_FORM0, GEN4_uLCD_STRING0, "V%d.%d", MAJOR_VERSION, MINOR_VERSION);
-        //status = uLCD_WriteString(FORM0, STRING0, "New string");
     }
     
     FOREVER {
