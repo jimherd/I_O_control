@@ -78,7 +78,7 @@ uint32_t                current_form, new_form, old_form, result, i, value, pres
                 switch(int_parameters[2]) {  // SYS_SUB_CMD_INDEX
                     case SOFT_RESET :    
                         // special : NO RETURN FROM THIS COMMAND
-                        // Therefor send OK response BEFORE executing command to
+                        // Therefore send OK response BEFORE executing command to
                         // ensure that remote comuputer does not enter a hang state
                         print_string("%d %d\n", int_parameters[PORT_INDEX], status);
                         software_reset();
@@ -399,6 +399,10 @@ uint32_t                current_form, new_form, old_form, result, i, value, pres
             case TOKENIZER_NEOPIXEL:
                 switch (int_parameters[NEOPIXEL_SUB_CMD_INDEX]) {
                     case NP_SET_PIXEL_ON:
+                        if (int_parameters[3] > NOS_NEOPIXELS) {
+                            status = BAD_NEOPIXEL_NUMBER;;
+                            break;
+                        }
                         set_neopixel_on(int_parameters[3], int_parameters[4]);
                         break;
                     case NP_SET_PIXEL_OFF:
