@@ -52,6 +52,14 @@ struct      {
 // functions
 //==============================================================================
 
+inline error_codes_te check_neopixel_number(uint8_t pixel_no) {
+
+    if (pixel_no >= NOS_NEOPIXELS) {
+        return BAD_NEOPIXEL_NUMBER;
+    }
+    return OK;
+}
+
 void init_neopixel_buffer(void) {
 
     neopixel_sys_buffer.cmd.data.nos_bits = (NOS_NEOPIXELS * 24) - 1;  
@@ -131,21 +139,30 @@ uint32_t urgb_u32(uint8_t r, uint8_t g, uint8_t b) {
              (uint32_t) (b);
 }
 
-void set_neopixel_on(uint8_t pixel_no, colours_et on_colour) {
+error_codes_te set_neopixel_on(uint8_t pixel_no, colours_et on_colour) {
+    if (check_neopixel_number(pixel_no) != OK) {
+        return BAD_NEOPIXEL_NUMBER;
+    }
     xSemaphoreTake(neopixel_data_MUTEX_access, portMAX_DELAY);
         neopixel_data[pixel_no].command = N_CMD_ON;
         neopixel_data[pixel_no].on_colour = on_colour;
     xSemaphoreGive(neopixel_data_MUTEX_access);
 }
 
-void set_neopixel_off(uint8_t pixel_no, colours_et off_colour) {
+error_codes_te set_neopixel_off(uint8_t pixel_no, colours_et off_colour) {
+    if (check_neopixel_number(pixel_no) != OK) {
+        return BAD_NEOPIXEL_NUMBER;
+    }
     xSemaphoreTake(neopixel_data_MUTEX_access, portMAX_DELAY);
         neopixel_data[pixel_no].command = N_CMD_OFF;
         neopixel_data[pixel_no].off_colour = off_colour;
     xSemaphoreGive(neopixel_data_MUTEX_access);
 }
 
-inline void clear_neopixel(uint8_t pixel_no) {
+inline error_codes_te clear_neopixel(uint8_t pixel_no) {
+    if (check_neopixel_number(pixel_no) != OK) {
+        return BAD_NEOPIXEL_NUMBER;
+    }
     set_neopixel_off(pixel_no, N_BLACK);
 }
 
@@ -155,8 +172,11 @@ inline void clear_all_neopixels(void) {
     }
 }
 
-void set_neopixel_flash(uint8_t pixel_no, colours_et on_colour, uint32_t on_time, 
+error_codes_te set_neopixel_flash(uint8_t pixel_no, colours_et on_colour, uint32_t on_time, 
                         colours_et off_colour, uint32_t off_time) {
+    if (check_neopixel_number(pixel_no) != OK) {
+        return BAD_NEOPIXEL_NUMBER;
+    }
     xSemaphoreTake(neopixel_data_MUTEX_access, portMAX_DELAY);
         neopixel_data[pixel_no].on_colour = on_colour;
         neopixel_data[pixel_no].flash_on_time = on_time;
@@ -166,31 +186,3 @@ void set_neopixel_flash(uint8_t pixel_no, colours_et on_colour, uint32_t on_time
         neopixel_data[pixel_no].state = N_FLASH_ON;
     xSemaphoreGive(neopixel_data_MUTEX_access);
 }
-
-// void set_state_neopixel(uint8_t pixel_no, NEOPIXEL_STATE_et state) 
-// {
-//     neopixel_data[pixel_no].state = state;
-//     if (state == N_DISABLE) {
-//         xSemaphoreTake(semaphore_neopixel_data, portMAX_DELAY);
-//             neopixel_data[pixel_no].current_colour      = N_BLACK;
-//             neopixel_data[pixel_no].current_intensity   = 0;
-//         xSemaphoreGive(semaphore_neopixel_data);
-//     }
-// }
-
-// void set_flash_neopixel(uint8_t pixel_no, NEOPIXEL_STATE_et state, uint8_t flash_rate)
-// {
-//     xSemaphoreTake(semaphore_neopixel_data, portMAX_DELAY);
-//         neopixel_data[pixel_no].flags.flash_state   = state;
-//         neopixel_data[pixel_no].dim_rate            = flash_rate;
-//     xSemaphoreGive(semaphore_neopixel_data);
-// }
-
-// void set_dim_neopixel(uint8_t pixel_no, NEOPIXEL_STATE_et state, uint8_t dim_rate, uint8_t dim_change)
-// {
-//     xSemaphoreTake(semaphore_neopixel_data, portMAX_DELAY);
-//         neopixel_data[pixel_no].flags.dim_state     = state;
-//         neopixel_data[pixel_no].dim_rate            = dim_rate;
-//         neopixel_data[pixel_no].dim_percent_change  = dim_change;
-//     xSemaphoreGive(semaphore_neopixel_data);
-// }
