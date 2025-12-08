@@ -510,7 +510,7 @@ typedef enum  {N_WHITE, N_RED, N_ORANGE, N_YELLOW, N_GREEN, N_BLUE, N_INDIGO, N_
 typedef enum  {N_OFF, N_ON, N_FLASH_OFF, N_FLASH_ON} NEOPIXEL_STATE_et;
 typedef enum  {N_CMD_ON, N_CMD_OFF, N_CMD_FLASH} NEOPIXEL_CMD_et;
 
-typedef enum {NP_SET_PIXEL_ON, NP_SET_PIXEL_OFF, NP_SET_PIXEL_FLASH, NP_BLANK_ALL} neopixel_commands_te;
+typedef enum {NP_SET_PIXEL_ON, NP_SET_PIXEL_OFF, NP_SET_PIXEL_FLASH, NP_SET_ALL, NP_BLANK_ALL} neopixel_commands_te;
     #define NOS_SERVO_CMDS     (NP_BLANK_ALL + 1) 
 
 struct neopixel_data_s {

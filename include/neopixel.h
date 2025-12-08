@@ -22,6 +22,7 @@ error_codes_te set_neopixel_on(uint8_t pixel_no, colours_et on_colour);
 error_codes_te set_neopixel_off(uint8_t pixel_no, colours_et off_colour);
 error_codes_te set_neopixel_flash(uint8_t pixel_no, colours_et on_colour, uint32_t on_time, colours_et off_colour, uint32_t off_time);
 
+void set_all_neopixels(colours_et colour);
 error_codes_te clear_neopixel(uint8_t pixel_no);
 void clear_all_neopixels(void);
 

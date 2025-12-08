@@ -166,10 +166,15 @@ inline error_codes_te clear_neopixel(uint8_t pixel_no) {
     set_neopixel_off(pixel_no, N_BLACK);
 }
 
-inline void clear_all_neopixels(void) {
+inline void set_all_neopixels(colours_et colour) {
     for (uint8_t count = 0 ; count < NOS_NEOPIXELS ; count++) {
-        set_neopixel_off(count, N_BLACK);
+        set_neopixel_on(count, colour);
     }
+}
+
+inline void clear_all_neopixels(void) {
+    
+    set_all_neopixels(N_BLACK);
 }
 
 error_codes_te set_neopixel_flash(uint8_t pixel_no, colours_et on_colour, uint32_t on_time, 

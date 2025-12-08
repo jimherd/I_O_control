@@ -19,8 +19,8 @@
 //==============================================================================
 
 struct stepper_data_s     stepper_data[NOS_STEPPERS] = {
- //   {200, 5, 2, 0, GP17, GP16, GP18, GP19, CLOCKWISE, false, 160, false, 200, -30, +30, 0,0, OK, STATE_SM_DORMANT,0,0,0,0,0,0}
-    {200, 1, 2, 0, GP17, GP16, GP18, GP19, CLOCKWISE, false, 100, false, 200, -30, +30, 0,0, OK, STATE_SM_DORMANT,0,0,0,0,0,0}
+    {200, 5, 2, 0, GP17, GP16, GP19, GP18, CLOCKWISE, false, 160, false, 2000, -30, +30, 0,0, OK, STATE_SM_DORMANT,0,0,0,0,0,0}
+//    {200, 1, 2, 0, GP17, GP16, GP19, GP18, CLOCKWISE, true, 100, false, 200, -30, +30, 0,0, OK, STATE_SM_DORMANT,0,0,0,0,0,0}
 };
 
 //==============================================================================
@@ -164,7 +164,7 @@ error_codes_te  status;
                     sm_ptr->state = STATE_SM_CALIB_S1;
                 }
                 break;
-    // states S1,S2,S3 to move to LEFT limit
+    // states S1,S2,S3 to move to RIGHT limit
             case STATE_SM_CALIB_S1 :
                 do_step(i);
                 if (CALIBRATE_SPEED_DELAY != 0) {
@@ -181,6 +181,10 @@ error_codes_te  status;
                 } 
                 break;
             case STATE_SM_CALIB_S3 :
+                if(gpio_get(sm_ptr->R_limit_pin) == ASSERTED_LOW) {  // wrong direction
+                    sm_ptr->state = STATE_SM_CALIB_S1;  // restart calibration
+                    continue;
+                }
                 if (gpio_get(sm_ptr->L_limit_pin) == ASSERTED_LOW) {
                     sm_ptr->current_step_count = 0;
                     sm_ptr->temp_count = MAX_STEPS;
@@ -190,7 +194,7 @@ error_codes_te  status;
                     sm_ptr->state = STATE_SM_CALIB_S1;
                 }
                 break;
-    // states S4,S5,S6 to move to RIGHT limit
+    // states S4,S5,S6 to move to LEFT limit
             case STATE_SM_CALIB_S4 :
                 do_step(i);
                 sm_ptr->current_step_count++;
@@ -225,7 +229,8 @@ error_codes_te  status;
                 sm_ptr->max_step_count = sm_ptr->current_step_count;
                 sm_ptr->calibrated = true;
                 set_SM_direction(i, ANTI_CLOCKWISE);
-                sm_ptr->temp_count = sm_ptr->max_step_count - sm_ptr->init_step_position;
+            //    sm_ptr->temp_count = sm_ptr->max_step_count - sm_ptr->init_step_position;
+                sm_ptr->temp_count = sm_ptr->max_step_count / 2;
                 sm_ptr->state = STATE_SM_CALIB_S8;
                 break;
     // states S8,S9,S10 to move to initial position             
@@ -287,7 +292,7 @@ void Task_stepper_control(void *p)
     TMC2208_interface_init();
 
     for (uint32_t i=0; i<NOS_STEPPERS; i++) {
-        calibrate_stepper(i);
+     //   calibrate_stepper(i);  //disable : do calibrate command from Pi computer
     }
 
     add_repeating_timer_us(1000, repeating_timer_callback, NULL, &timer);

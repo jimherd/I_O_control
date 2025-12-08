@@ -412,10 +412,11 @@ uint32_t                current_form, new_form, old_form, result, i, value, pres
                         set_neopixel_flash(int_parameters[3], int_parameters[4], int_parameters[5],
                                            int_parameters[6], int_parameters[7]);
                         break;
+                    case NP_SET_ALL:
+                        set_all_neopixels(int_parameters[3]);
+                        break;
                     case NP_BLANK_ALL:
-                        for (int i = 0; i < NOS_NEOPIXELS; i++) {
-                            set_neopixel_on(int_parameters[3], N_BLACK);
-                        }
+                        set_all_neopixels(N_BLACK);
                         break;
                     default:
                         break;
