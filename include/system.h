@@ -572,6 +572,8 @@ struct neopixel_colour_s {
 #define     TASK_NEOPIXELS_TIME_UNIT                    (1000 / TASK_NEOPIXELS_FREQUENCY)
 #define     TASK_NEOPIXELS_FREQUENCY_TICK_COUNT         ((1000/TASK_NEOPIXELS_FREQUENCY) * portTICK_PERIOD_MS)
 
+#define     TASK_SCAN_PUSH_BUTTONS_FREQUENCY             50  // Hz
+
 //==============================================================================
 // Set of 8 priority levels (set 8 in FreeRTOSconfig.h)
 //==============================================================================
@@ -649,7 +651,7 @@ struct neopixel_colour_s {
 
 typedef enum {
     TASK_UART, TASK_RUN_CMD, TASK_SERVO_CONTROL, TASK_STEPPER_CONTROL,
-    TASK_DISPLAY, TASK_SCAN_TOUCH_BUTTONS, TASK_WRITE_NEOPIXELS, TASK_BLINK,
+    TASK_DISPLAY, TASK_SCAN_TOUCH_BUTTONS, TASK_WRITE_NEOPIXELS, TASK_SCAN_PUSH_BUTTONS, TASK_BLINK,
 } task_et;
 
 #define     NOS_TASKS   (TASK_BLINK + 1)

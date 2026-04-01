@@ -47,6 +47,7 @@ TaskHandle_t        taskhndl_Task_stepper_control;
 TaskHandle_t        taskhndl_Task_display_control;
 TaskHandle_t        taskhndl_Task_scan_touch_buttons;
 TaskHandle_t        taskhndl_Task_write_neopixels;
+TaskHandle_t        taskhndl_Task_scan_push_buttons;
 
 QueueHandle_t       queue_print_string_buffers;
 QueueHandle_t       queue_free_buffers;
@@ -154,6 +155,14 @@ int main()
                 NULL,
                 TASK_PRIORITYLOW,
                 &taskhndl_Task_write_neopixels
+    );
+
+    xTaskCreate(Task_scan_push_buttons,
+                "Scan_push_button_task",
+                configMINIMAL_STACK_SIZE,
+                NULL,
+                TASK_PRIORITYLOW,
+                &taskhndl_Task_scan_push_buttons
     );
 
     queue_print_string_buffers = xQueueCreate(NOS_PRINT_STRING_BUFFERS+1, sizeof(uint32_t));

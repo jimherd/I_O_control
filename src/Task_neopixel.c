@@ -1,7 +1,7 @@
 /**
  * @file    Task_neopixel.c
  * @author  Jim Herd
- * @brief   read Robokid sensors and set neopixel LEDs
+ * @brief   set neopixel LEDs
  */
 
 #include <string.h>

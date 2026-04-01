@@ -18,3 +18,16 @@
 =======
 Fri 16 Jan 21:41:27 GMT 2026
 >>>>>>> 7ded54555d92caae97277b618da87bb39ade9771
+The current date is: 01/04/2026 
+Enter the new date: (dd-mm-yy) The current date is: 01/04/2026 
+Enter the new date: (dd-mm-yy) The system cannot accept the date entered.
+Enter the new date: (dd-mm-yy) The system cannot accept the date entered.
+Enter the new date: (dd-mm-yy) The system cannot accept the date entered.
+Enter the new date: (dd-mm-yy)       text       data        bss      total filename
+     41680       1696      85872     129248 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+      text       data        bss      total filename
+     41680       1696      85872     129248 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+      text       data        bss      total filename
+     41680       1696      85900     129276 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+      text       data        bss      total filename
+     41744       1720      85904     129368 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
