@@ -57,12 +57,14 @@ uint32_t    start_time, end_time;
     set_neopixel_flash(1, N_GREEN, 20, N_RED, 10);
     set_neopixel_on(2, N_RED);
     set_neopixel_on(3, N_WHITE);
-    set_neopixel_on(4, N_BLACK);
+    set_neopixel_on(4, N_BLUE);
     set_neopixel_flash(5, N_ORANGE, 100, N_INDIGO, 100);
     set_neopixel_flash(6, N_WHITE, 50, N_BLACK, 10);
-    set_neopixel_on(7, N_BLACK);
-    set_neopixel_on(8, N_BLACK);
-    set_neopixel_on(9, N_BLACK);
+    set_neopixel_on(7, N_RED);
+    set_neopixel_on(8, N_GREEN);
+    set_neopixel_on(9, N_BLUE);
+    set_neopixel_flash(10, N_GREEN, 20, N_RED, 10);
+
 //==============================================================================
 // Task code
 //==============================================================================
