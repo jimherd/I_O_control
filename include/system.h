@@ -558,6 +558,36 @@ struct neopixel_colour_s {
 // } ;
 
 //==============================================================================
+// Push switch subsystem
+//==============================================================================
+#define     NOS_SWITCHES            4
+#define     NOS_SWITCH_SAMPLES      3  //for debounce
+
+#define     SWITCH_A_PIN            GP10
+#define     SWITCH_B_PIN            GP11
+#define     SWITCH_C_PIN            GP12
+#define     SWITCH_D_PIN            GP13
+#define     SWITCH_MASK             ((1<<SWITCH_A_PIN)|(1<<SWITCH_B_PIN)|(1<<SWITCH_C_PIN)|(1<<SWITCH_D_PIN))
+
+#define     SWITCH_PRESSED        		0
+#define     SWITCH_RELEASED       		1
+#define     SWITCHES_ALL_RELEASED   (0b1111<<GP10)
+
+enum  { SWITCH_A, SWITCH_B, SWITCH_C, SWITCH_D};
+
+#define     WAIT_SWITCH_RELEASED(switch_n)      while((switch_data.switch_value[switch_n]) == SWITCH_PRESSED);
+#define     WAIT_SWITCH_PRESSED(switch_n)       while((switch_data.switch_value[switch_n]) == SWITCH_RELEASED);
+#define     WAIT_ANY_SWITCH_PRESSED             while(switch_data.switch_ABCD == SWITCHES_ALL_RELEASED);
+#define     WAIT_ALL_SWITCHES_RELEASED          while(switch_data.switch_ABCD != ALL_RELEASED);
+
+struct switch_data_s {
+    uint32_t    raw_switch_values[NOS_SWITCH_SAMPLES];
+    uint32_t    debounced_state;
+    uint32_t    switch_value[NOS_SWITCHES];
+    uint32_t    switches_ABCD;
+};
+
+//==============================================================================
 // Freertos : task rates
 //==============================================================================
 
