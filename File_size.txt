@@ -59,3 +59,7 @@ Enter the new date: (dd-mm-yy)       text       data        bss      total filen
      41760       1720      85904     129384 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
       text       data        bss      total filename
      41760       1720      85904     129384 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+      text       data        bss      total filename
+     41824       1736      85904     129464 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+      text       data        bss      total filename
+     41840       1740      85940     129520 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf

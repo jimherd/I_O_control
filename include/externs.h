@@ -51,5 +51,6 @@ extern struct neopixel_colour_s  rainbow_col[NOS_NEOPIXEL_COLOURS];
 extern form_data_ts    form_data[GEN4_uLCD_MAX_NOS_FORMS];
 extern nos_objects_per_form_te		nos_object[NOS_FORMS];
 extern form_data_ts    form_data[GEN4_uLCD_MAX_NOS_FORMS];
+extern struct switch_data_s switch_data;
 
 #endif  // __EXTERNS_H__

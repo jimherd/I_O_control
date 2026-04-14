@@ -54,6 +54,7 @@ const struct token_list_s commands[] = {
     {"ping",    TOKENIZER_PING},
     {"display", TOKENIZER_DISPLAY},
     {"neopixel",TOKENIZER_NEOPIXEL},
+    {"switch",  TOKENIZER_SWITCH},
     {"delay",   TOKENIZER_TDELAY},      // always last in list
 };
 
@@ -101,6 +102,7 @@ struct command_limits_s    cmd_limits[NOS_COMMANDS] = {
     [TOKENIZER_TDELAY].p_limits   = {{3, 3}, {0, 63}, {0, 50000}},                               // delay
     [TOKENIZER_DISPLAY].p_limits  = {{4, 5}, {0, 63}, {0, 9}, {0, 0}, {0, 0}},                   // display
     [TOKENIZER_NEOPIXEL].p_limits = {{4, 8}, {0, 63}, {0, 4}, {0, 4}, {N_WHITE, N_BLACK}, {0, 50}, {N_WHITE, N_BLACK}, {0, 50}},   // neopixel
+    [TOKENIZER_SWITCH].p_limits   = {{3, 3}, {0, 63}, {0, NOS_SWITCHES}},
 };
 
 //==============================================================================

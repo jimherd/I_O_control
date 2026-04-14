@@ -423,6 +423,11 @@ uint32_t                current_form, new_form, old_form, result, i, value, pres
                 }
                 break;
 
+            case TOKENIZER_SWITCH: 
+                print_string("%d %d %d\n", int_parameters[PORT_INDEX], OK, (switch_data.switch_value[int_parameters[2]]));
+                reply_done = true;
+                break;
+
             case TOKENIZER_TDELAY:
                 vTaskDelay(int_parameters[2]);
                 break;
