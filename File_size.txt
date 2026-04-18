@@ -80,3 +80,6 @@ Fri 13 Feb 14:13:32 GMT 2026
       text       data        bss      total filename
      41664       1696      85928     129288 /home/jimherd/Projects/Pi_the_robot_update/Pico_code/I_O_control/build/Pi_Robot_test.elf
 >>>>>>> ad6f2b7 (Update number of Neopixels)
+Sat 18 Apr 22:34:25 BST 2026
+      text       data        bss      total filename
+     41840       1740      85996     129576 /home/jimherd/Projects/Pi_the_robot_update/Pico_code/I_O_control/build/Pi_Robot_test.elf

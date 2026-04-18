@@ -103,9 +103,9 @@ pico_enable_stdio_uart(${PROJECT_NAME} 0)
 add_custom_command(
     TARGET ${PROJECT_NAME}
     POST_BUILD
-#    COMMAND date.exe  -t >> ${CMAKE_SOURCE_DIR}/File_size.txt
-    COMMAND ${USERHOME}/.pico-sdk/toolchain/14_2_Rel1/bin/arm-none-eabi-size.exe -G ${CMAKE_SOURCE_DIR}/build/${PROJECT_NAME}.elf
-    COMMAND ${USERHOME}/.pico-sdk/toolchain/14_2_Rel1/bin/arm-none-eabi-size.exe -G ${CMAKE_SOURCE_DIR}/build/${PROJECT_NAME}.elf  >> ${CMAKE_SOURCE_DIR}/File_size.txt
+    COMMAND date >> ${CMAKE_SOURCE_DIR}/File_size.txt
+    COMMAND ${USERHOME}/.pico-sdk/toolchain/14_2_Rel1/bin/arm-none-eabi-size -G ${CMAKE_SOURCE_DIR}/build/${PROJECT_NAME}.elf
+    COMMAND ${USERHOME}/.pico-sdk/toolchain/14_2_Rel1/bin/arm-none-eabi-size -G ${CMAKE_SOURCE_DIR}/build/${PROJECT_NAME}.elf  >> ${CMAKE_SOURCE_DIR}/File_size.txt
     VERBATIM
 )
 
