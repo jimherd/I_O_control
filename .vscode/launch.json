@@ -2,14 +2,15 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "showDevDebugOutput": "raw",
             "name": "Pico Debug (Cortex-Debug)",
             "cwd": "${userHome}/.pico-sdk/openocd/0.12.0+dev/scripts",
         //    "executable": "${command:raspberry-pi-pico.launchTargetPath}",
-            "executable": "C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf",
+           "executable": "${userHome}/Projects/Pi_the_robot_update/Pico_code/I_O_control/build/Pi_Robot_test.elf",
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "openocd",
-            "serverpath": "${userHome}/.pico-sdk/openocd/0.12.0+dev/openocd.exe",
+            "serverpath": "${userHome}/.pico-sdk/openocd/0.12.0+dev/openocd",
             "gdbPath": "${command:raspberry-pi-pico.getGDBPath}",
             "device": "${command:raspberry-pi-pico.getChipUppercase}",
             "configFiles": [
@@ -23,7 +24,7 @@
             "overrideLaunchCommands": [
                 "monitor reset init",
             //    "load \"${command:raspberry-pi-pico.launchTargetPath}\""
-                "load \"C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf\"",
+                "load \"/home/jimherd/Projects/Pi_the_robot_update/Pico_code/I_O_control/build/Pi_Robot_test.elf\"",
             ],
             "openOCDLaunchCommands": [
                 "adapter speed 5000"
@@ -32,8 +33,8 @@
         {
             "name": "Pico Debug (Cortex-Debug with external OpenOCD)",
             "cwd": "${workspaceRoot}",
-            "executable": "${command:raspberry-pi-pico.launchTargetPath}",
-        //    "executable": "C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf",
+        //    "executable": "${command:raspberry-pi-pico.launchTargetPath}",
+            "executable": "${userHome}/Projects/Pi_the_robot_update/Pico_code/I_O_control/build/Pi_Robot_test.elf",
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "external",
@@ -54,7 +55,7 @@
             "request": "launch",
             "cwd": "${workspaceRoot}",
          //   "program": "${command:raspberry-pi-pico.launchTargetPath}",
-            "program": "C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf",
+            "program": "${userHome}/Projects/Pi_the_robot_update/Pico_code/I_O_control/build/Pi_Robot_test.elf",
             "MIMode": "gdb",
             "miDebuggerPath": "${command:raspberry-pi-pico.getGDBPath}",
             "miDebuggerServerAddress": "localhost:3333",

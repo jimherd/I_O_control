@@ -17,6 +17,7 @@
      42748       2108      85868     130724 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
 =======
 Fri 16 Jan 21:41:27 GMT 2026
+<<<<<<< HEAD
 >>>>>>> 7ded54555d92caae97277b618da87bb39ade9771
 The current date is: 01/04/2026 
 Enter the new date: (dd-mm-yy) The current date is: 01/04/2026 
@@ -63,3 +64,19 @@ Enter the new date: (dd-mm-yy)       text       data        bss      total filen
      41824       1736      85904     129464 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
       text       data        bss      total filename
      41840       1740      85940     129520 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+=======
+Sat 17 Jan 23:05:59 GMT 2026
+Sat 17 Jan 23:11:18 GMT 2026
+Sat 17 Jan 23:13:17 GMT 2026
+Sat 17 Jan 23:36:36 GMT 2026
+Sat 17 Jan 23:37:48 GMT 2026
+      text       data        bss      total filename
+     41664       1696      85824     129184 /home/jimherd/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+Sat 17 Jan 23:58:44 GMT 2026
+Fri 13 Feb 13:34:31 GMT 2026
+      text       data        bss      total filename
+     41664       1696      85928     129288 /home/jimherd/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+Fri 13 Feb 14:13:32 GMT 2026
+      text       data        bss      total filename
+     41664       1696      85928     129288 /home/jimherd/Projects/Pi_the_robot_update/Pico_code/I_O_control/build/Pi_Robot_test.elf
+>>>>>>> ad6f2b7 (Update number of Neopixels)

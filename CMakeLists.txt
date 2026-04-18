@@ -19,6 +19,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(CMakePrintHelpers)
+cmake_print_variables(PROJECT_SOURCE_DIR)
 
 set (PROJECT_NAME "Pi_Robot_test")
 
@@ -99,7 +100,8 @@ pico_enable_stdio_usb(${PROJECT_NAME} 0)
 pico_enable_stdio_uart(${PROJECT_NAME} 0)
 
 # print executable size
-add_custom_command(TARGET ${PROJECT_NAME}
+add_custom_command(
+    TARGET ${PROJECT_NAME}
     POST_BUILD
 #    COMMAND date.exe  -t >> ${CMAKE_SOURCE_DIR}/File_size.txt
     COMMAND ${USERHOME}/.pico-sdk/toolchain/14_2_Rel1/bin/arm-none-eabi-size.exe -G ${CMAKE_SOURCE_DIR}/build/${PROJECT_NAME}.elf

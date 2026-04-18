@@ -493,7 +493,7 @@ struct sm_profile_s {      // single stepper motor seqence
 
 #define     NEOPIXEL_DOUT_PIN       GP26
 
-#define     NOS_NEOPIXELS           11
+#define     NOS_NEOPIXELS           12
 
 #define     NEOPIXEL_DATA_RATE      800000      // 800KHz
 #define     NEOPIXEL_BITS_PER_UNIT  24
