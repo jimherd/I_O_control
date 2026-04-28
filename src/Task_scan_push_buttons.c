@@ -22,13 +22,14 @@ struct switch_data_s switch_data;
 // Main task routine
 //==============================================================================
 //
+
 void Task_scan_push_buttons(void *p) 
 {
 TickType_t  xLastWakeTime;
 BaseType_t  xWasDelayed;
 uint8_t     index;
 uint32_t    start_time, end_time;
-uint32_t     sample_index;
+uint32_t    sample_index;
 
 struct switch_data_s switch_data;
 
@@ -39,15 +40,15 @@ struct switch_data_s switch_data;
     sample_index = 0;
     xLastWakeTime = xTaskGetTickCount ();
     FOREVER {
-        xWasDelayed = xTaskDelayUntil( &xLastWakeTime, TASK_SCAN_PUSH_BUTTONS_FREQUENCY );
+        xWasDelayed = xTaskDelayUntil( &xLastWakeTime, TASK_SCAN_PUSH_BUTTONS_FREQUENCY_TICK_COUNT );
         start_time = time_us_32();
 
-        switch_data.raw_switch_values[sample_index++] = sio_hw->gpio_in;
-        switch_data.debounced_state = 0xffffffff; 
+        switch_data.raw_switch_values[sample_index++] = ~(gpio_get_all() & (0b1111 << GP10));
+        switch_data.debounced_state = 0;
         for(uint8_t i=0; i < NOS_SWITCH_SAMPLES; i++) { 
             switch_data.debounced_state = switch_data.debounced_state & switch_data.raw_switch_values[i]; 
         }
-        switch_data.debounced_state = switch_data.debounced_state; 
+        // switch_data.debounced_state = switch_data.debounced_state; 
         if(sample_index >= NOS_SWITCH_SAMPLES) {
             sample_index = 0; 
         }
@@ -63,4 +64,4 @@ struct switch_data_s switch_data;
         end_time = time_us_32();
         update_task_execution_time(TASK_SCAN_PUSH_BUTTONS, start_time, end_time);
     }
-}
+}  

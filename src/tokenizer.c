@@ -47,7 +47,7 @@
 
 uint32_t string_to_token(struct token_list_s *tk_list, char *string)
 {
-    for (uint32_t i = 0; i < NOS_STRING_CMDS; i++) {
+    for (uint32_t i = 0; i < NOS_COMMANDS; i++) {     // NOS_STRING_CMDS
         if (strncmp(string, tk_list->keyword, strlen(tk_list->keyword)) == 0) {
             return tk_list->token;
         }

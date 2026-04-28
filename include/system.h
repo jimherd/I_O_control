@@ -22,7 +22,7 @@
 // Version number
 //==============================================================================
 #define     MAJOR_VERSION       0
-#define     MINOR_VERSION       4
+#define     MINOR_VERSION       5
 #define     PATCH_VERSION       0
 
 //==============================================================================
@@ -603,6 +603,7 @@ struct switch_data_s {
 #define     TASK_NEOPIXELS_FREQUENCY_TICK_COUNT         ((1000/TASK_NEOPIXELS_FREQUENCY) * portTICK_PERIOD_MS)
 
 #define     TASK_SCAN_PUSH_BUTTONS_FREQUENCY             50  // Hz
+#define     TASK_SCAN_PUSH_BUTTONS_FREQUENCY_TICK_COUNT  ((1000/TASK_SCAN_PUSH_BUTTONS_FREQUENCY) * portTICK_PERIOD_MS)
 
 //==============================================================================
 // Set of 8 priority levels (set 8 in FreeRTOSconfig.h)
@@ -747,7 +748,7 @@ enum {
     TOKENIZER_ERROR,
 };
 
-#define NOS_COMMANDS   (TOKENIZER_ERROR + 1)
+#define NOS_COMMANDS   (TOKENIZER_SWITCH + 1)
 
 //==============================================================================
 // Structure to hold button/form data

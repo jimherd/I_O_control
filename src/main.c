@@ -80,10 +80,27 @@ int main()
     gpio_set_dir(LOG_PIN, GPIO_OUT);
     gpio_pull_down(LOG_PIN);         // should default but just make sure
 
+// set push switch input pins
 
-        // I2C Initialisation. Using it at 400Khz.
+    gpio_init(SWITCH_A_PIN);
+    gpio_set_dir(SWITCH_A_PIN, GPIO_IN);
+    gpio_pull_up(SWITCH_A_PIN);
+
+    gpio_init(SWITCH_B_PIN);
+    gpio_set_dir(SWITCH_B_PIN, GPIO_IN);
+    gpio_pull_up(SWITCH_B_PIN);
+
+    gpio_init(SWITCH_C_PIN);
+    gpio_set_dir(SWITCH_C_PIN, GPIO_IN);
+    gpio_pull_up(SWITCH_C_PIN);
+
+    gpio_init(SWITCH_D_PIN);
+    gpio_set_dir(SWITCH_D_PIN, GPIO_IN);
+    gpio_pull_up(SWITCH_D_PIN);
+
+// I2C Initialisation. Using it at 400Khz.
+
     i2c_init(I2C_PORT, 400*1000);
-    
     gpio_set_function(I2C_SDA, GPIO_FUNC_I2C);
     gpio_set_function(I2C_SCL, GPIO_FUNC_I2C);
     gpio_pull_up(I2C_SDA);
