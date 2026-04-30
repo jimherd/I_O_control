@@ -137,3 +137,16 @@ Tue 28 Apr 15:25:57 BST 2026
 Tue 28 Apr 15:32:26 BST 2026
       text       data        bss      total filename
      41872       1740      85996     129608 /home/jimherd/Projects/Pi_the_robot_update/Pico_code/I_O_control/build/Pi_Robot_test.elf
+The current date is: 29/04/2026 
+30/04/2026 
+      text       data        bss      total filename
+     44004       3952      85988     133944 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+30/04/2026 
+      text       data        bss      total filename
+     44004       3952      85988     133944 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+30/04/2026 
+      text       data        bss      total filename
+     44004       3952      85988     133944 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf
+30/04/2026 
+      text       data        bss      total filename
+     41872       1740      85996     129608 C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf

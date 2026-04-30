@@ -19,7 +19,7 @@
 //==============================================================================
 
 struct stepper_data_s     stepper_data[NOS_STEPPERS] = {
-    {200, 5, 2, 0, GP17, GP16, GP19, GP18, CLOCKWISE, false, 160, false, 2000, -30, +30, 0,0, OK, STATE_SM_DORMANT,0,0,0,0,0,0}
+     {200, 5, 2, 0, GP17, GP16, GP19, GP18, CLOCKWISE, false, 160, false, 2000, -30, +30, 0,0, OK, STATE_SM_DORMANT,0,0,0,0,0,0}
 //    {200, 1, 2, 0, GP17, GP16, GP19, GP18, CLOCKWISE, true, 100, false, 200, -30, +30, 0,0, OK, STATE_SM_DORMANT,0,0,0,0,0,0}
 };
 

@@ -6,7 +6,20 @@
             "name": "Pico Debug (Cortex-Debug)",
             "cwd": "${userHome}/.pico-sdk/openocd/0.12.0+dev/scripts",
         //    "executable": "${command:raspberry-pi-pico.launchTargetPath}",
-           "executable": "${userHome}/Projects/Pi_the_robot_update/Pico_code/I_O_control/build/Pi_Robot_test.elf",
+            "windows": {
+                "executable": "C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf",
+                "overrideLaunchCommands": [
+                    "monitor reset init",
+                    "load \"C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf\"",
+                ],
+            },
+            "linux": {
+                "executable": "/home/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf",
+                "overrideLaunchCommands": [
+                    "monitor reset init",
+                    "load \"/home/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf\"",
+                ],
+            },
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "openocd",
@@ -21,11 +34,6 @@
             "runToEntryPoint": "main",
             // Fix for no_flash binaries, where monitor reset halt doesn't do what is expected
             // Also works fine for flash binaries
-            "overrideLaunchCommands": [
-                "monitor reset init",
-            //    "load \"${command:raspberry-pi-pico.launchTargetPath}\""
-                "load \"/home/jimherd/Projects/Pi_the_robot_update/Pico_code/I_O_control/build/Pi_Robot_test.elf\"",
-            ],
             "openOCDLaunchCommands": [
                 "adapter speed 5000"
             ]
@@ -34,7 +42,7 @@
             "name": "Pico Debug (Cortex-Debug with external OpenOCD)",
             "cwd": "${workspaceRoot}",
         //    "executable": "${command:raspberry-pi-pico.launchTargetPath}",
-            "executable": "${userHome}/Projects/Pi_the_robot_update/Pico_code/I_O_control/build/Pi_Robot_test.elf",
+            "executable": "C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf",
             "request": "launch",
             "type": "cortex-debug",
             "servertype": "external",
