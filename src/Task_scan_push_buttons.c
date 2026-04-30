@@ -31,24 +31,25 @@ uint8_t     index;
 uint32_t    start_time, end_time;
 uint32_t    sample_index;
 
-struct switch_data_s switch_data;
+volatile struct switch_data_s switch_data;
 
 //==============================================================================
 // Task code
 //==============================================================================
-    WAIT_SWITCH_PRESSED(SWITCH_A);
     sample_index = 0;
+    for(index=0; index < NOS_SWITCH_SAMPLES; index++) { 
+        switch_data.raw_switch_values[index] = 0; 
+    }
     xLastWakeTime = xTaskGetTickCount ();
     FOREVER {
         xWasDelayed = xTaskDelayUntil( &xLastWakeTime, TASK_SCAN_PUSH_BUTTONS_FREQUENCY_TICK_COUNT );
         start_time = time_us_32();
 
         switch_data.raw_switch_values[sample_index++] = ~(gpio_get_all() & (0b1111 << GP10));
-        switch_data.debounced_state = 0;
-        for(uint8_t i=0; i < NOS_SWITCH_SAMPLES; i++) { 
-            switch_data.debounced_state = switch_data.debounced_state & switch_data.raw_switch_values[i]; 
+        switch_data.debounced_state = (0b1111 << GP10);
+        for(index=0; index < NOS_SWITCH_SAMPLES; index++) { 
+            switch_data.debounced_state = switch_data.debounced_state & switch_data.raw_switch_values[index]; 
         }
-        // switch_data.debounced_state = switch_data.debounced_state; 
         if(sample_index >= NOS_SWITCH_SAMPLES) {
             sample_index = 0; 
         }
