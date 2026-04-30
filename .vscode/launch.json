@@ -14,10 +14,10 @@
                 ],
             },
             "linux": {
-                "executable": "/home/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf",
+                "executable": "/home/jimherd/Projects/Pi_the_robot_update/Pico_code/I_O_control/build/Pi_Robot_test.elf",
                 "overrideLaunchCommands": [
                     "monitor reset init",
-                    "load \"/home/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf\"",
+                    "load \"/home/jimherd/Projects/Pi_the_robot_update/Pico_code/I_O_control/build/Pi_Robot_test.elf\"",
                 ],
             },
             "request": "launch",
