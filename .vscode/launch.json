@@ -7,21 +7,12 @@
             "cwd": "${userHome}/.pico-sdk/openocd/0.12.0+dev/scripts",
             "windows": {
                 "executable": "${workspaceFolder}/build/Pi_Robot_test.elf",
-            //    "executable": "C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf",
-            //    "overrideLaunchCommands": [
-            //        "monitor reset init",
-            //       "load \"C:/jth/Projects/Pi_the_robot_update/Pico code/I_O_control/build/Pi_Robot_test.elf\"",
-            //    ],
             },
             "linux": {
                 "executable": "${workspaceFolder}/build/Pi_Robot_test.elf",
                 "postLaunchCommands": [
                     "monitor rp2040.core1 arp_reset assert 0 ; rp2040.core0 arp_reset assert 0 ; reset halt " ,   
                 ],
-            //    "overrideLaunchCommands": [
-            //        "monitor reset init",
-            //        "load \"/home/jimherd/Projects/Pi_the_robot_update/Pico_code/I_O_control/build/Pi_Robot_test.elf\"",
-            //    ],
             },
             "request": "launch",
             "type": "cortex-debug",
@@ -39,7 +30,6 @@
             // Also works fine for flash binaries
             "openOCDLaunchCommands": [
                 "adapter speed 5000",
-            //    "set USE_CORE 0",
             ],
         },
         {
